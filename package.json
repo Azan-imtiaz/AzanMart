@@ -2,10 +2,10 @@
   "name": "azanmart",
   "version": "1.0.0",
   "description": "AzanMart - a server-side rendered e-commerce store built with Express, EJS and MongoDB",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "node --watch app.js",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

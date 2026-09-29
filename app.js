@@ -1,19 +1,8 @@
-require("dotenv").config();
-
-// Fail fast if required secrets are missing
-const requiredEnv = ["MONGODB_URL", "SECRET_KEY", "EXP_SESSION_SECRET"];
-const missingEnv = requiredEnv.filter((key) => !process.env[key]);
-if (missingEnv.length > 0) {
-  console.error(`Missing required environment variables: ${missingEnv.join(", ")}`);
-  process.exit(1);
-}
-
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const expressSession = require("express-session");
 const flash = require("connect-flash");
-require("./config/mongooseConnection");
 
 const ownersRouter = require("./routes/ownersRouter");
 const productsRouter = require("./routes/productsRouter");
@@ -70,6 +59,4 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = app;
