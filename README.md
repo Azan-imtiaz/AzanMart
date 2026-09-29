@@ -17,7 +17,7 @@ Designed and developed by **Azan Imtiaz** · [GitHub](https://github.com/Azan-im
 
 - User registration and login (bcrypt-hashed passwords, JWT in an HTTP-only cookie)
 - Product listing and cart
-- Owner (admin) login and product creation with image upload
+- Role-based admin area for adding products with image upload
 - Flash messages for feedback
 
 ## Getting started
@@ -47,27 +47,24 @@ The app runs on `http://localhost:3000` by default.
 | `SECRET_KEY`         | Secret used to sign JWTs               |
 | `EXP_SESSION_SECRET` | Secret used to sign the session cookie |
 
-### Creating the owner account
-
-In development only, the first owner can be created once:
+### Creating an admin account
 
 ```bash
-curl -X POST http://localhost:3000/owners/create \
-  -H "Content-Type: application/json" \
-  -d '{"fullname":"Admin","email":"admin@example.com","password":"change-me"}'
+npm run create-admin -- admin@example.com "a-strong-password" "Your Name"
 ```
 
-Then log in at `/owners/login` to add products.
+This creates the account, or promotes an existing user to admin. Log in normally and you will land on `/admin`.
 
 ## Project structure
 
 ```
 config/        database and upload configuration
 controllers/   request handlers
-middlewares/   auth guards (users and owners)
+middlewares/   auth, validation, flash and error handling
 models/        Mongoose schemas
 routes/        Express routers
-utils/         helpers (JWT generation)
+scripts/       one-off tasks (create an admin)
+utils/         small helpers
 views/         EJS templates
 ```
 

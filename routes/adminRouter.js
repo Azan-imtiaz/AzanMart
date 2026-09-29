@@ -1,18 +1,22 @@
 const express = require("express");
 const { body } = require("express-validator");
-const validate = require("../middlewares/validate");
 const upload = require("../config/multer-config");
-const { isOwner } = require("../middlewares/isOwner");
-const { createProduct } = require("../controllers/productController");
+const validate = require("../middlewares/validate");
+const { isLoggedIn } = require("../middlewares/isLoggedIn");
+const requireAdmin = require("../middlewares/requireAdmin");
+const admin = require("../controllers/adminController");
 
 const router = express.Router();
+
+// Every admin route needs a logged-in admin
+router.use(isLoggedIn, requireAdmin);
 
 // Wrap multer so upload errors (size / file type) show up as a flash message
 const uploadImage = (req, res, next) => {
   upload.single("image")(req, res, (err) => {
     if (err) {
       req.flash("error", err.message);
-      return res.redirect("/owners/admin");
+      return res.redirect("/admin");
     }
     next();
   });
@@ -38,12 +42,7 @@ const productRules = [
   hexColor("textcolor"),
 ];
 
-router.post(
-  "/create",
-  isOwner,
-  uploadImage,
-  validate(productRules, "/owners/admin"),
-  createProduct,
-);
+router.get("/", admin.showNewProduct);
+router.post("/products", uploadImage, validate(productRules, "/admin"), admin.createProduct);
 
 module.exports = router;

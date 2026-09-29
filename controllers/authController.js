@@ -39,7 +39,7 @@ module.exports.userLogin = async function (req, res) {
 
   const token = generateToken(user);
   res.cookie("token", token, cookieOptions);
-  return res.redirect("/shop");
+  return res.redirect(user.role === "admin" ? "/admin" : "/shop");
 };
 
 // User logout

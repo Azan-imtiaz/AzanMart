@@ -5,8 +5,7 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 const expressSession = require("express-session");
 
-const ownersRouter = require("./routes/ownersRouter");
-const productsRouter = require("./routes/productsRouter");
+const adminRouter = require("./routes/adminRouter");
 const usersRouter = require("./routes/usersRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
@@ -59,9 +58,8 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 
-app.use("/owners", ownersRouter);
 app.use("/users", usersRouter);
-app.use("/products", productsRouter);
+app.use("/admin", adminRouter);
 app.use("/", index);
 
 app.use(notFound);
