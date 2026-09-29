@@ -27,12 +27,12 @@
             <% products.forEach(function(product){ %>
                 <div class="w-full sm:w-[45%] md:w-[30%] lg:w-60">
                     <div class="w-full h-52 flex items-center justify-center" style="background-color: <%= product.bgcolor %>">
-                        <img class="h-48" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="">
+                        <img class="h-48" src="data:<%= product.images[0].contentType %>;base64,<%= product.images[0].data.toString('base64') %>" alt="<%= product.name %>">
                     </div>
-                    <div class="flex justify-between items-center px-4 py-4" style="background-color: <%= product.panelcolor %>; color: <%= product.textcolor %>">
+                    <div class="flex justify-between items-center px-4 py-4 bg-white">
                         <div>
                             <h3><%= product.name %></h3>
-                            <h4>₹ <%= product.price %></h4>
+                            <h4><%= formatPrice(product.finalPrice) %></h4>
                         </div>
                         <form action="/addToCart/<%= product._id %>" method="post">
                             <%- include("./partials/csrf") %>

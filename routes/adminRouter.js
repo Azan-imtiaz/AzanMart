@@ -4,44 +4,48 @@ const upload = require("../config/multer-config");
 const validate = require("../middlewares/validate");
 const { requireAdmin } = require("../middlewares/auth");
 const admin = require("../controllers/adminController");
+const productModel = require("../models/productModel");
 
 const router = express.Router();
 
 // Every admin route needs a logged-in admin
 router.use(requireAdmin);
 
-// Wrap multer so upload errors (size / file type) show up as a flash message
-const uploadImage = (req, res, next) => {
-  upload.single("image")(req, res, (err) => {
+const UPLOAD_ERRORS = {
+  LIMIT_FILE_SIZE: "Each image must be 2MB or smaller",
+  LIMIT_FILE_COUNT: "You can upload up to 4 images",
+  LIMIT_UNEXPECTED_FILE: "You can upload up to 4 images",
+};
+
+// Wrap multer so upload errors show up as a flash message instead of a 500
+const uploadImages = (req, res, next) => {
+  upload.array("images", 4)(req, res, (err) => {
     if (err) {
-      req.flash("error", err.message);
+      req.flash("error", UPLOAD_ERRORS[err.code] || err.message);
       return res.redirect("/admin");
     }
     next();
   });
 };
 
-const hexColor = (field) =>
-  body(field)
-    .optional({ values: "falsy" })
-    .trim()
-    .isHexColor()
-    .withMessage("Colors must be hex values like #f5e6c8");
-
 // Runs after multer, because multipart fields are only parsed there
 const productRules = [
   body("name").trim().notEmpty().withMessage("Product name is required").isLength({ max: 100 }),
-  body("price").isFloat({ min: 0 }).withMessage("Price must be a positive number"),
+  body("description").optional().trim().isLength({ max: 2000 }),
+  body("category").isIn(productModel.CATEGORIES).withMessage("Pick a valid category"),
+  body("price").isFloat({ min: 0.5 }).withMessage("Price must be at least $0.50"),
   body("discount")
     .optional({ values: "falsy" })
-    .isFloat({ min: 0 })
-    .withMessage("Discount must be a positive number"),
-  hexColor("bgcolor"),
-  hexColor("panelcolor"),
-  hexColor("textcolor"),
+    .isInt({ min: 0, max: 90 })
+    .withMessage("Discount must be between 0 and 90 percent"),
+  body("stock").isInt({ min: 0 }).withMessage("Stock must be 0 or more"),
+  body("bgcolor")
+    .optional({ values: "falsy" })
+    .isHexColor()
+    .withMessage("Background must be a hex colour"),
 ];
 
 router.get("/", admin.showNewProduct);
-router.post("/products", uploadImage, validate(productRules, "/admin"), admin.createProduct);
+router.post("/products", uploadImages, validate(productRules, "/admin"), admin.createProduct);
 
 module.exports = router;

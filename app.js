@@ -13,6 +13,7 @@ const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
 const { loadUser } = require("./middlewares/auth");
 const csrf = require("./middlewares/csrf");
+const { formatPrice } = require("./utils/money");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -92,6 +93,7 @@ app.use((req, res, next) => {
 });
 
 app.set("view engine", "ejs");
+app.locals.formatPrice = formatPrice;
 
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);
