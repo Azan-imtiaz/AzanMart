@@ -1,0 +1,38 @@
+<%- include('./partials/header') %>
+
+<main class="flex-1 max-w-4xl w-full mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold">My orders</h1>
+
+    <% if (orders.length) { %>
+        <ul class="mt-8 card divide-y divide-gray-200 dark:divide-gray-800">
+            <% orders.forEach((order) => { %>
+                <% const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0); %>
+                <li>
+                    <a href="/orders/<%= order.orderNumber %>" class="p-5 flex flex-wrap items-center justify-between gap-4 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <div>
+                            <p class="font-semibold"><%= order.orderNumber %></p>
+                            <p class="text-sm muted">
+                                <%= new Date(order.createdAt).toLocaleDateString("en-US", { dateStyle: "medium" }) %>
+                                &middot; <%= itemCount %> <%= itemCount === 1 ? "item" : "items" %>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <%- include('./partials/order-status', { status: order.status }) %>
+                            <span class="font-semibold w-24 text-right"><%= formatPrice(order.total) %></span>
+                            <i class="ri-arrow-right-s-line muted"></i>
+                        </div>
+                    </a>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <div class="card mt-8 p-12 text-center">
+            <i class="ri-file-list-3-line text-5xl muted"></i>
+            <h2 class="text-xl font-semibold mt-3">No orders yet</h2>
+            <p class="muted mt-1">When you place an order, it will show up here.</p>
+            <a href="/shop" class="btn btn-primary mt-6">Start shopping</a>
+        </div>
+    <% } %>
+</main>
+
+<%- include('./partials/footer') %>

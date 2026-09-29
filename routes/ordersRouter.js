@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.use(requireAuth);
 
+router.get("/", orders.listOrders);
 router.get("/:orderNumber", orders.showOrder);
 
 module.exports = router;

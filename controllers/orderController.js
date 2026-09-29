@@ -1,6 +1,16 @@
 const orderModel = require("../models/orderModel");
 const httpError = require("../utils/httpError");
 
+exports.listOrders = async (req, res) => {
+  const orders = await orderModel
+    .find({ user: req.user._id })
+    .sort({ createdAt: -1 })
+    .select("orderNumber createdAt status total items.quantity")
+    .lean();
+
+  res.render("orders", { title: "My orders", orders });
+};
+
 exports.showOrder = async (req, res) => {
   const order = await orderModel.findOne({ orderNumber: req.params.orderNumber }).lean();
 
