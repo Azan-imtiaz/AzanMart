@@ -111,6 +111,27 @@ exports.showShop = async (req, res) => {
   });
 };
 
+exports.showProduct = async (req, res) => {
+  const product = await productModel
+    .findOne({ slug: req.params.slug })
+    .select("-images.data")
+    .lean();
+  if (!product) throw httpError(404, "We couldn't find that product.");
+
+  const related = await productModel
+    .find({ category: product.category, _id: mongoose.trusted({ $ne: product._id }) })
+    .select("-images.data")
+    .limit(4)
+    .lean();
+
+  res.render("product", {
+    title: product.name,
+    description: product.description.slice(0, 160) || `${product.name} at AzanMart`,
+    product,
+    related,
+  });
+};
+
 exports.addToCart = async (req, res) => {
   const { productid } = req.params;
   if (!mongoose.isValidObjectId(productid) || !(await productModel.exists({ _id: productid }))) {
