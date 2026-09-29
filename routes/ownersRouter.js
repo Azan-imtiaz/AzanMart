@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === "development") {
 
 router.get("/login", (req, res) => {
     const error = req.flash("error");
-    res.render("owner-login", { error: error.length ? error : null, loggedIn: false });
+    res.render("owner-login", { title: "Owner login", error: error.length ? error : null, loggedIn: false });
 });
 
 router.post("/login", async (req, res) => {
@@ -68,7 +68,7 @@ router.get("/logout", (req, res) => {
 router.get("/admin", isOwner, (req, res) => {
     const success = req.flash("success");
     const error = req.flash("error");
-    res.render("createproducts", { success, error, loggedIn: false });
+    res.render("createproducts", { title: "Add product", success, error, loggedIn: false });
 });
 
 module.exports = router;

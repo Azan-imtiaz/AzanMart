@@ -4,8 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AzanMart</title>
+    <%
+        const pageTitle = typeof title !== "undefined" ? `${title} | AzanMart` : "AzanMart - Everyday essentials, thoughtfully picked";
+        const pageDescription = typeof description !== "undefined" ? description : "AzanMart is an online store for bags and everyday essentials, built by Azan Imtiaz with Node.js, Express and MongoDB.";
+        const pageUrl = appUrl + currentPath;
+    %>
+    <title><%= pageTitle %></title>
+    <meta name="description" content="<%= pageDescription %>">
+    <meta name="author" content="Azan Imtiaz">
+    <meta name="theme-color" content="#1e3a8a">
+    <link rel="canonical" href="<%= pageUrl %>">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AzanMart">
+    <meta property="og:title" content="<%= pageTitle %>">
+    <meta property="og:description" content="<%= pageDescription %>">
+    <meta property="og:url" content="<%= pageUrl %>">
+    <meta property="og:image" content="<%= appUrl %>/images/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
