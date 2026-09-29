@@ -19,6 +19,7 @@ const { loadUser } = require("./middlewares/auth");
 const csrf = require("./middlewares/csrf");
 const { formatPrice } = require("./utils/money");
 const { sendProductImage } = require("./controllers/imageController");
+const { handleStripeEvent } = require("./controllers/webhookController");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -72,6 +73,9 @@ app.use((req, res, next) => {
 // Static files are served before sessions so they never touch the session store
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/product-images/:productId/:imageId", sendProductImage);
+
+// Needs the raw body to check Stripe's signature, and has no session or CSRF token
+app.post("/webhooks/stripe", express.raw({ type: "application/json" }), handleStripeEvent);
 
 app.use(express.json());
 // Flat form bodies only: no nested objects like email[$ne]=... reach the controllers
