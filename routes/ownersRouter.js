@@ -9,29 +9,24 @@ const router = express.Router();
 // Bootstrap route: creates the first (and only) owner. Available in development only.
 if (process.env.NODE_ENV === "development") {
   router.post("/create", async (req, res) => {
-    try {
-      const ownerCount = await ownerModel.countDocuments();
-      if (ownerCount > 0) {
-        return res.status(403).send("You don't have permission to create a new owner");
-      }
-
-      const { fullname, email, password } = req.body;
-      if (!fullname || !email || !password) {
-        return res.status(400).send("fullname, email and password are required");
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const createdOwner = await ownerModel.create({
-        fullName: fullname,
-        email,
-        password: hashedPassword,
-      });
-
-      return res.status(201).send({ id: createdOwner._id, email: createdOwner.email });
-    } catch (err) {
-      console.error(err.message);
-      return res.status(500).send("Something went wrong");
+    const ownerCount = await ownerModel.countDocuments();
+    if (ownerCount > 0) {
+      return res.status(403).send("You don't have permission to create a new owner");
     }
+
+    const { fullname, email, password } = req.body;
+    if (!fullname || !email || !password) {
+      return res.status(400).send("fullname, email and password are required");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const createdOwner = await ownerModel.create({
+      fullName: fullname,
+      email,
+      password: hashedPassword,
+    });
+
+    return res.status(201).send({ id: createdOwner._id, email: createdOwner.email });
   });
 }
 
@@ -45,23 +40,17 @@ router.get("/login", (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const owner = email && (await ownerModel.findOne({ email: email.toLowerCase() }));
-    const passwordMatch = owner && password && (await bcrypt.compare(password, owner.password));
+  const { email, password } = req.body;
+  const owner = email && (await ownerModel.findOne({ email: email.toLowerCase() }));
+  const passwordMatch = owner && password && (await bcrypt.compare(password, owner.password));
 
-    if (!passwordMatch) {
-      req.flash("error", "Email or password is incorrect");
-      return res.redirect("/owners/login");
-    }
-
-    res.cookie("ownerToken", generateToken(owner, "owner"), cookieOptions);
-    return res.redirect("/owners/admin");
-  } catch (err) {
-    console.error(err.message);
-    req.flash("error", "Something went wrong");
+  if (!passwordMatch) {
+    req.flash("error", "Email or password is incorrect");
     return res.redirect("/owners/login");
   }
+
+  res.cookie("ownerToken", generateToken(owner, "owner"), cookieOptions);
+  return res.redirect("/owners/admin");
 });
 
 router.get("/logout", (req, res) => {

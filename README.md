@@ -3,7 +3,7 @@
 > Everyday essentials, thoughtfully picked.
 
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)
-![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white)
 ![EJS](https://img.shields.io/badge/Views-EJS-B4CA65)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
