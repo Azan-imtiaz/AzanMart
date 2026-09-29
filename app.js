@@ -42,7 +42,7 @@ app.use(
       sameSite: "lax",
       secure: isProduction,
     },
-  })
+  }),
 );
 
 app.use(flash());

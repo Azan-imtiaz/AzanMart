@@ -39,13 +39,13 @@ The app runs on `http://localhost:3000` by default.
 
 ### Environment variables
 
-| Name                 | Description                                          |
-| -------------------- | ---------------------------------------------------- |
-| `NODE_ENV`           | `development` or `production`                        |
-| `PORT`               | Port to listen on (default `3000`)                   |
-| `MONGODB_URL`        | MongoDB connection string                            |
-| `SECRET_KEY`         | Secret used to sign JWTs                             |
-| `EXP_SESSION_SECRET` | Secret used to sign the session cookie               |
+| Name                 | Description                            |
+| -------------------- | -------------------------------------- |
+| `NODE_ENV`           | `development` or `production`          |
+| `PORT`               | Port to listen on (default `3000`)     |
+| `MONGODB_URL`        | MongoDB connection string              |
+| `SECRET_KEY`         | Secret used to sign JWTs               |
+| `EXP_SESSION_SECRET` | Secret used to sign the session cookie |
 
 ### Creating the owner account
 
