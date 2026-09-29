@@ -6,18 +6,8 @@ const { generateToken, cookieOptions } = require("../utils/generateToken");
 module.exports.userRegister = async function (req, res) {
   const { email, password, fullname } = req.body;
 
-  if (!email || !password || !fullname) {
-    req.flash("error", "All fields are required");
-    return res.redirect("/");
-  }
-
-  if (password.length < 6) {
-    req.flash("error", "Password must be at least 6 characters");
-    return res.redirect("/");
-  }
-
   // Check if user already exists
-  const existingUser = await userModel.findOne({ email: email.toLowerCase() });
+  const existingUser = await userModel.findOne({ email: email });
   if (existingUser) {
     req.flash("error", "You already have an account, please log in");
     return res.redirect("/");
@@ -39,12 +29,7 @@ module.exports.userRegister = async function (req, res) {
 module.exports.userLogin = async function (req, res) {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    req.flash("error", "Email and password are required");
-    return res.redirect("/");
-  }
-
-  const user = await userModel.findOne({ email: email.toLowerCase() });
+  const user = await userModel.findOne({ email: email });
   const passwordMatch = user && (await bcrypt.compare(password, user.password));
 
   if (!passwordMatch) {

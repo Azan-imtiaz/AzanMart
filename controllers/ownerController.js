@@ -30,8 +30,8 @@ exports.showLogin = (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-  const owner = email && (await ownerModel.findOne({ email: email.toLowerCase() }));
-  const passwordMatch = owner && password && (await bcrypt.compare(password, owner.password));
+  const owner = await ownerModel.findOne({ email });
+  const passwordMatch = owner && (await bcrypt.compare(password, owner.password));
 
   if (!passwordMatch) {
     req.flash("error", "Email or password is incorrect");

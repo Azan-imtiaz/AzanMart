@@ -5,7 +5,8 @@ function notFound(req, res, next) {
 }
 
 function errorHandler(err, req, res, next) {
-  const status = err.status || err.statusCode || 500;
+  // Mongoose validation errors are the client's fault, not ours
+  const status = err.name === "ValidationError" ? 400 : err.status || err.statusCode || 500;
 
   if (status >= 500) console.error(err);
   if (res.headersSent) return;
