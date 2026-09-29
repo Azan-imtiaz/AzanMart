@@ -3,8 +3,15 @@ const userModel = require("../models/userModel");
 const productModel = require("../models/productModel");
 const httpError = require("../utils/httpError");
 
-exports.showHome = (req, res) => {
-  res.render("index", { title: "Sign in" });
+exports.showHome = async (req, res) => {
+  const newArrivals = await productModel
+    .find()
+    .select("-images.data")
+    .sort({ createdAt: -1 })
+    .limit(8)
+    .lean();
+
+  res.render("home", { newArrivals, categories: productModel.CATEGORIES });
 };
 
 exports.showAbout = (req, res) => {

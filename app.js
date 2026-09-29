@@ -7,7 +7,7 @@ const session = require("express-session");
 const { MongoStore } = require("connect-mongo");
 
 const adminRouter = require("./routes/adminRouter");
-const usersRouter = require("./routes/usersRouter");
+const authRouter = require("./routes/authRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
@@ -99,7 +99,7 @@ app.locals.formatPrice = formatPrice;
 app.locals.imageUrl = (product, index = 0) =>
   `/product-images/${product._id}/${product.images[index]._id}`;
 
-app.use("/users", usersRouter);
+app.use("/", authRouter);
 app.use("/admin", adminRouter);
 app.use("/", index);
 

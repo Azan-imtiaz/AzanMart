@@ -17,8 +17,10 @@ const loginRules = [
   body("password").notEmpty().withMessage("Please enter your password"),
 ];
 
-router.post("/register", authLimiter, validate(registerRules, "/"), auth.register);
-router.post("/login", authLimiter, validate(loginRules, "/"), auth.login);
+router.get("/login", auth.showLogin);
+router.post("/login", authLimiter, validate(loginRules, "/login"), auth.login);
+router.get("/register", auth.showRegister);
+router.post("/register", authLimiter, validate(registerRules, "/register"), auth.register);
 router.post("/logout", auth.logout);
 
 module.exports = router;

@@ -1,50 +1,18 @@
 <%- include('./partials/header') %>
-<div class="w-full min-h-screen flex flex-col lg:flex-row items-start px-5 lg:px-20 py-10 lg:py-20">
-    <div class="w-full lg:w-1/4 flex flex-col items-start mb-10 lg:mb-0">
-        <div class="mb-5">
-            <h3 class="text-lg font-semibold mb-2">Sort by</h3>
-            <form action="/shop">
-                <select class="border px-3 py-1 rounded-md w-full">
-                    <option value="popular">Popular</option>
-                    <option value="newest">Newest</option>
-                </select>
-            </form>
-        </div>
-        <div class="mb-10">
-            <h3 class="text-lg font-semibold mb-2">Categories</h3>
-            <a class="block text-gray-700 hover:text-blue-500 mb-2" href="">New Collection</a>
-            <a class="block text-gray-700 hover:text-blue-500 mb-2" href="">All Products</a>
-            <a class="block text-gray-700 hover:text-blue-500 mb-2" href="">Discounted Products</a>
-        </div>
-        <div>
-            <h3 class="text-lg font-semibold mb-2">Filters</h3>
-            <a class="block text-gray-700 hover:text-blue-500 mb-2" href="">Availability</a>
-            <a class="block text-gray-700 hover:text-blue-500 mb-2" href="">Discount</a>
-        </div>
-    </div>
-    <div class="w-full lg:w-[75%] flex flex-col gap-5">
-        <div class="flex flex-wrap justify-start gap-5">
-            <% products.forEach(function(product){ %>
-                <div class="w-full sm:w-[45%] md:w-[30%] lg:w-60">
-                    <div class="w-full h-52 flex items-center justify-center" style="background-color: <%= product.bgcolor %>">
-                        <img class="h-48" src="<%= imageUrl(product) %>" loading="lazy" alt="<%= product.name %>">
-                    </div>
-                    <div class="flex justify-between items-center px-4 py-4 bg-white">
-                        <div>
-                            <h3><%= product.name %></h3>
-                            <h4><%= formatPrice(product.finalPrice) %></h4>
-                        </div>
-                        <form action="/addToCart/<%= product._id %>" method="post">
-                            <%- include("./partials/csrf") %>
-                            <button type="submit" class="w-7 h-7 flex items-center justify-center rounded-full bg-white" title="Add to cart">
-                                <i class="ri-add-line"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
+
+<main class="flex-1 max-w-6xl w-full mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold">Shop</h1>
+    <p class="muted mt-1"><%= products.length %> products</p>
+
+    <% if (products.length) { %>
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <% products.forEach((product) => { %>
+                <%- include('./partials/product-card', { product }) %>
             <% }) %>
         </div>
-    </div>
-</div>
+    <% } else { %>
+        <p class="mt-8 muted">No products yet.</p>
+    <% } %>
+</main>
 
 <%- include('./partials/footer') %>

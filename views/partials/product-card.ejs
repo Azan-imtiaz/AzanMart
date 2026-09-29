@@ -1,0 +1,30 @@
+<article class="card overflow-hidden flex flex-col group">
+    <div class="h-56 flex items-center justify-center relative" style="background-color: <%= product.bgcolor %>">
+        <img src="<%= imageUrl(product) %>" alt="<%= product.name %>" loading="lazy" class="max-h-48 object-contain transition group-hover:scale-105">
+        <% if (product.discount > 0) { %>
+            <span class="absolute top-3 left-3 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white">-<%= product.discount %>%</span>
+        <% } %>
+    </div>
+    <div class="p-4 flex flex-col gap-1 flex-1">
+        <p class="text-xs uppercase tracking-wide muted"><%= product.category %></p>
+        <h3 class="font-semibold leading-snug"><%= product.name %></h3>
+        <div class="mt-auto pt-3 flex items-center justify-between">
+            <p>
+                <span class="font-semibold text-blue-900 dark:text-blue-300"><%= formatPrice(product.finalPrice) %></span>
+                <% if (product.discount > 0) { %>
+                    <span class="text-sm line-through muted ml-1"><%= formatPrice(product.price) %></span>
+                <% } %>
+            </p>
+            <% if (product.stock > 0) { %>
+                <form action="/addToCart/<%= product._id %>" method="post">
+                    <%- include("./csrf") %>
+                    <button type="submit" class="h-9 w-9 rounded-full bg-blue-900 text-white hover:bg-blue-800 flex items-center justify-center" aria-label="Add <%= product.name %> to cart">
+                        <i class="ri-add-line"></i>
+                    </button>
+                </form>
+            <% } else { %>
+                <span class="text-sm muted">Sold out</span>
+            <% } %>
+        </div>
+    </div>
+</article>

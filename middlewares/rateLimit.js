@@ -10,7 +10,7 @@ const authLimiter = rateLimit({
   skip: () => process.env.NODE_ENV === "test",
   handler: (req, res) => {
     req.flash("error", "Too many attempts. Please wait 15 minutes and try again.");
-    res.redirect("/");
+    res.redirect(req.originalUrl);
   },
 });
 
