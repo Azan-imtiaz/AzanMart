@@ -1,15 +1,22 @@
 {
-  "name": "shopease",
+  "name": "azanmart",
   "version": "1.0.0",
-  "description": "Server-side rendered e-commerce platform built with Express, EJS and MongoDB",
+  "description": "AzanMart - a server-side rendered e-commerce store built with Express, EJS and MongoDB",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "node --watch app.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "ecommerce",
+    "express",
+    "ejs",
+    "mongodb",
+    "ssr",
+    "nodejs"
+  ],
+  "author": "Azan Imtiaz (https://github.com/Azan-imtiaz)",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "connect-flash": "^0.1.1",
@@ -22,5 +29,13 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.5",
     "multer": "^1.4.5-lts.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Azan-imtiaz/AzanMart.git"
+  },
+  "homepage": "https://github.com/Azan-imtiaz/AzanMart#readme",
+  "bugs": {
+    "url": "https://github.com/Azan-imtiaz/AzanMart/issues"
   }
 }
