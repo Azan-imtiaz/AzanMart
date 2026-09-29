@@ -1,4 +1,6 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const expressSession = require("express-session");
@@ -17,6 +19,17 @@ const PORT = process.env.PORT || 3000;
 const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
 
 app.disable("x-powered-by");
+
+// Used by uptime checks and the hosting platform; registered before
+// logging and sessions so health pings stay cheap and quiet.
+app.get("/health", (req, res) => {
+  const dbUp = mongoose.connection.readyState === 1;
+  res.status(dbUp ? 200 : 503).json({ status: dbUp ? "ok" : "degraded", db: dbUp ? "up" : "down" });
+});
+
+if (process.env.NODE_ENV !== "test") {
+  app.use(morgan(isProduction ? "combined" : "dev"));
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
