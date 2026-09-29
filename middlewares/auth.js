@@ -11,7 +11,7 @@ async function loadUser(req, res, next) {
   if (user) {
     req.user = user;
     res.locals.currentUser = user;
-    res.locals.cartCount = user.cart.length;
+    res.locals.cartCount = user.cart.reduce((sum, item) => sum + item.quantity, 0);
   } else {
     // The account was deleted while the session was still alive
     delete req.session.userId;

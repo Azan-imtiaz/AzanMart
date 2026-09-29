@@ -1,10 +1,6 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
-
-// Only allow redirects back into this site, never to another domain
-function safeReturnTo(url) {
-  return typeof url === "string" && url.startsWith("/") && !url.startsWith("//") ? url : null;
-}
+const safeRedirect = require("../utils/safeRedirect");
 
 // A new session id on login prevents session fixation attacks
 function regenerateSession(req) {
@@ -21,7 +17,7 @@ function redirectIfLoggedIn(req, res) {
 }
 
 async function logIn(req, user) {
-  const returnTo = safeReturnTo(req.session.returnTo);
+  const returnTo = safeRedirect(req.session.returnTo, null);
   await regenerateSession(req);
   req.session.userId = user._id.toString();
   return returnTo || (user.role === "admin" ? "/admin" : "/shop");

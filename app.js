@@ -8,6 +8,7 @@ const { MongoStore } = require("connect-mongo");
 
 const adminRouter = require("./routes/adminRouter");
 const authRouter = require("./routes/authRouter");
+const cartRouter = require("./routes/cartRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
@@ -91,6 +92,7 @@ app.use(csrf);
 app.use((req, res, next) => {
   res.locals.appUrl = APP_URL;
   res.locals.currentPath = req.path;
+  res.locals.currentUrl = req.originalUrl;
   next();
 });
 
@@ -100,6 +102,7 @@ app.locals.imageUrl = (product, index = 0) =>
   `/product-images/${product._id}/${product.images[index]._id}`;
 
 app.use("/", authRouter);
+app.use("/cart", cartRouter);
 app.use("/admin", adminRouter);
 app.use("/", index);
 

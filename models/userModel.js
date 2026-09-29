@@ -23,10 +23,10 @@ const userSchema = mongoose.Schema({
     default: "customer",
   },
   cart: [
-    // stores product ids
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "product",
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "product", required: true },
+      quantity: { type: Number, min: 1, default: 1 },
+      _id: false,
     },
   ],
   orders: {

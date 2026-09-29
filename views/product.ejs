@@ -48,9 +48,14 @@
             </p>
 
             <% if (product.stock > 0) { %>
-                <form action="/addToCart/<%= product._id %>" method="post" class="mt-6">
+                <form action="/cart/items/<%= product._id %>" method="post" class="mt-6 flex items-end gap-3">
                     <%- include('./partials/csrf') %>
-                    <button type="submit" class="btn btn-primary px-8 py-3">
+                    <input type="hidden" name="returnTo" value="<%= currentUrl %>">
+                    <div>
+                        <label for="quantity" class="label">Quantity</label>
+                        <input id="quantity" name="quantity" type="number" min="1" max="<%= product.stock %>" value="1" class="input w-24">
+                    </div>
+                    <button type="submit" class="btn btn-primary px-8 py-2.5">
                         <i class="ri-shopping-bag-3-line"></i> Add to cart
                     </button>
                 </form>

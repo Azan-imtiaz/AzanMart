@@ -11,9 +11,9 @@ document.addEventListener("click", (event) => {
   });
 });
 
-// Sort dropdowns apply as soon as they change
-document.querySelectorAll("form[data-autosubmit] select").forEach((select) => {
-  select.addEventListener("change", () => select.form.submit());
+// Sort dropdowns and cart quantities apply as soon as they change
+document.querySelectorAll("form[data-autosubmit] :is(select, input)").forEach((field) => {
+  field.addEventListener("change", () => field.form.submit());
 });
 
 // Product gallery: clicking a thumbnail swaps the main image

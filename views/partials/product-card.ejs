@@ -18,8 +18,9 @@
                 <% } %>
             </p>
             <% if (product.stock > 0) { %>
-                <form action="/addToCart/<%= product._id %>" method="post">
+                <form action="/cart/items/<%= product._id %>" method="post">
                     <%- include("./csrf") %>
+                    <input type="hidden" name="returnTo" value="<%= currentUrl %>">
                     <button type="submit" class="h-9 w-9 rounded-full bg-blue-900 text-white hover:bg-blue-800 flex items-center justify-center" aria-label="Add <%= product.name %> to cart">
                         <i class="ri-add-line"></i>
                     </button>
