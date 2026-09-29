@@ -14,6 +14,7 @@ const flash = require("./middlewares/flash");
 const { loadUser } = require("./middlewares/auth");
 const csrf = require("./middlewares/csrf");
 const { formatPrice } = require("./utils/money");
+const { sendProductImage } = require("./controllers/imageController");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -57,6 +58,7 @@ app.use(
 
 // Static files are served before sessions so they never touch the session store
 app.use(express.static(path.join(__dirname, "public")));
+app.get("/product-images/:productId/:imageId", sendProductImage);
 
 app.use(express.json());
 // Flat form bodies only: no nested objects like email[$ne]=... reach the controllers
@@ -94,6 +96,8 @@ app.use((req, res, next) => {
 
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
+app.locals.imageUrl = (product, index = 0) =>
+  `/product-images/${product._id}/${product.images[index]._id}`;
 
 app.use("/users", usersRouter);
 app.use("/admin", adminRouter);

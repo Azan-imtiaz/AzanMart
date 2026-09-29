@@ -27,7 +27,7 @@
             <% products.forEach(function(product){ %>
                 <div class="w-full sm:w-[45%] md:w-[30%] lg:w-60">
                     <div class="w-full h-52 flex items-center justify-center" style="background-color: <%= product.bgcolor %>">
-                        <img class="h-48" src="data:<%= product.images[0].contentType %>;base64,<%= product.images[0].data.toString('base64') %>" alt="<%= product.name %>">
+                        <img class="h-48" src="<%= imageUrl(product) %>" loading="lazy" alt="<%= product.name %>">
                     </div>
                     <div class="flex justify-between items-center px-4 py-4 bg-white">
                         <div>

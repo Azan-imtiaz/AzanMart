@@ -16,7 +16,7 @@ exports.showAbout = (req, res) => {
 };
 
 exports.showShop = async (req, res) => {
-  const products = await productModel.find({}).lean();
+  const products = await productModel.find({}).select("-images.data").lean();
   res.render("shop", { title: "Shop", products });
 };
 
@@ -32,7 +32,9 @@ exports.addToCart = async (req, res) => {
 };
 
 exports.showCart = async (req, res) => {
-  const user = await userModel.findById(req.user._id).populate("cart");
+  const user = await userModel
+    .findById(req.user._id)
+    .populate({ path: "cart", select: "-images.data" });
   // Drop items whose product has been deleted
   user.cart = user.cart.filter(Boolean);
   res.render("cart", { title: "Your cart", user });

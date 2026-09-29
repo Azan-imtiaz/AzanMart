@@ -14,7 +14,7 @@
     <div class="w-full h-screen flex items-start px-20 py-20 gap-10">
         <div class="w-[30%] rounded-md overflow-hidden">
             <div class="w-full flex justify-center items-center align just h-80" style="background-color: <%= item.bgcolor %>">
-                <img src="data:<%= item.images[0].contentType %>;base64,<%= item.images[0].data.toString('base64') %>" alt="<%= item.name %>" class="h-[18rem]">
+                <img src="<%= imageUrl(item) %>" alt="<%= item.name %>" class="h-[18rem]">
             </div>
             <div class="w-full flex justify-between px-5 py-4" style="background-color: #ffffff">
                 <h3 class="text-2xl"><%= item.name %></h3>
