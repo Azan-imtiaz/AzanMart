@@ -30,6 +30,12 @@ const productSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// Powers the shop search box; name matches count most
+productSchema.index(
+  { name: "text", description: "text", category: "text" },
+  { weights: { name: 5, category: 2, description: 1 } },
+);
+
 // Slugs are set once so product URLs stay stable even if the name changes
 productSchema.pre("validate", async function () {
   if (this.slug) return;

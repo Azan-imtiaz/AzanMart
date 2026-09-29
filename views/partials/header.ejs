@@ -36,6 +36,14 @@
                 <span><span class="text-blue-900 dark:text-white">Azan</span><span class="text-amber-500">Mart</span></span>
             </a>
 
+            <form action="/shop" method="get" role="search" class="hidden md:block flex-1 max-w-sm">
+                <label for="site-search" class="sr-only">Search products</label>
+                <div class="relative">
+                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 muted"></i>
+                    <input id="site-search" name="q" type="search" placeholder="Search products" class="input rounded-full pl-9 py-1.5">
+                </div>
+            </form>
+
             <div class="flex items-center gap-4 sm:gap-6 text-sm font-medium">
                 <a href="/shop" class="hover:text-blue-900 dark:hover:text-blue-300">Shop</a>
                 <a href="/about" class="hidden sm:inline hover:text-blue-900 dark:hover:text-blue-300">About</a>

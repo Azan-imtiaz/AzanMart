@@ -1,18 +1,114 @@
 <%- include('./partials/header') %>
 
 <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold">Shop</h1>
-    <p class="muted mt-1"><%= products.length %> products</p>
-
-    <% if (products.length) { %>
-        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <% products.forEach((product) => { %>
-                <%- include('./partials/product-card', { product }) %>
-            <% }) %>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold"><%= options.category || "Shop" %></h1>
+            <p class="muted mt-1">
+                <%= total %> <%= total === 1 ? "product" : "products" %><% if (options.q) { %> matching "<%= options.q %>"<% } %>
+            </p>
         </div>
-    <% } else { %>
-        <p class="mt-8 muted">No products yet.</p>
-    <% } %>
+
+        <form action="/shop" method="get" class="flex items-center gap-2" data-autosubmit>
+            <% for (const key of ["q", "category", "min", "max"]) { if (options[key]) { %>
+                <input type="hidden" name="<%= key %>" value="<%= options[key] %>">
+            <% } } %>
+            <% if (options.sale) { %><input type="hidden" name="sale" value="1"><% } %>
+            <% if (options.inStock) { %><input type="hidden" name="instock" value="1"><% } %>
+            <label for="sort" class="text-sm muted">Sort by</label>
+            <select id="sort" name="sort" class="input w-auto py-1.5">
+                <% const sorts = [["", options.q ? "Best match" : "Newest"], ["price-asc", "Price: low to high"], ["price-desc", "Price: high to low"], ["rating", "Top rated"]]; %>
+                <% sorts.forEach(([value, label]) => { %>
+                    <option value="<%= value %>" <%= options.sort === value ? "selected" : "" %>><%= label %></option>
+                <% }) %>
+            </select>
+            <noscript><button type="submit" class="btn btn-outline py-1.5">Sort</button></noscript>
+        </form>
+    </div>
+
+    <div class="mt-8 grid lg:grid-cols-[240px_1fr] gap-8">
+        <aside>
+            <form action="/shop" method="get" class="card p-5 space-y-5">
+                <% if (options.sort) { %><input type="hidden" name="sort" value="<%= options.sort %>"><% } %>
+                <div>
+                    <label for="q" class="label">Search</label>
+                    <input id="q" name="q" type="search" value="<%= options.q %>" placeholder="Backpack, leather..." class="input">
+                </div>
+
+                <fieldset>
+                    <legend class="label">Category</legend>
+                    <div class="space-y-1 text-sm">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="category" value="" <%= options.category ? "" : "checked" %>> All
+                        </label>
+                        <% categories.forEach((category) => { %>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="category" value="<%= category %>" <%= options.category === category ? "checked" : "" %>> <%= category %>
+                            </label>
+                        <% }) %>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend class="label">Price (USD)</legend>
+                    <div class="flex items-center gap-2">
+                        <input name="min" type="number" min="0" step="1" value="<%= options.min || '' %>" placeholder="Min" aria-label="Minimum price" class="input">
+                        <span class="muted">to</span>
+                        <input name="max" type="number" min="0" step="1" value="<%= options.max || '' %>" placeholder="Max" aria-label="Maximum price" class="input">
+                    </div>
+                </fieldset>
+
+                <div class="space-y-1 text-sm">
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="sale" value="1" <%= options.sale ? "checked" : "" %>> On sale
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" name="instock" value="1" <%= options.inStock ? "checked" : "" %>> In stock only
+                    </label>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-1">Apply</button>
+                    <% if (hasFilters) { %>
+                        <a href="/shop" class="btn btn-outline">Clear</a>
+                    <% } %>
+                </div>
+            </form>
+        </aside>
+
+        <section aria-label="Products">
+            <% if (products.length) { %>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <% products.forEach((product) => { %>
+                        <%- include('./partials/product-card', { product }) %>
+                    <% }) %>
+                </div>
+
+                <% if (totalPages > 1) { %>
+                    <nav class="mt-10 flex items-center justify-center gap-2" aria-label="Pagination">
+                        <% if (options.page > 1) { %>
+                            <a href="<%= pageUrl(options.page - 1) %>" class="btn btn-outline py-1.5" rel="prev">Previous</a>
+                        <% } %>
+                        <% for (let page = 1; page <= totalPages; page++) { %>
+                            <a href="<%= pageUrl(page) %>"
+                                class="h-9 min-w-9 px-3 rounded-full flex items-center justify-center text-sm <%= page === options.page ? 'bg-blue-900 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800' %>"
+                                <%- page === options.page ? 'aria-current="page"' : '' %>><%= page %></a>
+                        <% } %>
+                        <% if (options.page < totalPages) { %>
+                            <a href="<%= pageUrl(options.page + 1) %>" class="btn btn-outline py-1.5" rel="next">Next</a>
+                        <% } %>
+                    </nav>
+                <% } %>
+            <% } else { %>
+                <div class="card p-10 text-center">
+                    <i class="ri-search-eye-line text-4xl muted"></i>
+                    <h2 class="text-lg font-semibold mt-3">No products found</h2>
+                    <p class="muted mt-1">Try a different search or remove some filters.</p>
+                    <a href="/shop" class="btn btn-primary mt-5">See all products</a>
+                </div>
+            <% } %>
+        </section>
+    </div>
 </main>
 
 <%- include('./partials/footer') %>

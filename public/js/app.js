@@ -10,3 +10,8 @@ document.addEventListener("click", (event) => {
     if (!menu.contains(event.target)) menu.removeAttribute("open");
   });
 });
+
+// Sort dropdowns apply as soon as they change
+document.querySelectorAll("form[data-autosubmit] select").forEach((select) => {
+  select.addEventListener("change", () => select.form.submit());
+});
