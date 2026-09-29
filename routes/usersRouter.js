@@ -18,6 +18,6 @@ const loginRules = [
 
 router.post("/register", validate(registerRules, "/"), auth.register);
 router.post("/login", validate(loginRules, "/"), auth.login);
-router.get("/logout", auth.logout);
+router.post("/logout", auth.logout);
 
 module.exports = router;

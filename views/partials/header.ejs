@@ -44,7 +44,9 @@
             <% } %>
             <a href="/about">About</a>
             <% if (locals.currentUser) { %>
-                <a href="/users/logout" class="text-red-600">Logout</a>
+                <form action="/users/logout" method="post">
+                    <button type="submit" class="text-red-600">Logout</button>
+                </form>
             <% } %>
         </div>
     </nav>
