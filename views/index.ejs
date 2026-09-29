@@ -1,0 +1,54 @@
+<%- include('./partials/header') %>
+
+<% if (error && error.length > 0) { %>
+    <div id="errorMessage" class="absolute top-5 left-1/2 transform -translate-x-1/2 p-3 rounded-md bg-red-500 shadow-lg">
+        <span class="inline-block text-white font-medium">
+            <%= error %>
+        </span>
+    </div>
+<% } %>
+
+<% if (successMessage && successMessage.length > 0) { %>
+    <div id="successMessage" class="absolute top-5 left-1/2 transform -translate-x-1/2 p-3 rounded-md bg-green-500 shadow-lg">
+        <span class="inline-block text-white font-medium">
+            <%= successMessage %>
+        </span>
+    </div>
+<% } %>
+
+<div class="w-full min-h-screen flex flex-col md:flex-row bg-gray-100">
+    <div class="flex-1 flex items-center justify-center p-5 md:p-10">
+        <div class="w-full max-w-md">
+            <h3 class="text-4xl font-bold text-gray-800 mb-2">Welcome to <span class="text-blue-500">ShopEase</span></h3>
+            <h4 class="text-xl text-gray-600 mb-5">Create your account</h4>
+            <form autocomplete="off" action="/users/register" method="post">
+                <input class="bg-white block w-full px-4 py-2 border border-gray-300 rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" type="text" placeholder="Full Name" name="fullname">
+                <input class="bg-white block w-full px-4 py-2 border border-gray-300 rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" type="email" placeholder="Email" name="email">
+                <input class="bg-white block w-full px-4 py-2 border border-gray-300 rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" type="password" placeholder="Password" name="password">
+                <input class="w-full py-2 mt-2 bg-blue-500 text-white font-semibold rounded-full cursor-pointer hover:bg-blue-600 transition duration-300" type="submit" value="Create My Account">
+            </form>
+        </div>
+    </div>
+    <div class="flex-1 flex items-center justify-center p-5 md:p-10">
+        <div class="w-full max-w-md">
+            <h4 class="text-2xl font-bold text-gray-800 mb-5">Login to your account</h4>
+            <form autocomplete="off" action="/users/login" method="post">
+                <input class="bg-white block w-full px-4 py-2 border border-gray-300 rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" type="email" placeholder="Email" name="email">
+                <input class="bg-white block w-full px-4 py-2 border border-gray-300 rounded-md mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" type="password" placeholder="Password" name="password">
+                <input class="w-full py-2 mt-2 bg-blue-500 text-white font-semibold rounded-full cursor-pointer hover:bg-blue-600 transition duration-300" type="submit" value="Login">
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<script>
+    // Auto dismiss error and success messages after 3 seconds
+    setTimeout(function () {
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        if (errorMessage) errorMessage.style.display = 'none';
+        if (successMessage) successMessage.style.display = 'none';
+    }, 3000);
+</script>
