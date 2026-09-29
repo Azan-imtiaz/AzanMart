@@ -9,6 +9,7 @@ const { MongoStore } = require("connect-mongo");
 const adminRouter = require("./routes/adminRouter");
 const authRouter = require("./routes/authRouter");
 const cartRouter = require("./routes/cartRouter");
+const wishlistRouter = require("./routes/wishlistRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
@@ -57,6 +58,14 @@ app.use(
   }),
 );
 
+// Set first so the error page can always render, even if a later middleware fails
+app.use((req, res, next) => {
+  res.locals.appUrl = APP_URL;
+  res.locals.currentPath = req.path;
+  res.locals.currentUrl = req.originalUrl;
+  next();
+});
+
 // Static files are served before sessions so they never touch the session store
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/product-images/:productId/:imageId", sendProductImage);
@@ -89,13 +98,6 @@ app.use(flash);
 app.use(loadUser);
 app.use(csrf);
 
-app.use((req, res, next) => {
-  res.locals.appUrl = APP_URL;
-  res.locals.currentPath = req.path;
-  res.locals.currentUrl = req.originalUrl;
-  next();
-});
-
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
 app.locals.imageUrl = (product, index = 0) =>
@@ -103,6 +105,7 @@ app.locals.imageUrl = (product, index = 0) =>
 
 app.use("/", authRouter);
 app.use("/cart", cartRouter);
+app.use("/wishlist", wishlistRouter);
 app.use("/admin", adminRouter);
 app.use("/", index);
 

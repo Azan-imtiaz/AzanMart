@@ -1,0 +1,23 @@
+<%- include('./partials/header') %>
+
+<main class="flex-1 max-w-6xl w-full mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold">Wishlist</h1>
+
+    <% if (products.length) { %>
+        <p class="muted mt-1"><%= products.length %> saved <%= products.length === 1 ? "item" : "items" %></p>
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <% products.forEach((product) => { %>
+                <%- include('./partials/product-card', { product }) %>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <div class="card mt-8 p-12 text-center">
+            <i class="ri-heart-line text-5xl muted"></i>
+            <h2 class="text-xl font-semibold mt-3">Nothing saved yet</h2>
+            <p class="muted mt-1">Tap the heart on any product to keep it here for later.</p>
+            <a href="/shop" class="btn btn-primary mt-6">Browse the shop</a>
+        </div>
+    <% } %>
+</main>
+
+<%- include('./partials/footer') %>

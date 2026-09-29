@@ -5,13 +5,16 @@ const httpError = require("../utils/httpError");
 async function loadUser(req, res, next) {
   res.locals.currentUser = null;
   res.locals.cartCount = 0;
+  res.locals.wishlistIds = new Set();
   if (!req.session.userId) return next();
 
   const user = await userModel.findById(req.session.userId).select("-password").lean();
   if (user) {
     req.user = user;
     res.locals.currentUser = user;
-    res.locals.cartCount = user.cart.reduce((sum, item) => sum + item.quantity, 0);
+    res.locals.cartCount = (user.cart ?? []).reduce((sum, item) => sum + item.quantity, 0);
+    // Accounts created before a field existed may not have it yet
+    res.locals.wishlistIds = new Set((user.wishlist ?? []).map(String));
   } else {
     // The account was deleted while the session was still alive
     delete req.session.userId;

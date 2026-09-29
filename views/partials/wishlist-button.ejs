@@ -1,0 +1,21 @@
+<% const saved = wishlistIds.has(String(product._id)); %>
+<% const position = floating ? "absolute top-3 right-3" : ""; %>
+<% if (locals.currentUser) { %>
+    <form action="/wishlist/<%= product._id %>" method="post" class="<%= position %>">
+        <%- include("./csrf") %>
+        <input type="hidden" name="returnTo" value="<%= currentUrl %>">
+        <% if (floating) { %>
+            <button type="submit" class="h-9 w-9 rounded-full bg-white/90 shadow flex items-center justify-center text-lg <%= saved ? 'text-red-500' : 'text-gray-600' %> hover:text-red-500"
+                aria-label="<%= saved ? 'Remove from' : 'Save to' %> wishlist" aria-pressed="<%= saved %>">
+                <i class="<%= saved ? 'ri-heart-fill' : 'ri-heart-line' %>"></i>
+            </button>
+        <% } else { %>
+            <button type="submit" class="btn btn-outline" aria-pressed="<%= saved %>">
+                <i class="<%= saved ? 'ri-heart-fill text-red-500' : 'ri-heart-line' %>"></i>
+                <%= saved ? "Saved to wishlist" : "Save to wishlist" %>
+            </button>
+        <% } %>
+    </form>
+<% } else if (!floating) { %>
+    <a href="/login" class="btn btn-outline"><i class="ri-heart-line"></i> Log in to save</a>
+<% } %>

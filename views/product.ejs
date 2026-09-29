@@ -60,6 +60,9 @@
                     </button>
                 </form>
             <% } %>
+            <div class="mt-4">
+                <%- include("./partials/wishlist-button", { product, floating: false }) %>
+            </div>
 
             <% if (product.description) { %>
                 <div class="mt-8">
