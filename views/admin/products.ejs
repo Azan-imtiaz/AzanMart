@@ -1,0 +1,67 @@
+<%- include('./partials/shell-top') %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="text-2xl font-bold">Products</h1>
+    <div class="flex items-center gap-3">
+        <form action="/admin/products" method="get" role="search">
+            <label for="admin-q" class="sr-only">Search products</label>
+            <input id="admin-q" name="q" type="search" value="<%= q %>" placeholder="Search by name" class="input py-1.5 w-56">
+        </form>
+        <a href="/admin/products/new" class="btn btn-primary py-1.5"><i class="ri-add-line"></i> Add product</a>
+    </div>
+</div>
+
+<div class="card mt-6 overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="text-left muted border-b border-gray-200 dark:border-gray-800">
+            <tr>
+                <th class="px-4 py-3 font-medium">Product</th>
+                <th class="px-4 py-3 font-medium">Category</th>
+                <th class="px-4 py-3 font-medium text-right">Price</th>
+                <th class="px-4 py-3 font-medium text-right">Stock</th>
+                <th class="px-4 py-3"><span class="sr-only">Actions</span></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+            <% products.forEach((product) => { %>
+                <tr>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-3">
+                            <img src="<%= imageUrl(product) %>" alt="" class="h-10 w-10 rounded object-contain" style="background-color: <%= product.bgcolor %>">
+                            <a href="/products/<%= product.slug %>" class="font-medium hover:underline"><%= product.name %></a>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 muted"><%= product.category %></td>
+                    <td class="px-4 py-3 text-right">
+                        <%= formatPrice(product.finalPrice) %>
+                        <% if (product.discount > 0) { %><span class="block text-xs muted">-<%= product.discount %>%</span><% } %>
+                    </td>
+                    <td class="px-4 py-3 text-right <%= product.stock === 0 ? 'text-red-600 font-medium' : '' %>"><%= product.stock %></td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-3">
+                            <a href="/admin/products/<%= product._id %>/edit" class="text-blue-900 hover:underline dark:text-blue-300">Edit</a>
+                            <form action="/admin/products/<%= product._id %>/delete" method="post" data-confirm="Delete <%= product.name %>? This can't be undone.">
+                                <%- include('../partials/csrf') %>
+                                <button type="submit" class="text-red-600 hover:underline">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <% if (!products.length) { %>
+        <p class="p-8 text-center muted"><%= q ? "No products match that search." : "No products yet. Add your first one." %></p>
+    <% } %>
+</div>
+
+<% if (totalPages > 1) { %>
+    <nav class="mt-6 flex items-center justify-between text-sm" aria-label="Pagination">
+        <% const qs = q ? `&q=${encodeURIComponent(q)}` : ""; %>
+        <% if (page > 1) { %><a href="/admin/products?page=<%= page - 1 %><%= qs %>" class="btn btn-outline py-1.5">Previous</a><% } else { %><span></span><% } %>
+        <span class="muted">Page <%= page %> of <%= totalPages %></span>
+        <% if (page < totalPages) { %><a href="/admin/products?page=<%= page + 1 %><%= qs %>" class="btn btn-outline py-1.5">Next</a><% } else { %><span></span><% } %>
+    </nav>
+<% } %>
+
+<%- include('./partials/shell-bottom') %>

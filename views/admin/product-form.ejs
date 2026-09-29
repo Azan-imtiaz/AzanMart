@@ -1,66 +1,69 @@
-<%- include('../partials/header') %>
+<%- include('./partials/shell-top') %>
+<% const editing = Boolean(product); %>
+<% const value = (field, fallback = "") => (editing ? product[field] : fallback); %>
 
-<main class="flex-1 w-full max-w-3xl mx-auto px-5 py-10">
-  <a href="/admin" class="text-sm text-gray-500 hover:text-blue-900">&larr; Back to admin</a>
-  <h1 class="text-2xl font-bold text-gray-900 mt-2">Add a product</h1>
+<a href="/admin/products" class="text-sm muted hover:underline">&larr; All products</a>
+<h1 class="text-2xl font-bold mt-2"><%= editing ? `Edit ${product.name}` : "Add a product" %></h1>
 
-  <form action="/admin/products?_csrf=<%= csrfToken() %>" method="post" enctype="multipart/form-data"
-    class="mt-6 bg-white rounded-xl shadow-sm p-6 space-y-5">
+<form action="<%= editing ? `/admin/products/${product._id}` : '/admin/products' %>?_csrf=<%= csrfToken() %>" method="post" enctype="multipart/form-data"
+    class="mt-6 card p-6 space-y-5 max-w-3xl">
     <div>
-      <label for="name" class="block text-sm font-medium mb-1">Name</label>
-      <input id="name" name="name" type="text" required maxlength="100"
-        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-800">
+        <label for="name" class="label">Name</label>
+        <input id="name" name="name" type="text" required maxlength="100" value="<%= value('name') %>" class="input">
     </div>
 
     <div>
-      <label for="description" class="block text-sm font-medium mb-1">Description</label>
-      <textarea id="description" name="description" rows="4" maxlength="2000"
-        class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-800"></textarea>
+        <label for="description" class="label">Description</label>
+        <textarea id="description" name="description" rows="4" maxlength="2000" class="input"><%= value('description') %></textarea>
     </div>
 
     <div class="grid sm:grid-cols-2 gap-4">
-      <div>
-        <label for="category" class="block text-sm font-medium mb-1">Category</label>
-        <select id="category" name="category" required
-          class="w-full rounded-md border border-gray-300 px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-800">
-          <% categories.forEach((category) => { %>
-            <option value="<%= category %>"><%= category %></option>
-          <% }) %>
-        </select>
-      </div>
-      <div>
-        <label for="stock" class="block text-sm font-medium mb-1">Stock</label>
-        <input id="stock" name="stock" type="number" min="0" step="1" value="10" required
-          class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-800">
-      </div>
-      <div>
-        <label for="price" class="block text-sm font-medium mb-1">Price (USD)</label>
-        <input id="price" name="price" type="number" min="0.5" step="0.01" required
-          class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-800">
-      </div>
-      <div>
-        <label for="discount" class="block text-sm font-medium mb-1">Discount (%)</label>
-        <input id="discount" name="discount" type="number" min="0" max="90" step="1" value="0"
-          class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-800">
-      </div>
+        <div>
+            <label for="category" class="label">Category</label>
+            <select id="category" name="category" required class="input">
+                <% categories.forEach((category) => { %>
+                    <option value="<%= category %>" <%= value('category') === category ? "selected" : "" %>><%= category %></option>
+                <% }) %>
+            </select>
+        </div>
+        <div>
+            <label for="stock" class="label">Stock</label>
+            <input id="stock" name="stock" type="number" min="0" step="1" required value="<%= value('stock', 10) %>" class="input">
+        </div>
+        <div>
+            <label for="price" class="label">Price (USD)</label>
+            <input id="price" name="price" type="number" min="0.5" step="0.01" required value="<%= editing ? (product.price / 100).toFixed(2) : '' %>" class="input">
+        </div>
+        <div>
+            <label for="discount" class="label">Discount (%)</label>
+            <input id="discount" name="discount" type="number" min="0" max="90" step="1" value="<%= value('discount', 0) %>" class="input">
+        </div>
     </div>
 
     <div class="grid sm:grid-cols-2 gap-4">
-      <div>
-        <label for="images" class="block text-sm font-medium mb-1">Images (up to 4, 2MB each)</label>
-        <input id="images" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple required
-          class="w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-900">
-      </div>
-      <div>
-        <label for="bgcolor" class="block text-sm font-medium mb-1">Card background</label>
-        <input id="bgcolor" name="bgcolor" type="color" value="#f3f4f6" class="h-10 w-20 rounded border border-gray-300">
-      </div>
+        <div>
+            <label for="images" class="label">Images (up to 4, 2MB each)</label>
+            <input id="images" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple <%= editing ? "" : "required" %>
+                class="w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-blue-900">
+            <% if (editing) { %>
+                <p class="text-xs muted mt-1">Leave empty to keep the current images. Uploading replaces all of them.</p>
+                <div class="mt-2 flex gap-2">
+                    <% product.images.forEach((image, index) => { %>
+                        <img src="<%= imageUrl(product, index) %>" alt="" class="h-14 w-14 rounded object-contain" style="background-color: <%= product.bgcolor %>">
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+        <div>
+            <label for="bgcolor" class="label">Card background</label>
+            <input id="bgcolor" name="bgcolor" type="color" value="<%= value('bgcolor', '#f3f4f6') %>" class="h-10 w-20 rounded border border-gray-300 dark:border-gray-700">
+        </div>
     </div>
 
-    <button type="submit" class="px-5 py-2 rounded-full bg-blue-900 text-white font-medium hover:bg-blue-800">
-      Create product
-    </button>
-  </form>
-</main>
+    <div class="flex gap-3">
+        <button type="submit" class="btn btn-primary"><%= editing ? "Save changes" : "Create product" %></button>
+        <a href="/admin/products" class="btn btn-outline">Cancel</a>
+    </div>
+</form>
 
-<%- include('../partials/footer') %>
+<%- include('./partials/shell-bottom') %>

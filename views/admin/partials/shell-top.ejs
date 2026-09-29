@@ -1,0 +1,19 @@
+<%- include('../../partials/header') %>
+<% const adminLinks = [["/admin", "Dashboard", "ri-dashboard-line"], ["/admin/products", "Products", "ri-shopping-bag-line"], ["/admin/orders", "Orders", "ri-file-list-3-line"], ["/admin/users", "Users", "ri-group-line"]]; %>
+<div class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 grid md:grid-cols-[200px_1fr] gap-8">
+    <aside>
+        <p class="text-xs font-semibold uppercase tracking-wide muted px-3">Admin</p>
+        <nav class="mt-2 flex md:flex-col gap-1 overflow-x-auto" aria-label="Admin">
+            <% adminLinks.forEach(([href, label, icon]) => { %>
+                <% const active = href === "/admin" ? currentPath === "/admin" : currentPath.startsWith(href); %>
+                <a href="<%= href %>" <%- active ? 'aria-current="page"' : '' %>
+                    class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap <%= active ? 'bg-blue-900 text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800' %>">
+                    <i class="<%= icon %>"></i> <%= label %>
+                </a>
+            <% }) %>
+            <a href="/" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm muted hover:bg-gray-100 dark:hover:bg-gray-800 whitespace-nowrap">
+                <i class="ri-store-2-line"></i> View store
+            </a>
+        </nav>
+    </aside>
+    <main class="min-w-0">

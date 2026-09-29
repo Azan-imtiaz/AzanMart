@@ -3,13 +3,18 @@ const { body } = require("express-validator");
 const upload = require("../config/multer-config");
 const validate = require("../middlewares/validate");
 const { requireAdmin } = require("../middlewares/auth");
-const admin = require("../controllers/adminController");
 const productModel = require("../models/productModel");
+const dashboard = require("../controllers/admin/dashboardController");
+const products = require("../controllers/admin/productsController");
 
 const router = express.Router();
 
 // Every admin route needs a logged-in admin
 router.use(requireAdmin);
+
+// Where to send the admin back to when a product form has a problem
+const productFormUrl = (req) =>
+  req.params.id ? `/admin/products/${req.params.id}/edit` : "/admin/products/new";
 
 const UPLOAD_ERRORS = {
   LIMIT_FILE_SIZE: "Each image must be 2MB or smaller",
@@ -22,7 +27,7 @@ const uploadImages = (req, res, next) => {
   upload.array("images", 4)(req, res, (err) => {
     if (err) {
       req.flash("error", UPLOAD_ERRORS[err.code] || err.message);
-      return res.redirect("/admin");
+      return res.redirect(productFormUrl(req));
     }
     next();
   });
@@ -45,7 +50,23 @@ const productRules = [
     .withMessage("Background must be a hex colour"),
 ];
 
-router.get("/", admin.showNewProduct);
-router.post("/products", uploadImages, validate(productRules, "/admin"), admin.createProduct);
+router.get("/", dashboard.showDashboard);
+
+router.get("/products", products.listProducts);
+router.get("/products/new", products.showNewForm);
+router.post(
+  "/products",
+  uploadImages,
+  validate(productRules, productFormUrl),
+  products.createProduct,
+);
+router.get("/products/:id/edit", products.showEditForm);
+router.post(
+  "/products/:id",
+  uploadImages,
+  validate(productRules, productFormUrl),
+  products.updateProduct,
+);
+router.post("/products/:id/delete", products.deleteProduct);
 
 module.exports = router;

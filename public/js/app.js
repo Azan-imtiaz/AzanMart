@@ -25,3 +25,10 @@ document.querySelectorAll("[data-gallery-thumb]").forEach((thumb, _, thumbs) => 
     thumb.classList.replace("border-transparent", "border-blue-900");
   });
 });
+
+// Ask before destructive actions like deleting a product
+document.querySelectorAll("form[data-confirm]").forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    if (!window.confirm(form.dataset.confirm)) event.preventDefault();
+  });
+});

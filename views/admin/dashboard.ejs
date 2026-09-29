@@ -1,0 +1,58 @@
+<%- include('./partials/shell-top') %>
+
+<h1 class="text-2xl font-bold">Dashboard</h1>
+
+<div class="mt-6 grid grid-cols-2 xl:grid-cols-4 gap-4">
+    <% const cards = [["Revenue", formatPrice(stats.revenue), "ri-money-dollar-circle-line", "Paid orders only"], ["Orders", stats.orderCount, "ri-file-list-3-line", "All time"], ["Customers", stats.customerCount, "ri-group-line", "Registered accounts"], ["Products", stats.productCount, "ri-shopping-bag-line", "In the catalog"]]; %>
+    <% cards.forEach(([label, value, icon, hint]) => { %>
+        <div class="card p-5">
+            <div class="flex items-center justify-between">
+                <p class="text-sm muted"><%= label %></p>
+                <i class="<%= icon %> text-xl text-blue-900 dark:text-blue-300"></i>
+            </div>
+            <p class="text-2xl font-bold mt-2"><%= value %></p>
+            <p class="text-xs muted mt-1"><%= hint %></p>
+        </div>
+    <% }) %>
+</div>
+
+<div class="mt-8 grid lg:grid-cols-2 gap-6">
+    <section class="card p-5">
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold">Recent orders</h2>
+            <a href="/admin/orders" class="text-sm text-blue-900 hover:underline dark:text-blue-300">View all</a>
+        </div>
+        <% if (recentOrders.length) { %>
+            <ul class="mt-4 divide-y divide-gray-200 dark:divide-gray-800 text-sm">
+                <% recentOrders.forEach((order) => { %>
+                    <li class="py-2.5 flex items-center justify-between gap-3">
+                        <a href="/admin/orders/<%= order.orderNumber %>" class="font-medium hover:underline"><%= order.orderNumber %></a>
+                        <span class="muted truncate flex-1"><%= order.shippingAddress.fullName %></span>
+                        <%- include('../partials/order-status', { status: order.status }) %>
+                        <span class="w-20 text-right"><%= formatPrice(order.total) %></span>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p class="mt-4 text-sm muted">No orders yet.</p>
+        <% } %>
+    </section>
+
+    <section class="card p-5">
+        <h2 class="font-semibold">Low stock</h2>
+        <% if (lowStock.length) { %>
+            <ul class="mt-4 divide-y divide-gray-200 dark:divide-gray-800 text-sm">
+                <% lowStock.forEach((product) => { %>
+                    <li class="py-2.5 flex items-center justify-between">
+                        <a href="/admin/products/<%= product._id %>/edit" class="hover:underline"><%= product.name %></a>
+                        <span class="font-medium <%= product.stock === 0 ? 'text-red-600' : 'text-amber-600' %>"><%= product.stock === 0 ? "Sold out" : `${product.stock} left` %></span>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p class="mt-4 text-sm muted">Everything is well stocked.</p>
+        <% } %>
+    </section>
+</div>
+
+<%- include('./partials/shell-bottom') %>
