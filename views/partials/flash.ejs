@@ -1,0 +1,14 @@
+<% const messages = typeof takeFlash === "function" ? takeFlash() : []; %>
+<% if (messages.length) { %>
+  <div class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm" aria-live="polite">
+    <% messages.forEach(({ type, message }) => { %>
+      <div data-toast role="<%= type === 'error' ? 'alert' : 'status' %>"
+        class="flex items-start gap-3 rounded-lg px-4 py-3 text-white shadow-lg <%= type === 'error' ? 'bg-red-600' : 'bg-green-600' %>">
+        <span class="flex-1"><%= message %></span>
+        <button type="button" data-toast-close aria-label="Dismiss" class="opacity-80 hover:opacity-100">
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+    <% }) %>
+  </div>
+<% } %>

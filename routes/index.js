@@ -8,15 +8,7 @@ const httpError = require("../utils/httpError");
 const router = express.Router();
 
 router.get("/", function (req, res) {
-  const error = req.flash("error");
-  const success = req.flash("success");
-
-  res.render("index", {
-    title: "Sign in",
-    error: error.length ? error : null,
-    successMessage: success.length ? success : null,
-    loggedIn: false,
-  });
+  res.render("index", { title: "Sign in", loggedIn: false });
 });
 
 router.get("/about", (req, res) => {
@@ -29,9 +21,8 @@ router.get("/about", (req, res) => {
 });
 
 router.get("/shop", isLoggedIn, async (req, res) => {
-  const message = req.flash("successMessage");
   const products = await productModel.find({}).lean();
-  res.render("shop", { title: "Shop", products, successMessage: message });
+  res.render("shop", { title: "Shop", products });
 });
 
 router.post("/addToCart/:productid", isLoggedIn, async (req, res) => {
@@ -41,7 +32,7 @@ router.post("/addToCart/:productid", isLoggedIn, async (req, res) => {
   }
 
   await userModel.updateOne({ _id: req.user._id }, { $push: { cart: productid } });
-  req.flash("successMessage", "Added to cart");
+  req.flash("success", "Added to cart");
   res.redirect("/shop");
 });
 

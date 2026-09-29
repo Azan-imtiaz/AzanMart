@@ -1,21 +1,5 @@
 <%- include('./partials/header') %>
 
-<% if(success.length > 0) { %>
-    <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-blue-500" id="successMessage">
-        <span class="inline-block mt-1 mb-1 text-white">
-            <%= success %>
-        </span>
-    </div>
-<% } %>
-
-<% if(error.length > 0) { %>
-    <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500" id="errorMessage">
-        <span class="inline-block mt-1 mb-1 text-white">
-            <%= error %>
-        </span>
-    </div>
-<% } %>
-
 <div class="min-h-screen flex flex-col">
     <div class="container px-10 py-20 flex flex-grow">
         <div class="w-[25%] flex h-screen flex-col items-start">
@@ -55,12 +39,3 @@
 </div>
 
 <%- include('./partials/footer') %>
-<script>
-    // Auto dismiss error and success messages after 3 seconds
-    setTimeout(function () {
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-        if (successMessage) successMessage.style.display = 'none';
-        if (errorMessage) errorMessage.style.display = 'none';
-    }, 3000);
-</script>

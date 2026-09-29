@@ -1,21 +1,5 @@
 <%- include('./partials/header') %>
 
-<% if (error && error.length > 0) { %>
-    <div id="errorMessage" class="absolute top-5 left-1/2 transform -translate-x-1/2 p-3 rounded-md bg-red-500 shadow-lg">
-        <span class="inline-block text-white font-medium">
-            <%= error %>
-        </span>
-    </div>
-<% } %>
-
-<% if (successMessage && successMessage.length > 0) { %>
-    <div id="successMessage" class="absolute top-5 left-1/2 transform -translate-x-1/2 p-3 rounded-md bg-green-500 shadow-lg">
-        <span class="inline-block text-white font-medium">
-            <%= successMessage %>
-        </span>
-    </div>
-<% } %>
-
 <div class="w-full flex-1 flex flex-col md:flex-row bg-gray-100">
     <div class="flex-1 flex items-center justify-center p-5 md:p-10">
         <div class="w-full max-w-md">
@@ -42,13 +26,3 @@
 </div>
 
 <%- include('./partials/footer') %>
-
-<script>
-    // Auto dismiss error and success messages after 3 seconds
-    setTimeout(function () {
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        if (errorMessage) errorMessage.style.display = 'none';
-        if (successMessage) successMessage.style.display = 'none';
-    }, 3000);
-</script>

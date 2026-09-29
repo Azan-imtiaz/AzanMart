@@ -2,13 +2,13 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const expressSession = require("express-session");
-const flash = require("connect-flash");
 
 const ownersRouter = require("./routes/ownersRouter");
 const productsRouter = require("./routes/productsRouter");
 const usersRouter = require("./routes/usersRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
+const flash = require("./middlewares/flash");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -35,7 +35,7 @@ app.use(
   }),
 );
 
-app.use(flash());
+app.use(flash);
 
 app.use((req, res, next) => {
   res.locals.appUrl = APP_URL;
