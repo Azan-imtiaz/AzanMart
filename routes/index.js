@@ -18,6 +18,14 @@ router.get("/", function (req, res) {
     });
 });
 
+router.get("/about", (req, res) => {
+    res.render("about", {
+        title: "About the developer",
+        description: "AzanMart is designed and developed by Azan Imtiaz, a Software Engineering graduate and MERN & Blockchain developer.",
+        loggedIn: Boolean(req.cookies.token)
+    });
+});
+
 router.get("/shop", isLoggedIn, async (req, res) => {
     try {
         const message = req.flash("successMessage");

@@ -28,17 +28,20 @@
 </head>
 
 <body class="font-sans antialiased text-gray-800 bg-gray-100 min-h-screen flex flex-col">
-    <nav class="w-full flex justify-between px-5 py-3">
+    <nav class="w-full flex items-center justify-between px-5 py-3">
         <a href="/shop" aria-label="AzanMart home">
             <img src="/images/logo.svg" alt="AzanMart" class="h-9 w-auto">
         </a>
 
         <% var loggedIn = typeof loggedIn !== "undefined" ? loggedIn : true %>
-        <% if (loggedIn) { %>
-            <div class="flex gap-5">
+        <div class="flex items-center gap-5">
+            <% if (loggedIn) { %>
                 <a href="/shop">Shop</a>
                 <a href="/cart">Cart</a>
+            <% } %>
+            <a href="/about">About</a>
+            <% if (loggedIn) { %>
                 <a href="/users/logout" class="text-red-600">Logout</a>
-            </div>
-        <% } %>
+            <% } %>
+        </div>
     </nav>
