@@ -1,6 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 const validate = require("../middlewares/validate");
+const { authLimiter } = require("../middlewares/rateLimit");
 const auth = require("../controllers/authController");
 
 const router = express.Router();
@@ -16,8 +17,8 @@ const loginRules = [
   body("password").notEmpty().withMessage("Please enter your password"),
 ];
 
-router.post("/register", validate(registerRules, "/"), auth.register);
-router.post("/login", validate(loginRules, "/"), auth.login);
+router.post("/register", authLimiter, validate(registerRules, "/"), auth.register);
+router.post("/login", authLimiter, validate(loginRules, "/"), auth.login);
 router.post("/logout", auth.logout);
 
 module.exports = router;
