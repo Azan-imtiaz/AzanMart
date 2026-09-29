@@ -11,6 +11,7 @@ const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
 const { loadUser } = require("./middlewares/auth");
+const csrf = require("./middlewares/csrf");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -62,6 +63,7 @@ app.use(
 
 app.use(flash);
 app.use(loadUser);
+app.use(csrf);
 
 app.use((req, res, next) => {
   res.locals.appUrl = APP_URL;
