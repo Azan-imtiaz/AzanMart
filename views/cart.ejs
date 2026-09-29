@@ -69,7 +69,12 @@
                 <% if (cart.shipping > 0) { %>
                     <p class="mt-3 text-xs muted">Add <%= formatPrice(freeShippingFrom - cart.subtotal) %> more for free shipping.</p>
                 <% } %>
-                <a href="/shop" class="btn btn-outline w-full mt-6">Continue shopping</a>
+                <% if (cart.hasStockProblems) { %>
+                    <p class="mt-6 text-sm text-red-600">Fix the items marked above to check out.</p>
+                <% } else { %>
+                    <a href="/checkout" class="btn btn-primary w-full mt-6">Checkout</a>
+                <% } %>
+                <a href="/shop" class="btn btn-outline w-full mt-3">Continue shopping</a>
             </aside>
         </div>
     <% } %>

@@ -10,6 +10,8 @@ const adminRouter = require("./routes/adminRouter");
 const authRouter = require("./routes/authRouter");
 const cartRouter = require("./routes/cartRouter");
 const wishlistRouter = require("./routes/wishlistRouter");
+const checkoutRouter = require("./routes/checkoutRouter");
+const ordersRouter = require("./routes/ordersRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
@@ -106,6 +108,8 @@ app.locals.imageUrl = (product, index = 0) =>
 app.use("/", authRouter);
 app.use("/cart", cartRouter);
 app.use("/wishlist", wishlistRouter);
+app.use("/checkout", checkoutRouter);
+app.use("/orders", ordersRouter);
 app.use("/admin", adminRouter);
 app.use("/", index);
 

@@ -1,0 +1,77 @@
+<%- include('./partials/header') %>
+
+<main class="flex-1 max-w-6xl w-full mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold">Checkout</h1>
+
+    <form action="/checkout" method="post" class="mt-8 grid lg:grid-cols-[1fr_360px] gap-8 items-start">
+        <%- include('./partials/csrf') %>
+
+        <div class="space-y-6">
+            <section class="card p-6">
+                <h2 class="text-lg font-semibold">Shipping address</h2>
+                <div class="mt-4 grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="fullName" class="label">Full name</label>
+                        <input id="fullName" name="fullName" autocomplete="name" required maxlength="60" value="<%= address.fullName || '' %>" class="input">
+                    </div>
+                    <div>
+                        <label for="phone" class="label">Phone</label>
+                        <input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" value="<%= address.phone || '' %>" class="input">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="line1" class="label">Address</label>
+                        <input id="line1" name="line1" autocomplete="address-line1" required maxlength="120" value="<%= address.line1 || '' %>" class="input">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="line2" class="label">Apartment, suite, etc. <span class="muted font-normal">(optional)</span></label>
+                        <input id="line2" name="line2" autocomplete="address-line2" maxlength="120" value="<%= address.line2 || '' %>" class="input">
+                    </div>
+                    <div>
+                        <label for="city" class="label">City</label>
+                        <input id="city" name="city" autocomplete="address-level2" required maxlength="60" value="<%= address.city || '' %>" class="input">
+                    </div>
+                    <div>
+                        <label for="postalCode" class="label">Postal code</label>
+                        <input id="postalCode" name="postalCode" autocomplete="postal-code" required maxlength="20" value="<%= address.postalCode || '' %>" class="input">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="country" class="label">Country</label>
+                        <input id="country" name="country" autocomplete="country-name" required maxlength="60" value="<%= address.country || '' %>" class="input">
+                    </div>
+                </div>
+            </section>
+
+            <section class="card p-6">
+                <h2 class="text-lg font-semibold">Payment</h2>
+                <label class="mt-4 flex items-center gap-3 rounded-lg border border-blue-900 p-4 dark:border-blue-400">
+                    <input type="radio" name="paymentMethod" value="cod" checked>
+                    <span>
+                        <span class="font-medium">Cash on delivery</span>
+                        <span class="block text-sm muted">Pay when your order arrives.</span>
+                    </span>
+                </label>
+            </section>
+        </div>
+
+        <aside class="card p-6 lg:sticky lg:top-24">
+            <h2 class="text-lg font-semibold">Your order</h2>
+            <ul class="mt-4 space-y-3 text-sm">
+                <% cart.items.forEach(({ product, quantity, lineTotal }) => { %>
+                    <li class="flex justify-between gap-3">
+                        <span><%= product.name %> <span class="muted">&times; <%= quantity %></span></span>
+                        <span><%= formatPrice(lineTotal) %></span>
+                    </li>
+                <% }) %>
+            </ul>
+            <dl class="mt-4 space-y-2 text-sm border-t border-gray-200 dark:border-gray-800 pt-4">
+                <div class="flex justify-between"><dt class="muted">Subtotal</dt><dd><%= formatPrice(cart.subtotal) %></dd></div>
+                <div class="flex justify-between"><dt class="muted">Shipping</dt><dd><%= cart.shipping === 0 ? "Free" : formatPrice(cart.shipping) %></dd></div>
+                <div class="flex justify-between text-base font-semibold pt-2"><dt>Total</dt><dd><%= formatPrice(cart.total) %></dd></div>
+            </dl>
+            <button type="submit" class="btn btn-primary w-full mt-6">Place order</button>
+            <a href="/cart" class="block text-center text-sm muted hover:underline mt-3">Back to cart</a>
+        </aside>
+    </form>
+</main>
+
+<%- include('./partials/footer') %>
