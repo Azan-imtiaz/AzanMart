@@ -18,14 +18,12 @@ const flash = require("./middlewares/flash");
 const { loadUser } = require("./middlewares/auth");
 const csrf = require("./middlewares/csrf");
 const { formatPrice } = require("./utils/money");
+const { APP_URL } = require("./config/site");
 const { sendProductImage } = require("./controllers/imageController");
 const { handleStripeEvent } = require("./controllers/webhookController");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
-const PORT = process.env.PORT || 3000;
-// Open Graph and canonical links need absolute URLs
-const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
 const SESSION_TTL_DAYS = 7;
 
 app.disable("x-powered-by");

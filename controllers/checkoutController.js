@@ -1,6 +1,7 @@
 const orderModel = require("../models/orderModel");
 const { getCart } = require("../services/cart");
 const { placeOrder, clearCart, cancelOrder } = require("../services/orders");
+const { sendOrderConfirmation } = require("../services/emails");
 const { stripe } = require("../utils/stripe");
 const { CURRENCY } = require("../utils/money");
 
@@ -95,6 +96,7 @@ exports.placeOrder = async (req, res) => {
 
   if (paymentMethod === "cod") {
     await clearCart(req.user._id);
+    await sendOrderConfirmation(order);
     req.flash("success", "Thank you! Your order has been placed.");
     return res.redirect(`/orders/${order.orderNumber}`);
   }

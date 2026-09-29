@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const orderModel = require("../models/orderModel");
 const productModel = require("../models/productModel");
 const userModel = require("../models/userModel");
+const { sendOrderConfirmation } = require("./emails");
 
 // Takes stock for every item, one atomic update each. The update only matches
 // when enough stock is left, so two shoppers can't both buy the last unit.
@@ -74,7 +75,10 @@ async function markOrderPaid(orderId) {
     { paymentStatus: "paid", status: "processing", paidAt: new Date() },
     { new: true },
   );
-  if (order) await clearCart(order.user);
+  if (order) {
+    await clearCart(order.user);
+    await sendOrderConfirmation(order);
+  }
   return order;
 }
 

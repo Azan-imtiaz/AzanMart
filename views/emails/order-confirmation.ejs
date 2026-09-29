@@ -1,0 +1,31 @@
+<%- include('layout-top', { subject: `Order ${order.orderNumber}` }) %>
+<h1 style="margin:0 0 8px;font-size:20px;">Thanks for your order, <%= user.fullName.split(" ")[0] %>!</h1>
+<p style="margin:0 0 20px;color:#4b5563;line-height:1.5;">
+  <% if (order.paymentMethod === "cod") { %>
+    We've received order <strong><%= order.orderNumber %></strong>. Please have <strong><%= formatPrice(order.total) %></strong> ready when it arrives.
+  <% } else { %>
+    Your payment for order <strong><%= order.orderNumber %></strong> went through. We'll let you know when it ships.
+  <% } %>
+</p>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e5e7eb;font-size:14px;">
+  <% order.items.forEach((item) => { %>
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid #e5e7eb;"><%= item.name %> &times; <%= item.quantity %></td>
+      <td align="right" style="padding:10px 0;border-bottom:1px solid #e5e7eb;"><%= formatPrice(item.price * item.quantity) %></td>
+    </tr>
+  <% }) %>
+  <tr><td style="padding:8px 0 0;color:#6b7280;">Shipping</td><td align="right" style="padding:8px 0 0;color:#6b7280;"><%= order.shipping === 0 ? "Free" : formatPrice(order.shipping) %></td></tr>
+  <tr><td style="padding:6px 0;font-weight:bold;">Total</td><td align="right" style="padding:6px 0;font-weight:bold;"><%= formatPrice(order.total) %></td></tr>
+</table>
+
+<% const a = order.shippingAddress; %>
+<p style="margin:20px 0 0;font-size:14px;color:#4b5563;line-height:1.5;">
+  <strong style="color:#1f2937;">Shipping to</strong><br>
+  <%= a.fullName %>, <%= a.line1 %><%= a.line2 ? `, ${a.line2}` : "" %>, <%= a.city %> <%= a.postalCode %>, <%= a.country %>
+</p>
+
+<p style="margin:24px 0 0;">
+  <a href="<%= appUrl %>/orders/<%= order.orderNumber %>" style="display:inline-block;background:#1e3a8a;color:#ffffff;text-decoration:none;padding:10px 20px;border-radius:999px;font-weight:bold;">View your order</a>
+</p>
+<%- include('layout-bottom') %>
