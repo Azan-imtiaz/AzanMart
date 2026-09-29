@@ -4,14 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEase</title>
+    <title>AzanMart</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="font-['helvetica_now_display'] bg-gray-100">
     <nav class="w-full flex justify-between px-5 py-3">
-        <h3 class="text-2xl font-semibold">ShopEase</h3>
+        <a href="/shop" aria-label="AzanMart home">
+            <img src="/images/logo.svg" alt="AzanMart" class="h-9 w-auto">
+        </a>
 
         <% var loggedIn = typeof loggedIn !== "undefined" ? loggedIn : true %>
         <% if (loggedIn) { %>
