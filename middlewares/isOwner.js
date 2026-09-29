@@ -20,7 +20,7 @@ module.exports.isOwner = async function (req, res, next) {
 
         req.owner = owner;
         next();
-    } catch (err) {
+    } catch {
         res.clearCookie("ownerToken");
         req.flash("error", "Owner login required");
         return res.redirect("/owners/login");

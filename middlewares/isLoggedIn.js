@@ -23,7 +23,7 @@ module.exports.isLoggedIn = async function (req, res, next) {
         // Attach user object to request for further middleware/routes
         req.user = user;
         next();
-    } catch (err) {
+    } catch {
         res.clearCookie("token");
         req.flash("error", "Your session has expired, please log in again");
         return res.redirect("/");
