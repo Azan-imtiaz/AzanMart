@@ -57,7 +57,8 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Flat form bodies only: no nested objects like email[$ne]=... reach the controllers
+app.use(express.urlencoded({ extended: false }));
 
 app.use(
   session({

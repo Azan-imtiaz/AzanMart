@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const dbgr = require("debug")("azanmart:db");
 
+// Wraps any user-supplied { $ne: ... } style objects in $eq, so a crafted
+// request body can't turn a filter into a MongoDB operator (NoSQL injection).
+mongoose.set("sanitizeFilter", true);
+
 async function connectDB(url = process.env.MONGODB_URL) {
   try {
     await mongoose.connect(url);
