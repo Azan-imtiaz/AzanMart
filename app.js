@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
+const helmet = require("helmet");
 const path = require("path");
 const session = require("express-session");
 const { MongoStore } = require("connect-mongo");
@@ -34,6 +35,23 @@ app.get("/health", (req, res) => {
 if (process.env.NODE_ENV !== "test") {
   app.use(morgan(isProduction ? "combined" : "dev"));
 }
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        // The Tailwind CDN is temporary until the CSS is built locally
+        "script-src": ["'self'", "https://cdn.tailwindcss.com"],
+        "style-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+        "font-src": ["'self'", "https://cdn.jsdelivr.net"],
+        "img-src": ["'self'", "data:"],
+        "form-action": ["'self'"],
+        // Only force HTTPS in production, otherwise localhost breaks
+        "upgrade-insecure-requests": isProduction ? [] : null,
+      },
+    },
+  }),
+);
 
 // Static files are served before sessions so they never touch the session store
 app.use(express.static(path.join(__dirname, "public")));
