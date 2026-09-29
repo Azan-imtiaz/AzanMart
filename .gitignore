@@ -16,3 +16,7 @@ npm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# build output
+public/css/
+coverage/

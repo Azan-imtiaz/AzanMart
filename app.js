@@ -40,9 +40,10 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        // The Tailwind CDN is temporary until the CSS is built locally
-        "script-src": ["'self'", "https://cdn.tailwindcss.com"],
-        "style-src": ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+        "script-src": ["'self'"],
+        "style-src": ["'self'", "https://cdn.jsdelivr.net"],
+        // Product colours come from the database as inline style attributes
+        "style-src-attr": ["'unsafe-inline'"],
         "font-src": ["'self'", "https://cdn.jsdelivr.net"],
         "img-src": ["'self'", "data:"],
         "form-action": ["'self'"],

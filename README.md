@@ -32,7 +32,14 @@ Designed and developed by **Azan Imtiaz** · [GitHub](https://github.com/Azan-im
 ```bash
 npm install
 cp .env.example .env   # then fill in the values
-npm run dev            # or: npm start
+npm run dev            # watches CSS and restarts the server on changes
+```
+
+For production, build the stylesheet once and start the server:
+
+```bash
+npm run build
+npm start
 ```
 
 The app runs on `http://localhost:3000` by default.

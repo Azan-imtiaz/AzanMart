@@ -14,10 +14,10 @@
     %>
     <div class="w-full h-screen flex items-start px-20 py-20 gap-10">
         <div class="w-[30%] rounded-md overflow-hidden">
-            <div class="w-full flex justify-center items-center align just h-80 bg-[<%= item.bgcolor %>]">
+            <div class="w-full flex justify-center items-center align just h-80" style="background-color: <%= item.bgcolor %>">
                 <img src="data:image/jpeg;base64,<%= item.image.toString('base64') %>" class="h-[18rem]">
             </div>
-            <div class="w-full flex justify-between px-5 py-4 bg-[<%= item.panelcolor %>]">
+            <div class="w-full flex justify-between px-5 py-4" style="background-color: <%= item.panelcolor %>">
                 <h3 class="text-2xl"><%= item.name %></h3>
                 <div class="flex items-center gap-2">
                     <i class="w-7 h-7 bg-white flex rounded-full items-center justify-center ri-add-line"></i>
@@ -25,7 +25,7 @@
                     <i class="w-7 h-7 bg-white flex rounded-full items-center justify-center ri-subtract-line"></i>
                 </div>
             </div>
-            <div class="flex text-white items-center justify-between px-5 py-3 bg-[<%= item.textcolor %>]">
+            <div class="flex text-white items-center justify-between px-5 py-3" style="background-color: <%= item.textcolor %>">
                 <h4 class="text-lg">Net Total</h4>
                 <h2 class="text-lg">₹ <%= bill %> </h2> <!-- Display calculated bill -->
             </div>

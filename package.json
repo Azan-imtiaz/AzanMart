@@ -5,11 +5,14 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
+    "dev": "concurrently -k -n css,app \"npm:watch:css\" \"node --watch server.js\"",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "create-admin": "node scripts/createAdmin.js"
+    "create-admin": "node scripts/createAdmin.js",
+    "build:css": "tailwindcss -i ./styles/app.css -o ./public/css/app.css --minify",
+    "watch:css": "tailwindcss -i ./styles/app.css -o ./public/css/app.css --watch",
+    "build": "npm run build:css"
   },
   "keywords": [
     "ecommerce",
@@ -46,9 +49,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@tailwindcss/cli": "^4.3.3",
+    "concurrently": "^10.0.5",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
-    "prettier": "^3.9.9"
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4.3.3"
   }
 }
