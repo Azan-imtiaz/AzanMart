@@ -34,14 +34,16 @@
             <img src="/images/logo.svg" alt="AzanMart" class="h-9 w-auto">
         </a>
 
-        <% var loggedIn = typeof loggedIn !== "undefined" ? loggedIn : true %>
         <div class="flex items-center gap-5">
-            <% if (loggedIn) { %>
+            <% if (locals.currentUser) { %>
                 <a href="/shop">Shop</a>
                 <a href="/cart">Cart</a>
+                <% if (currentUser.role === "admin") { %>
+                    <a href="/admin">Admin</a>
+                <% } %>
             <% } %>
             <a href="/about">About</a>
-            <% if (loggedIn) { %>
+            <% if (locals.currentUser) { %>
                 <a href="/users/logout" class="text-red-600">Logout</a>
             <% } %>
         </div>

@@ -16,7 +16,6 @@ function errorHandler(err, req, res, next) {
     status,
     // Never leak internal error details to the browser
     message: status < 500 ? err.message : "Something went wrong on our side. Please try again.",
-    loggedIn: false,
   });
 }
 

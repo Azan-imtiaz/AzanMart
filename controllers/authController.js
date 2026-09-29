@@ -1,35 +1,38 @@
-const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const { generateToken, cookieOptions } = require("../utils/generateToken");
+const userModel = require("../models/userModel");
 
-// User registration
-module.exports.userRegister = async function (req, res) {
+// Only allow redirects back into this site, never to another domain
+function safeReturnTo(url) {
+  return typeof url === "string" && url.startsWith("/") && !url.startsWith("//") ? url : null;
+}
+
+// A new session id on login prevents session fixation attacks
+function regenerateSession(req) {
+  return new Promise((resolve, reject) => {
+    req.session.regenerate((err) => (err ? reject(err) : resolve()));
+  });
+}
+
+exports.register = async (req, res) => {
   const { email, password, fullname } = req.body;
 
-  // Check if user already exists
-  const existingUser = await userModel.findOne({ email: email });
+  const existingUser = await userModel.findOne({ email });
   if (existingUser) {
     req.flash("error", "You already have an account, please log in");
     return res.redirect("/");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-
-  await userModel.create({
-    email: email,
-    password: hashedPassword,
-    fullName: fullname,
-  });
+  await userModel.create({ email, password: hashedPassword, fullName: fullname });
 
   req.flash("success", "Account created successfully, please log in");
-  return res.redirect("/");
+  res.redirect("/");
 };
 
-// User login
-module.exports.userLogin = async function (req, res) {
+exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userModel.findOne({ email: email });
+  const user = await userModel.findOne({ email });
   const passwordMatch = user && (await bcrypt.compare(password, user.password));
 
   if (!passwordMatch) {
@@ -37,14 +40,15 @@ module.exports.userLogin = async function (req, res) {
     return res.redirect("/");
   }
 
-  const token = generateToken(user);
-  res.cookie("token", token, cookieOptions);
-  return res.redirect(user.role === "admin" ? "/admin" : "/shop");
+  const returnTo = safeReturnTo(req.session.returnTo);
+  await regenerateSession(req);
+  req.session.userId = user._id.toString();
+
+  res.redirect(returnTo || (user.role === "admin" ? "/admin" : "/shop"));
 };
 
-// User logout
-module.exports.userLogout = function (req, res) {
-  res.clearCookie("token");
-  req.flash("success", "Logout successful");
-  return res.redirect("/");
+exports.logout = async (req, res) => {
+  await regenerateSession(req);
+  req.flash("success", "You have been logged out");
+  res.redirect("/");
 };

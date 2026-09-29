@@ -4,7 +4,7 @@ const productModel = require("../models/productModel");
 const httpError = require("../utils/httpError");
 
 exports.showHome = (req, res) => {
-  res.render("index", { title: "Sign in", loggedIn: false });
+  res.render("index", { title: "Sign in" });
 };
 
 exports.showAbout = (req, res) => {
@@ -12,7 +12,6 @@ exports.showAbout = (req, res) => {
     title: "About the developer",
     description:
       "AzanMart is designed and developed by Azan Imtiaz, a Software Engineering graduate and MERN & Blockchain developer.",
-    loggedIn: Boolean(req.cookies.token),
   });
 };
 

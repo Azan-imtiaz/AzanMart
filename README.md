@@ -15,7 +15,7 @@ Designed and developed by **Azan Imtiaz** · [GitHub](https://github.com/Azan-im
 
 ## Features
 
-- User registration and login (bcrypt-hashed passwords, JWT in an HTTP-only cookie)
+- User registration and login (bcrypt-hashed passwords, sessions stored in MongoDB)
 - Product listing and cart
 - Role-based admin area for adding products with image upload
 - Flash messages for feedback

@@ -1,7 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 const validate = require("../middlewares/validate");
-const { userRegister, userLogin, userLogout } = require("../controllers/authController");
+const auth = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -16,8 +16,8 @@ const loginRules = [
   body("password").notEmpty().withMessage("Please enter your password"),
 ];
 
-router.post("/register", validate(registerRules, "/"), userRegister);
-router.post("/login", validate(loginRules, "/"), userLogin);
-router.get("/logout", userLogout);
+router.post("/register", validate(registerRules, "/"), auth.register);
+router.post("/login", validate(loginRules, "/"), auth.login);
+router.get("/logout", auth.logout);
 
 module.exports = router;

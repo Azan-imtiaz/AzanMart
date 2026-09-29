@@ -2,14 +2,13 @@ const express = require("express");
 const { body } = require("express-validator");
 const upload = require("../config/multer-config");
 const validate = require("../middlewares/validate");
-const { isLoggedIn } = require("../middlewares/isLoggedIn");
-const requireAdmin = require("../middlewares/requireAdmin");
+const { requireAdmin } = require("../middlewares/auth");
 const admin = require("../controllers/adminController");
 
 const router = express.Router();
 
 // Every admin route needs a logged-in admin
-router.use(isLoggedIn, requireAdmin);
+router.use(requireAdmin);
 
 // Wrap multer so upload errors (size / file type) show up as a flash message
 const uploadImage = (req, res, next) => {
