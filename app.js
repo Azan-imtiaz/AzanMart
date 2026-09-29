@@ -8,6 +8,7 @@ const ownersRouter = require("./routes/ownersRouter");
 const productsRouter = require("./routes/productsRouter");
 const usersRouter = require("./routes/usersRouter");
 const index = require("./routes/index");
+const { notFound, errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -50,13 +51,7 @@ app.use("/users", usersRouter);
 app.use("/products", productsRouter);
 app.use("/", index);
 
-app.use((req, res) => {
-  res.status(404).send("Page not found");
-});
-
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send("Something went wrong");
-});
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
