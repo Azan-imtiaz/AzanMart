@@ -14,7 +14,12 @@ async function findProduct(productId) {
 
 exports.showCart = async (req, res) => {
   const cart = await getCart(req.user._id);
-  res.render("cart", { title: "Your cart", cart, freeShippingFrom: FREE_SHIPPING_FROM });
+  res.render("cart", {
+    title: "Your cart",
+    cart,
+    freeShippingFrom: FREE_SHIPPING_FROM,
+    checkoutCancelled: req.query.checkout === "cancelled",
+  });
 };
 
 exports.addItem = async (req, res) => {

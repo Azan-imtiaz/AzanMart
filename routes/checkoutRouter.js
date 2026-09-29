@@ -17,6 +17,7 @@ const addressRules = [
   required("city", "City", 60),
   required("postalCode", "Postal code", 20),
   required("country", "Country", 60),
+  body("paymentMethod").isIn(["cod", "card"]).withMessage("Choose a payment method"),
 ];
 
 router.use(requireAuth);

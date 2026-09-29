@@ -52,7 +52,8 @@ app.use(
         "style-src-attr": ["'unsafe-inline'"],
         "font-src": ["'self'", "https://cdn.jsdelivr.net"],
         "img-src": ["'self'", "data:"],
-        "form-action": ["'self'"],
+        // Checkout posts to us, then redirects to Stripe's hosted payment page
+        "form-action": ["'self'", "https://checkout.stripe.com"],
         // Only force HTTPS in production, otherwise localhost breaks
         "upgrade-insecure-requests": isProduction ? [] : null,
       },

@@ -66,4 +66,27 @@ async function clearCart(userId) {
   await userModel.updateOne({ _id: userId }, { $set: { cart: [] } });
 }
 
-module.exports = { placeOrder, releaseStock, clearCart };
+// Safe to call more than once (redirect and webhook can both confirm the same
+// payment): only the call that flips the order from unpaid does any work.
+async function markOrderPaid(orderId) {
+  const order = await orderModel.findOneAndUpdate(
+    { _id: orderId, paymentStatus: "unpaid" },
+    { paymentStatus: "paid", status: "processing", paidAt: new Date() },
+    { new: true },
+  );
+  if (order) await clearCart(order.user);
+  return order;
+}
+
+// Cancels an unpaid order and puts its stock back. Also only acts once.
+async function cancelOrder(orderId) {
+  const order = await orderModel.findOneAndUpdate(
+    { _id: orderId, status: "pending", paymentStatus: "unpaid" },
+    { status: "cancelled" },
+    { new: true },
+  );
+  if (order) await releaseStock(order.items);
+  return order;
+}
+
+module.exports = { placeOrder, releaseStock, clearCart, markOrderPaid, cancelOrder };

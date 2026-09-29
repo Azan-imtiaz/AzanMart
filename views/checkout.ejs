@@ -43,13 +43,26 @@
 
             <section class="card p-6">
                 <h2 class="text-lg font-semibold">Payment</h2>
-                <label class="mt-4 flex items-center gap-3 rounded-lg border border-blue-900 p-4 dark:border-blue-400">
-                    <input type="radio" name="paymentMethod" value="cod" checked>
-                    <span>
-                        <span class="font-medium">Cash on delivery</span>
-                        <span class="block text-sm muted">Pay when your order arrives.</span>
-                    </span>
-                </label>
+                <div class="mt-4 space-y-3">
+                    <% if (cardPayments) { %>
+                        <label class="flex items-center gap-3 rounded-lg border border-gray-300 p-4 has-checked:border-blue-900 dark:border-gray-700 dark:has-checked:border-blue-400">
+                            <input type="radio" name="paymentMethod" value="card" checked>
+                            <span>
+                                <span class="font-medium">Card</span>
+                                <span class="block text-sm muted">Pay securely with Stripe. You'll be redirected to finish payment.</span>
+                            </span>
+                            <i class="ri-bank-card-line ml-auto text-2xl muted"></i>
+                        </label>
+                    <% } %>
+                    <label class="flex items-center gap-3 rounded-lg border border-gray-300 p-4 has-checked:border-blue-900 dark:border-gray-700 dark:has-checked:border-blue-400">
+                        <input type="radio" name="paymentMethod" value="cod" <%= cardPayments ? "" : "checked" %>>
+                        <span>
+                            <span class="font-medium">Cash on delivery</span>
+                            <span class="block text-sm muted">Pay when your order arrives.</span>
+                        </span>
+                        <i class="ri-money-dollar-circle-line ml-auto text-2xl muted"></i>
+                    </label>
+                </div>
             </section>
         </div>
 
