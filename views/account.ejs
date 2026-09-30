@@ -1,6 +1,6 @@
 <%- include('./partials/header') %>
 
-<main class="flex-1 max-w-3xl w-full mx-auto px-4 py-10">
+<main id="main" class="flex-1 max-w-3xl w-full mx-auto px-4 py-10">
     <h1 class="text-3xl font-bold">Your account</h1>
     <p class="muted mt-1">Member since <%= currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "the early days" %></p>
 

@@ -30,11 +30,12 @@
 </head>
 
 <body class="font-sans antialiased text-gray-800 bg-gray-50 min-h-screen flex flex-col dark:bg-gray-950 dark:text-gray-100">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 btn btn-primary">Skip to content</a>
     <header class="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-950/90">
         <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4" aria-label="Main">
-            <a href="/" class="flex items-center gap-2 text-xl font-bold tracking-tight" aria-label="AzanMart home">
-                <img src="/favicon.svg" alt="" class="h-8 w-8">
-                <span><span class="text-blue-900 dark:text-white">Azan</span><span class="text-amber-500">Mart</span></span>
+            <a href="/" class="shrink-0" aria-label="AzanMart home">
+                <img src="/images/logo.svg" alt="AzanMart" width="147" height="36" class="h-9 w-auto dark:hidden">
+                <img src="/images/logo-dark.svg" alt="AzanMart" width="147" height="36" class="h-9 w-auto hidden dark:block">
             </a>
 
             <form action="/shop" method="get" role="search" class="hidden md:block flex-1 max-w-sm">

@@ -2,7 +2,7 @@
     <a href="/products/<%= product.slug %>" class="h-56 flex items-center justify-center relative" style="background-color: <%= product.bgcolor %>" tabindex="-1" aria-hidden="true">
         <img src="<%= imageUrl(product) %>" alt="<%= product.name %>" loading="lazy" class="max-h-48 object-contain transition group-hover:scale-105">
         <% if (product.discount > 0) { %>
-            <span class="absolute top-3 left-3 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-semibold text-white">-<%= product.discount %>%</span>
+            <span class="absolute top-3 left-3 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-semibold text-gray-950">-<%= product.discount %>%</span>
         <% } %>
     </a>
     <%- include("./wishlist-button", { product, floating: true }) %>
