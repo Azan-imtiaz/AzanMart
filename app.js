@@ -21,6 +21,7 @@ const { loadUser } = require("./middlewares/auth");
 const csrf = require("./middlewares/csrf");
 const { formatPrice } = require("./utils/money");
 const { APP_URL, ASSET_VERSION } = require("./config/site");
+const { whenConnected } = require("./config/db");
 const { sendProductImage } = require("./controllers/imageController");
 const { handleStripeEvent } = require("./controllers/webhookController");
 const seo = require("./controllers/seoController");
@@ -104,7 +105,7 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       // Reuse the Mongoose connection instead of opening a second one
-      clientPromise: mongoose.connection.asPromise().then((conn) => conn.getClient()),
+      clientPromise: whenConnected(),
       ttl: SESSION_TTL_DAYS * 24 * 60 * 60,
     }),
     cookie: {
