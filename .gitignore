@@ -20,3 +20,6 @@ Thumbs.db
 # build output
 public/css/
 coverage/
+
+# personal notes (portfolio, interview prep)
+notes/
