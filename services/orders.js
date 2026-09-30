@@ -86,7 +86,7 @@ async function markOrderPaid(orderId) {
 async function cancelOrder(orderId) {
   const order = await orderModel.findOneAndUpdate(
     { _id: orderId, status: "pending", paymentStatus: "unpaid" },
-    { status: "cancelled" },
+    { status: "cancelled", cancelledAt: new Date() },
     { new: true },
   );
   if (order) await releaseStock(order.items);
@@ -95,18 +95,31 @@ async function cancelOrder(orderId) {
 
 const FINAL_STATUSES = ["delivered", "cancelled"];
 
-// Admin status changes. Returns an error message, or null on success.
-async function updateOrderStatus(order, status) {
+// Admin status changes. `shipment` holds the courier and tracking number when
+// an order is marked as shipped. Returns an error message, or null on success.
+async function updateOrderStatus(order, status, shipment = {}) {
   if (order.status === status) return null;
   if (FINAL_STATUSES.includes(order.status)) {
     return `This order is already ${order.status} and can't be changed.`;
   }
 
-  if (status === "cancelled") await releaseStock(order.items);
+  const now = new Date();
+  if (status === "shipped") {
+    order.shipment = {
+      carrier: shipment.carrier || undefined,
+      trackingNumber: shipment.trackingNumber || undefined,
+      shippedAt: now,
+    };
+  }
+  if (status === "delivered") order.set("shipment.deliveredAt", now);
+  if (status === "cancelled") {
+    order.cancelledAt = now;
+    await releaseStock(order.items);
+  }
   // Cash on delivery is collected when the parcel arrives
   if (status === "delivered" && order.paymentMethod === "cod" && order.paymentStatus === "unpaid") {
     order.paymentStatus = "paid";
-    order.paidAt = new Date();
+    order.paidAt = now;
   }
 
   order.status = status;

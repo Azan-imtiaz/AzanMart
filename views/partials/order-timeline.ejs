@@ -1,0 +1,30 @@
+<%
+  const fmt = (date) => new Date(date).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+  const steps = [{ label: "Order placed", at: order.createdAt }];
+  if (order.paymentMethod === "card") steps.push({ label: "Payment received", at: order.paidAt });
+  if (order.status === "cancelled") {
+    steps.push({ label: "Cancelled", at: order.cancelledAt, cancelled: true });
+  } else {
+    steps.push({ label: "Shipped", at: order.shipment?.shippedAt });
+    steps.push({ label: "Delivered", at: order.shipment?.deliveredAt });
+  }
+%>
+<ol class="mt-3 space-y-3">
+    <% steps.forEach((step) => { %>
+        <li class="flex gap-3">
+            <span class="mt-0.5 h-5 w-5 shrink-0 rounded-full flex items-center justify-center text-xs
+                <%= step.cancelled ? 'bg-gray-400 text-white' : step.at ? 'bg-green-600 text-white' : 'border-2 border-gray-300 dark:border-gray-600' %>">
+                <% if (step.at) { %><i class="<%= step.cancelled ? 'ri-close-line' : 'ri-check-line' %>"></i><% } %>
+            </span>
+            <div>
+                <p class="font-medium <%= step.at ? '' : 'muted' %>"><%= step.label %></p>
+                <% if (step.at) { %><p class="text-xs muted"><%= fmt(step.at) %></p><% } %>
+                <% if (step.label === "Shipped" && step.at && (order.shipment.carrier || order.shipment.trackingNumber)) { %>
+                    <p class="text-xs muted">
+                        <%= order.shipment.carrier || "" %><% if (order.shipment.trackingNumber) { %> &middot; tracking <span class="font-mono"><%= order.shipment.trackingNumber %></span><% } %>
+                    </p>
+                <% } %>
+            </div>
+        </li>
+    <% }) %>
+</ol>

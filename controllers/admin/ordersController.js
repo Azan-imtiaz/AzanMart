@@ -54,7 +54,8 @@ exports.showOrder = async (req, res) => {
 
 exports.updateStatus = async (req, res) => {
   const order = await findOrder(req.params.orderNumber);
-  const error = await updateOrderStatus(order, req.body.status);
+  const { status, carrier, trackingNumber } = req.body;
+  const error = await updateOrderStatus(order, status, { carrier, trackingNumber });
 
   if (error) req.flash("error", error);
   else req.flash("success", `Order ${order.orderNumber} is now ${order.status}`);

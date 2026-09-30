@@ -36,6 +36,10 @@
 
         <aside class="space-y-6">
             <section class="card p-5 text-sm">
+                <h2 class="font-semibold">Delivery</h2>
+                <%- include('./partials/order-timeline', { order }) %>
+            </section>
+            <section class="card p-5 text-sm">
                 <h2 class="font-semibold">Shipping to</h2>
                 <% const a = order.shippingAddress; %>
                 <address class="not-italic mt-2 muted leading-relaxed">

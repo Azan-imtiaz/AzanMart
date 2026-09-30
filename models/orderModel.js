@@ -43,6 +43,13 @@ const orderSchema = new mongoose.Schema(
     status: { type: String, enum: STATUSES, default: "pending" },
     stripeSessionId: String,
     paidAt: Date,
+    shipment: {
+      carrier: String,
+      trackingNumber: String,
+      shippedAt: Date,
+      deliveredAt: Date,
+    },
+    cancelledAt: Date,
   },
   { timestamps: true },
 );

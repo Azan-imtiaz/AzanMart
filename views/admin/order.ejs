@@ -42,6 +42,18 @@
                             <option value="<%= s %>" <%= s === order.status ? "selected" : "" %>><%= s[0].toUpperCase() + s.slice(1) %></option>
                         <% }) %>
                     </select>
+                    <fieldset class="space-y-2">
+                        <legend class="text-xs muted">Shipping details, used when marking the order as shipped</legend>
+                        <label for="carrier" class="sr-only">Courier</label>
+                        <input id="carrier" name="carrier" list="carriers" maxlength="60" placeholder="Courier, e.g. TCS" value="<%= order.shipment?.carrier || '' %>" class="input">
+                        <datalist id="carriers">
+                            <% ["TCS", "Leopards Courier", "M&P", "Trax", "Pakistan Post", "DHL", "FedEx"].forEach((name) => { %>
+                                <option value="<%= name %>"></option>
+                            <% }) %>
+                        </datalist>
+                        <label for="trackingNumber" class="sr-only">Tracking number</label>
+                        <input id="trackingNumber" name="trackingNumber" maxlength="100" placeholder="Tracking number" value="<%= order.shipment?.trackingNumber || '' %>" class="input">
+                    </fieldset>
                     <button type="submit" class="btn btn-primary w-full">Save</button>
                     <p class="text-xs muted">Shipped sends the customer an email. Cancelled puts the items back in stock<%= order.paymentStatus === "paid" && order.paymentMethod === "card" ? "; refund the card payment from the Stripe dashboard" : "" %>.</p>
                 </form>
@@ -57,6 +69,16 @@
                 <%= a.fullName %><br><%= a.line1 %><br><% if (a.line2) { %><%= a.line2 %><br><% } %><%= a.city %> <%= a.postalCode %><br><%= a.country %><br><%= a.phone %>
             </address>
         </section>
+
+        <% if (order.shipment?.shippedAt) { %>
+            <section class="card p-5 text-sm">
+                <h2 class="font-semibold">Shipment</h2>
+                <p class="mt-2 muted"><%= order.shipment.carrier || "Courier not recorded" %></p>
+                <% if (order.shipment.trackingNumber) { %><p class="muted">Tracking: <span class="font-mono"><%= order.shipment.trackingNumber %></span></p><% } %>
+                <p class="muted">Shipped <%= new Date(order.shipment.shippedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) %></p>
+                <% if (order.shipment.deliveredAt) { %><p class="muted">Delivered <%= new Date(order.shipment.deliveredAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) %></p><% } %>
+            </section>
+        <% } %>
 
         <section class="card p-5 text-sm">
             <h2 class="font-semibold">Payment</h2>

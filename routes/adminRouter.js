@@ -77,7 +77,11 @@ router.get("/orders/:orderNumber", orders.showOrder);
 router.post(
   "/orders/:orderNumber/status",
   validate(
-    [body("status").isIn(orderModel.STATUSES).withMessage("Pick a valid status")],
+    [
+      body("status").isIn(orderModel.STATUSES).withMessage("Pick a valid status"),
+      body("carrier").optional().trim().isLength({ max: 60 }),
+      body("trackingNumber").optional().trim().isLength({ max: 100 }),
+    ],
     (req) => `/admin/orders/${req.params.orderNumber}`,
   ),
   orders.updateStatus,
