@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const safeRedirect = require("../utils/safeRedirect");
+const { sendCode } = require("../services/verification");
 
 // A new session id on login prevents session fixation attacks
 function regenerateSession(req) {
@@ -44,9 +45,14 @@ exports.register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await userModel.create({ email, password: hashedPassword, fullName: fullname });
 
-  const destination = await logIn(req, user);
-  req.flash("success", `Welcome to AzanMart, ${user.fullName.split(" ")[0]}!`);
-  res.redirect(destination);
+  // Send them to confirm their email first, then on to where they were going
+  req.session.afterVerify = await logIn(req, user);
+  await sendCode(user);
+  req.flash(
+    "success",
+    `Welcome to AzanMart, ${user.fullName.split(" ")[0]}! Check your inbox for a code.`,
+  );
+  res.redirect("/verify-email");
 };
 
 exports.login = async (req, res) => {

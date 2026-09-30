@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+<main id="main" class="flex-1 flex items-center justify-center px-4 py-16">
+    <div class="card w-full max-w-md p-8">
+        <div class="h-12 w-12 rounded-full bg-blue-50 text-blue-900 flex items-center justify-center text-2xl dark:bg-blue-900/40 dark:text-blue-200">
+            <i class="ri-mail-check-line"></i>
+        </div>
+        <h1 class="text-2xl font-bold mt-4">Check your email</h1>
+        <p class="muted mt-1">We sent a 6-digit code to <strong class="text-gray-800 dark:text-gray-100"><%= email %></strong>. It expires in 10 minutes.</p>
+
+        <form action="/verify-email" method="post" class="mt-6 space-y-4">
+            <%- include('../partials/csrf') %>
+            <div>
+                <label for="code" class="label">Verification code</label>
+                <input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required
+                    class="input text-center text-2xl tracking-[0.5em] font-semibold" placeholder="000000">
+            </div>
+            <button type="submit" class="btn btn-primary w-full">Verify email</button>
+        </form>
+
+        <form action="/verify-email/resend" method="post" class="mt-4 text-center text-sm">
+            <%- include('../partials/csrf') %>
+            <span class="muted">Didn't get it? Check your spam folder or</span>
+            <button type="submit" class="font-medium text-blue-900 hover:underline dark:text-blue-300">send a new code</button>
+        </form>
+
+        <p class="mt-6 text-sm text-center muted">
+            Wrong address? <a href="/account" class="font-medium text-blue-900 hover:underline dark:text-blue-300">Change it in your account</a>
+        </p>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

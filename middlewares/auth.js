@@ -10,7 +10,7 @@ async function loadUser(req, res, next) {
 
   const user = await userModel
     .findById(req.session.userId)
-    .select("-password -passwordResetHash -passwordResetExpires")
+    .select("-password -passwordResetHash -passwordResetExpires -emailCodeHash")
     .lean();
   if (user) {
     req.user = user;

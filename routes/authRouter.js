@@ -4,6 +4,8 @@ const validate = require("../middlewares/validate");
 const { authLimiter } = require("../middlewares/rateLimit");
 const auth = require("../controllers/authController");
 const passwordReset = require("../controllers/passwordResetController");
+const verification = require("../controllers/verificationController");
+const { requireAuth } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -33,6 +35,23 @@ const newPasswordRules = [
     .custom((value, { req }) => value === req.body.password)
     .withMessage("The passwords don't match"),
 ];
+
+const codeRules = [
+  body("code")
+    .trim()
+    .matches(/^\d{6}$/)
+    .withMessage("Enter the 6-digit code from the email"),
+];
+
+router.get("/verify-email", requireAuth, verification.showForm);
+router.post(
+  "/verify-email",
+  requireAuth,
+  authLimiter,
+  validate(codeRules, "/verify-email"),
+  verification.verify,
+);
+router.post("/verify-email/resend", requireAuth, verification.resend);
 
 router.get("/forgot-password", passwordReset.showForgotForm);
 router.post(

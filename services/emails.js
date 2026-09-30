@@ -40,4 +40,18 @@ async function sendPasswordReset(user, resetUrl) {
   });
 }
 
-module.exports = { render, sendOrderConfirmation, sendOrderShipped, sendPasswordReset };
+async function sendVerificationCode(user, code) {
+  await sendMail({
+    to: user.email,
+    subject: `${code} is your AzanMart verification code`,
+    html: await render("verify-email", { user, code }),
+  });
+}
+
+module.exports = {
+  render,
+  sendOrderConfirmation,
+  sendOrderShipped,
+  sendPasswordReset,
+  sendVerificationCode,
+};

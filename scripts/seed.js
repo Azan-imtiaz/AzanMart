@@ -55,10 +55,12 @@ async function seedUsers() {
     ...DEMO_ADMIN,
     password: await hash(DEMO_ADMIN.password),
     role: "admin",
+    emailVerified: true,
   });
   const demo = await userModel.create({
     ...DEMO_CUSTOMER,
     password: await hash(DEMO_CUSTOMER.password),
+    emailVerified: true,
   });
 
   const sharedPassword = await hash(crypto.randomBytes(12).toString("hex"));
@@ -67,6 +69,7 @@ async function seedUsers() {
       fullName,
       email: `${fullName.toLowerCase().replace(/\s+/g, ".")}@example.com`,
       password: sharedPassword,
+      emailVerified: true,
     })),
   );
   return { admin, customers: [demo, ...others] };

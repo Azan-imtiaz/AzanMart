@@ -8,7 +8,7 @@ afterEach(clearDatabase);
 afterAll(stopDatabase);
 
 describe("registration", () => {
-  it("creates an account with a hashed password and logs the user in", async () => {
+  it("creates an account, logs the user in and asks them to verify their email", async () => {
     const agent = request.agent(app);
     const _csrf = await csrfToken(agent, "/register");
 
@@ -18,12 +18,13 @@ describe("registration", () => {
       .send({ _csrf, fullname: "Azan Imtiaz", email: "Azan@Example.com", password: "secret123" });
 
     expect(res.status).toBe(302);
-    expect(res.headers.location).toBe("/shop");
+    expect(res.headers.location).toBe("/verify-email");
 
     const user = await userModel.findOne({ email: "azan@example.com" });
     expect(user).not.toBeNull();
     expect(user.password).not.toBe("secret123");
     expect(user.role).toBe("customer");
+    expect(user.emailVerified).toBe(false);
 
     const account = await agent.get("/account");
     expect(account.status).toBe(200);

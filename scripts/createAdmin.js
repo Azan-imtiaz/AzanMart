@@ -25,6 +25,7 @@ async function main() {
     {
       password: hashedPassword,
       role: "admin",
+      emailVerified: true,
       $setOnInsert: { fullName: nameParts.join(" ") || "Admin" },
     },
     { upsert: true, new: true },

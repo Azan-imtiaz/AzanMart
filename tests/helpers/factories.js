@@ -11,6 +11,7 @@ async function createUser({ role = "customer", password = "password123", ...fiel
     email: `user${counter}@example.com`,
     password: await bcrypt.hash(password, 4),
     role,
+    emailVerified: true,
     ...fields,
   });
   return { user, password };

@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema(
       },
     ],
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "product" }],
+    emailVerified: { type: Boolean, default: false },
+    // One-time code for email verification; only a keyed hash is stored
+    emailCodeHash: String,
+    emailCodeExpires: Date,
+    emailCodeAttempts: { type: Number, default: 0 },
+    emailCodeSentAt: Date,
     // Only a hash of the emailed token is stored, so a leaked database can't reset passwords
     passwordResetHash: String,
     passwordResetExpires: Date,

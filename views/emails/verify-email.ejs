@@ -1,0 +1,12 @@
+<%- include('layout-top', { subject: "Verify your email" }) %>
+<h1 style="margin:0 0 8px;font-size:20px;">Verify your email address</h1>
+<p style="margin:0 0 20px;color:#4b5563;line-height:1.5;">
+  Hi <%= user.fullName.split(" ")[0] %>, enter this code on AzanMart to confirm this is your email address:
+</p>
+<p style="margin:0;text-align:center;">
+  <span style="display:inline-block;background:#eff6ff;color:#1e3a8a;font-size:32px;font-weight:bold;letter-spacing:8px;padding:14px 24px;border-radius:12px;"><%= code %></span>
+</p>
+<p style="margin:20px 0 0;color:#6b7280;font-size:13px;line-height:1.5;">
+  The code expires in 10 minutes. If you didn't create an AzanMart account, you can ignore this email.
+</p>
+<%- include('layout-bottom') %>
