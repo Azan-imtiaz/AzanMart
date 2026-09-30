@@ -28,6 +28,9 @@ const seo = require("./controllers/seoController");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
+// HTTPS-only settings follow the real URL, so a production build can still be
+// tried over plain http://localhost (for example with docker compose)
+const isHttps = APP_URL.startsWith("https://");
 const SESSION_TTL_DAYS = 7;
 
 app.disable("x-powered-by");
@@ -59,10 +62,10 @@ app.use(
         "img-src": ["'self'", "data:"],
         // Checkout posts to us, then redirects to Stripe's hosted payment page
         "form-action": ["'self'", "https://checkout.stripe.com"],
-        // Only force HTTPS in production, otherwise localhost breaks
-        "upgrade-insecure-requests": isProduction ? [] : null,
+        "upgrade-insecure-requests": isHttps ? [] : null,
       },
     },
+    strictTransportSecurity: isHttps,
   }),
 );
 
@@ -111,7 +114,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: "lax",
-      secure: isProduction,
+      secure: isHttps,
       maxAge: SESSION_TTL_DAYS * 24 * 60 * 60 * 1000,
     },
   }),
