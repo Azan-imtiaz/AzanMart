@@ -134,7 +134,7 @@ async function seedOrders(customers, products) {
   for (let day = 29; day >= 0; day--) {
     const perDay = Math.floor(Math.random() * 3);
     for (let i = 0; i < perDay; i++) {
-      const createdAt = daysAgo(day - Math.random() * 0.9);
+      const createdAt = daysAgo(day + Math.random() * 0.9);
       orders.push(randomOrder(pick(customers), products, createdAt));
     }
   }
