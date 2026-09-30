@@ -31,6 +31,28 @@ After running `npm run seed`, you can log in with:
 
 Card payments use Stripe test mode: card `4242 4242 4242 4242`, any future date, any CVC.
 
+### Stripe and Gmail are optional
+
+AzanMart runs without any Stripe or Gmail keys, but a few features are limited until you add them:
+
+| Feature                    | Without the keys                                                                                                                                    | With the keys                                                          |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Card payments (Stripe)** | Only **cash on delivery** is offered at checkout; the card option is hidden                                                                         | Shoppers can pay by card on Stripe's secure page, confirmed by webhook |
+| **Emails (Gmail)**         | Nothing is sent. Each email (verification codes, order updates, password resets) is saved as an HTML file and its path is printed in the server log | Real emails reach the shopper's inbox                                  |
+| **New account sign-up**    | The 6-digit verification code has to be read from the server log (the seeded demo accounts are already verified)                                    | The code arrives by email                                              |
+
+Everything else (browsing, search, cart, wishlist, reviews, cash-on-delivery orders, the admin
+dashboard) works the same either way.
+
+**To see every feature working, add your own keys** to `.env` (copy `.env.example` first):
+
+- **Stripe:** create a free account and copy your **test** secret key into `STRIPE_SECRET_KEY`
+  (and a webhook secret into `STRIPE_WEBHOOK_SECRET`). Test mode never charges real money.
+- **Gmail:** turn on 2-Step Verification, create an App Password and set `SMTP_USER` and `SMTP_PASS`.
+
+Step-by-step instructions for both are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#4-turn-on-card-payments-optional).
+Use your own accounts: keys are never included in this repository.
+
 ## Screenshots
 
 | Shop with filters                   | Product page with reviews                 |
