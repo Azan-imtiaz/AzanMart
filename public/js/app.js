@@ -45,3 +45,7 @@ document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
     document.dispatchEvent(new CustomEvent("themechange"));
   });
 });
+
+// Shop filters are collapsible on phones but always open on wide screens
+const filters = document.querySelector("details[data-filters]");
+if (filters && window.matchMedia("(min-width: 1024px)").matches) filters.open = true;
