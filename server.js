@@ -10,6 +10,7 @@ if (missingEnv.length > 0) {
 
 const app = require("./app");
 const connectDB = require("./config/db");
+const { checkMailer } = require("./utils/mailer");
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,4 +18,5 @@ connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`AzanMart is running on http://localhost:${PORT}`);
   });
+  checkMailer();
 });
