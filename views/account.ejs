@@ -1,0 +1,66 @@
+<%- include('./partials/header') %>
+
+<main class="flex-1 max-w-3xl w-full mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold">Your account</h1>
+    <p class="muted mt-1">Member since <%= currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : "the early days" %></p>
+
+    <div class="mt-8 grid sm:grid-cols-3 gap-4">
+        <a href="/orders" class="card p-5 hover:border-blue-900 dark:hover:border-blue-400">
+            <i class="ri-file-list-3-line text-2xl text-blue-900 dark:text-blue-300"></i>
+            <p class="font-semibold mt-2">Orders</p>
+            <p class="text-sm muted">Track and review your orders</p>
+        </a>
+        <a href="/wishlist" class="card p-5 hover:border-blue-900 dark:hover:border-blue-400">
+            <i class="ri-heart-line text-2xl text-blue-900 dark:text-blue-300"></i>
+            <p class="font-semibold mt-2">Wishlist</p>
+            <p class="text-sm muted">Products you saved for later</p>
+        </a>
+        <a href="/cart" class="card p-5 hover:border-blue-900 dark:hover:border-blue-400">
+            <i class="ri-shopping-bag-3-line text-2xl text-blue-900 dark:text-blue-300"></i>
+            <p class="font-semibold mt-2">Cart</p>
+            <p class="text-sm muted"><%= cartCount %> <%= cartCount === 1 ? "item" : "items" %> waiting</p>
+        </a>
+    </div>
+
+    <section class="card p-6 mt-8">
+        <h2 class="text-lg font-semibold">Profile</h2>
+        <form action="/account/profile" method="post" class="mt-4 grid sm:grid-cols-2 gap-4">
+            <%- include('./partials/csrf') %>
+            <div>
+                <label for="fullname" class="label">Full name</label>
+                <input id="fullname" name="fullname" autocomplete="name" required maxlength="60" value="<%= currentUser.fullName %>" class="input">
+            </div>
+            <div>
+                <label for="email" class="label">Email</label>
+                <input id="email" name="email" type="email" autocomplete="email" required value="<%= currentUser.email %>" class="input">
+            </div>
+            <div class="sm:col-span-2">
+                <button type="submit" class="btn btn-primary">Save details</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card p-6 mt-6">
+        <h2 class="text-lg font-semibold">Change password</h2>
+        <form action="/account/password" method="post" class="mt-4 grid sm:grid-cols-2 gap-4">
+            <%- include('./partials/csrf') %>
+            <div class="sm:col-span-2 sm:max-w-sm">
+                <label for="currentPassword" class="label">Current password</label>
+                <input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required class="input">
+            </div>
+            <div>
+                <label for="newPassword" class="label">New password</label>
+                <input id="newPassword" name="newPassword" type="password" autocomplete="new-password" minlength="6" required class="input">
+            </div>
+            <div>
+                <label for="confirmPassword" class="label">Confirm new password</label>
+                <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="6" required class="input">
+            </div>
+            <div class="sm:col-span-2">
+                <button type="submit" class="btn btn-primary">Update password</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<%- include('./partials/footer') %>

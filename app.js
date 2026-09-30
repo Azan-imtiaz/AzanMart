@@ -12,6 +12,7 @@ const cartRouter = require("./routes/cartRouter");
 const wishlistRouter = require("./routes/wishlistRouter");
 const checkoutRouter = require("./routes/checkoutRouter");
 const ordersRouter = require("./routes/ordersRouter");
+const accountRouter = require("./routes/accountRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
@@ -120,6 +121,7 @@ app.use("/cart", cartRouter);
 app.use("/wishlist", wishlistRouter);
 app.use("/checkout", checkoutRouter);
 app.use("/orders", ordersRouter);
+app.use("/account", accountRouter);
 app.use("/admin", adminRouter);
 app.use("/", index);
 
