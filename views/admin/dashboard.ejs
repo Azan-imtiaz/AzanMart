@@ -26,7 +26,7 @@
             <ul class="mt-4 divide-y divide-gray-200 dark:divide-gray-800 text-sm">
                 <% recentOrders.forEach((order) => { %>
                     <li class="py-2.5 flex items-center justify-between gap-3">
-                        <a href="/admin/orders/<%= order.orderNumber %>" class="font-medium hover:underline"><%= order.orderNumber %></a>
+                        <a href="/admin/orders/<%= order.orderNumber %>" class="font-medium text-blue-900 hover:underline dark:text-blue-300"><%= order.orderNumber %></a>
                         <span class="muted truncate flex-1"><%= order.shippingAddress.fullName %></span>
                         <%- include('../partials/order-status', { status: order.status }) %>
                         <span class="w-20 text-right"><%= formatPrice(order.total) %></span>

@@ -21,4 +21,15 @@ async function sendOrderConfirmation(order) {
   });
 }
 
-module.exports = { render, sendOrderConfirmation };
+async function sendOrderShipped(order) {
+  const user = await userModel.findById(order.user).select("email fullName").lean();
+  if (!user) return;
+
+  await sendMail({
+    to: user.email,
+    subject: `Your AzanMart order ${order.orderNumber} is on its way`,
+    html: await render("order-shipped", { order, user }),
+  });
+}
+
+module.exports = { render, sendOrderConfirmation, sendOrderShipped };

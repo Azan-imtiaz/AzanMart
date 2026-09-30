@@ -6,6 +6,8 @@ const { requireAdmin } = require("../middlewares/auth");
 const productModel = require("../models/productModel");
 const dashboard = require("../controllers/admin/dashboardController");
 const products = require("../controllers/admin/productsController");
+const orders = require("../controllers/admin/ordersController");
+const orderModel = require("../models/orderModel");
 
 const router = express.Router();
 
@@ -68,5 +70,16 @@ router.post(
   products.updateProduct,
 );
 router.post("/products/:id/delete", products.deleteProduct);
+
+router.get("/orders", orders.listOrders);
+router.get("/orders/:orderNumber", orders.showOrder);
+router.post(
+  "/orders/:orderNumber/status",
+  validate(
+    [body("status").isIn(orderModel.STATUSES).withMessage("Pick a valid status")],
+    (req) => `/admin/orders/${req.params.orderNumber}`,
+  ),
+  orders.updateStatus,
+);
 
 module.exports = router;

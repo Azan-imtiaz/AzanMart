@@ -1,0 +1,58 @@
+<%- include('./partials/shell-top') %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="text-2xl font-bold">Orders</h1>
+    <form action="/admin/orders" method="get" class="flex items-center gap-2" role="search">
+        <label for="order-q" class="sr-only">Order number</label>
+        <input id="order-q" name="q" value="<%= q %>" placeholder="Order number" class="input py-1.5 w-44">
+        <label for="order-status" class="sr-only">Status</label>
+        <select id="order-status" name="status" class="input py-1.5 w-40">
+            <option value="">All statuses</option>
+            <% statuses.forEach((s) => { %>
+                <option value="<%= s %>" <%= s === status ? "selected" : "" %>><%= s[0].toUpperCase() + s.slice(1) %></option>
+            <% }) %>
+        </select>
+        <button type="submit" class="btn btn-outline py-1.5">Filter</button>
+    </form>
+</div>
+
+<div class="card mt-6 overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="text-left muted border-b border-gray-200 dark:border-gray-800">
+            <tr>
+                <th class="px-4 py-3 font-medium">Order</th>
+                <th class="px-4 py-3 font-medium">Customer</th>
+                <th class="px-4 py-3 font-medium">Date</th>
+                <th class="px-4 py-3 font-medium">Payment</th>
+                <th class="px-4 py-3 font-medium">Status</th>
+                <th class="px-4 py-3 font-medium text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+            <% orders.forEach((order) => { %>
+                <tr>
+                    <td class="px-4 py-3"><a href="/admin/orders/<%= order.orderNumber %>" class="font-medium text-blue-900 hover:underline dark:text-blue-300"><%= order.orderNumber %></a></td>
+                    <td class="px-4 py-3"><%= order.shippingAddress.fullName %></td>
+                    <td class="px-4 py-3 muted"><%= new Date(order.createdAt).toLocaleDateString("en-US", { dateStyle: "medium" }) %></td>
+                    <td class="px-4 py-3 muted"><%= order.paymentMethod === "cod" ? "COD" : "Card" %> &middot; <%= order.paymentStatus %></td>
+                    <td class="px-4 py-3"><%- include('../partials/order-status', { status: order.status }) %></td>
+                    <td class="px-4 py-3 text-right font-medium"><%= formatPrice(order.total) %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <% if (!orders.length) { %>
+        <p class="p-8 text-center muted">No orders found.</p>
+    <% } %>
+</div>
+
+<% if (totalPages > 1) { %>
+    <nav class="mt-6 flex items-center justify-between text-sm" aria-label="Pagination">
+        <% const qs = `${status ? `&status=${status}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}`; %>
+        <% if (page > 1) { %><a href="/admin/orders?page=<%= page - 1 %><%= qs %>" class="btn btn-outline py-1.5">Previous</a><% } else { %><span></span><% } %>
+        <span class="muted">Page <%= page %> of <%= totalPages %></span>
+        <% if (page < totalPages) { %><a href="/admin/orders?page=<%= page + 1 %><%= qs %>" class="btn btn-outline py-1.5">Next</a><% } else { %><span></span><% } %>
+    </nav>
+<% } %>
+
+<%- include('./partials/shell-bottom') %>

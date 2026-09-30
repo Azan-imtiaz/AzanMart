@@ -1,0 +1,12 @@
+<%- include('layout-top', { subject: `Order ${order.orderNumber} shipped` }) %>
+<h1 style="margin:0 0 8px;font-size:20px;">Good news, <%= user.fullName.split(" ")[0] %>!</h1>
+<p style="margin:0 0 20px;color:#4b5563;line-height:1.5;">
+  Your order <strong><%= order.orderNumber %></strong> has shipped and is on its way to <%= order.shippingAddress.city %>.
+  <% if (order.paymentMethod === "cod" && order.paymentStatus === "unpaid") { %>
+    Please have <strong><%= formatPrice(order.total) %></strong> ready for the courier.
+  <% } %>
+</p>
+<p style="margin:24px 0 0;">
+  <a href="<%= appUrl %>/orders/<%= order.orderNumber %>" style="display:inline-block;background:#1e3a8a;color:#ffffff;text-decoration:none;padding:10px 20px;border-radius:999px;font-weight:bold;">Track your order</a>
+</p>
+<%- include('layout-bottom') %>

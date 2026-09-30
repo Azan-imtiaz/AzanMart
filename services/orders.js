@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const orderModel = require("../models/orderModel");
 const productModel = require("../models/productModel");
 const userModel = require("../models/userModel");
-const { sendOrderConfirmation } = require("./emails");
+const { sendOrderConfirmation, sendOrderShipped } = require("./emails");
 
 // Takes stock for every item, one atomic update each. The update only matches
 // when enough stock is left, so two shoppers can't both buy the last unit.
@@ -93,4 +93,35 @@ async function cancelOrder(orderId) {
   return order;
 }
 
-module.exports = { placeOrder, releaseStock, clearCart, markOrderPaid, cancelOrder };
+const FINAL_STATUSES = ["delivered", "cancelled"];
+
+// Admin status changes. Returns an error message, or null on success.
+async function updateOrderStatus(order, status) {
+  if (order.status === status) return null;
+  if (FINAL_STATUSES.includes(order.status)) {
+    return `This order is already ${order.status} and can't be changed.`;
+  }
+
+  if (status === "cancelled") await releaseStock(order.items);
+  // Cash on delivery is collected when the parcel arrives
+  if (status === "delivered" && order.paymentMethod === "cod" && order.paymentStatus === "unpaid") {
+    order.paymentStatus = "paid";
+    order.paidAt = new Date();
+  }
+
+  order.status = status;
+  await order.save();
+
+  if (status === "shipped") await sendOrderShipped(order);
+  return null;
+}
+
+module.exports = {
+  placeOrder,
+  releaseStock,
+  clearCart,
+  markOrderPaid,
+  cancelOrder,
+  updateOrderStatus,
+  FINAL_STATUSES,
+};
