@@ -14,7 +14,7 @@
     <meta name="author" content="Azan Imtiaz">
     <meta name="theme-color" content="#1e3a8a">
     <link rel="canonical" href="<%= pageUrl %>">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="<%= asset("/favicon.svg") %>">
 
     <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
     <meta property="og:site_name" content="AzanMart">
@@ -27,9 +27,9 @@
         <script type="application/ld+json"><%- safeJson(structuredData) %></script>
     <% } %>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-    <script src="/js/theme.js"></script>
-    <link rel="stylesheet" href="/css/app.css">
-    <script src="/js/app.js" defer></script>
+    <script src="<%= asset("/js/theme.js") %>"></script>
+    <link rel="stylesheet" href="<%= asset("/css/app.css") %>">
+    <script src="<%= asset("/js/app.js") %>" defer></script>
 </head>
 
 <body class="font-sans antialiased text-gray-800 bg-gray-50 min-h-screen flex flex-col dark:bg-gray-950 dark:text-gray-100">
@@ -37,8 +37,8 @@
     <header class="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-950/90">
         <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4" aria-label="Main">
             <a href="/" class="shrink-0" aria-label="AzanMart home">
-                <img src="/images/logo.svg" alt="AzanMart" width="147" height="36" class="h-7 sm:h-9 w-auto dark:hidden">
-                <img src="/images/logo-dark.svg" alt="AzanMart" width="147" height="36" class="h-7 sm:h-9 w-auto hidden dark:block">
+                <img src="<%= asset("/images/logo.svg") %>" alt="AzanMart" width="147" height="36" class="h-7 sm:h-9 w-auto dark:hidden">
+                <img src="<%= asset("/images/logo-dark.svg") %>" alt="AzanMart" width="147" height="36" class="h-7 sm:h-9 w-auto hidden dark:block">
             </a>
 
             <form action="/shop" method="get" role="search" class="hidden md:block flex-1 max-w-sm">

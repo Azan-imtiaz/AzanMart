@@ -106,7 +106,7 @@
 </div>
 
 <script type="application/json" id="dashboard-data"><%- safeJson(charts) %></script>
-<script src="/vendor/chart.js/chart.umd.min.js" defer></script>
-<script src="/js/dashboard.js" defer></script>
+<script src="<%= asset("/vendor/chart.js/chart.umd.min.js") %>" defer></script>
+<script src="<%= asset("/js/dashboard.js") %>" defer></script>
 
 <%- include('./partials/shell-bottom') %>

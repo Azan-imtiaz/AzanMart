@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const compression = require("compression");
 const path = require("path");
 const session = require("express-session");
 const { MongoStore } = require("connect-mongo");
@@ -19,7 +20,7 @@ const flash = require("./middlewares/flash");
 const { loadUser } = require("./middlewares/auth");
 const csrf = require("./middlewares/csrf");
 const { formatPrice } = require("./utils/money");
-const { APP_URL } = require("./config/site");
+const { APP_URL, ASSET_VERSION } = require("./config/site");
 const { sendProductImage } = require("./controllers/imageController");
 const { handleStripeEvent } = require("./controllers/webhookController");
 const seo = require("./controllers/seoController");
@@ -38,6 +39,8 @@ app.get("/health", (req, res) => {
   const dbUp = mongoose.connection.readyState === 1;
   res.status(dbUp ? 200 : 503).json({ status: dbUp ? "ok" : "degraded", db: dbUp ? "up" : "down" });
 });
+
+app.use(compression());
 
 if (process.env.NODE_ENV !== "test") {
   app.use(morgan(isProduction ? "combined" : "dev"));
@@ -71,10 +74,12 @@ app.use((req, res, next) => {
 });
 
 // Static files are served before sessions so they never touch the session store
-app.use(express.static(path.join(__dirname, "public")));
+// Asset URLs carry ?v=<version>, so a long cache is safe in production
+const staticMaxAge = isProduction ? "30d" : 0;
+app.use(express.static(path.join(__dirname, "public"), { maxAge: staticMaxAge }));
 app.use(
   "/vendor/chart.js",
-  express.static(path.join(__dirname, "node_modules/chart.js/dist"), { maxAge: "30d" }),
+  express.static(path.join(__dirname, "node_modules/chart.js/dist"), { maxAge: staticMaxAge }),
 );
 app.get("/product-images/:productId/:imageId", sendProductImage);
 app.get("/robots.txt", seo.robots);
@@ -113,6 +118,7 @@ app.use(csrf);
 
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
+app.locals.asset = (url) => `${url}?v=${ASSET_VERSION}`;
 // For data embedded in <script type="application/json">: escaping "<" means a
 // value like "</script>" can't end the tag early
 app.locals.safeJson = (data) => JSON.stringify(data).replace(/</g, "\\u003c");
