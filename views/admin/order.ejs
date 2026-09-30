@@ -55,7 +55,7 @@
                         <input id="trackingNumber" name="trackingNumber" maxlength="100" placeholder="Tracking number" value="<%= order.shipment?.trackingNumber || '' %>" class="input">
                     </fieldset>
                     <button type="submit" class="btn btn-primary w-full">Save</button>
-                    <p class="text-xs muted">Shipped sends the customer an email. Cancelled puts the items back in stock<%= order.paymentStatus === "paid" && order.paymentMethod === "card" ? "; refund the card payment from the Stripe dashboard" : "" %>.</p>
+                    <p class="text-xs muted">The customer is emailed when an order is shipped, delivered or cancelled. Cancelled puts the items back in stock<%= order.paymentStatus === "paid" && order.paymentMethod === "card" ? "; refund the card payment from the Stripe dashboard" : "" %>.</p>
                 </form>
             <% } %>
         </section>

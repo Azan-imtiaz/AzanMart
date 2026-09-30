@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const orderModel = require("../models/orderModel");
 const productModel = require("../models/productModel");
 const userModel = require("../models/userModel");
-const { sendOrderConfirmation, sendOrderShipped } = require("./emails");
+const { sendOrderConfirmation, sendOrderUpdate } = require("./emails");
 
 // Takes stock for every item, one atomic update each. The update only matches
 // when enough stock is left, so two shoppers can't both buy the last unit.
@@ -125,7 +125,7 @@ async function updateOrderStatus(order, status, shipment = {}) {
   order.status = status;
   await order.save();
 
-  if (status === "shipped") await sendOrderShipped(order);
+  await sendOrderUpdate(order);
   return null;
 }
 

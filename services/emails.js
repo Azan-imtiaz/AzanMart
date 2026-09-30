@@ -21,14 +21,24 @@ async function sendOrderConfirmation(order) {
   });
 }
 
-async function sendOrderShipped(order) {
+const STATUS_EMAILS = {
+  shipped: (order) => `Your AzanMart order ${order.orderNumber} is on its way`,
+  delivered: (order) => `Your AzanMart order ${order.orderNumber} was delivered`,
+  cancelled: (order) => `Your AzanMart order ${order.orderNumber} was cancelled`,
+};
+
+// Emails the customer when an admin ships, delivers or cancels their order
+async function sendOrderUpdate(order) {
+  const subject = STATUS_EMAILS[order.status];
+  if (!subject) return;
+
   const user = await userModel.findById(order.user).select("email fullName").lean();
   if (!user) return;
 
   await sendMail({
     to: user.email,
-    subject: `Your AzanMart order ${order.orderNumber} is on its way`,
-    html: await render("order-shipped", { order, user }),
+    subject: subject(order),
+    html: await render(`order-${order.status}`, { order, user }),
   });
 }
 
@@ -51,7 +61,7 @@ async function sendVerificationCode(user, code) {
 module.exports = {
   render,
   sendOrderConfirmation,
-  sendOrderShipped,
+  sendOrderUpdate,
   sendPasswordReset,
   sendVerificationCode,
 };

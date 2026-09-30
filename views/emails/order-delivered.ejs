@@ -1,0 +1,19 @@
+<%- include('layout-top', { subject: `Order ${order.orderNumber} delivered` }) %>
+<h1 style="margin:0 0 8px;font-size:20px;">Your order has been delivered</h1>
+<p style="margin:0 0 16px;color:#4b5563;line-height:1.5;">
+  Hi <%= user.fullName.split(" ")[0] %>, order <strong><%= order.orderNumber %></strong> was delivered on
+  <%= new Date(order.shipment.deliveredAt).toLocaleDateString("en-US", { dateStyle: "long" }) %>.
+  <% if (order.paymentMethod === "cod") { %>
+    We received your cash payment of <strong><%= formatPrice(order.total) %></strong>. Keep this email as your receipt.
+  <% } %>
+</p>
+
+<p style="margin:0 0 8px;color:#4b5563;font-size:14px;">Enjoying your new things? A quick review helps other shoppers:</p>
+<ul style="margin:0 0 20px;padding-left:18px;font-size:14px;line-height:1.8;">
+  <% order.items.filter((item) => item.slug).forEach((item) => { %>
+    <li><a href="<%= appUrl %>/products/<%= item.slug %>#reviews" style="color:#1e3a8a;">Review <%= item.name %></a></li>
+  <% }) %>
+</ul>
+
+<%- include('order-summary', { order }) %>
+<%- include('layout-bottom') %>

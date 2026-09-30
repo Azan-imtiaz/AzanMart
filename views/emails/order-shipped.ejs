@@ -1,12 +1,24 @@
 <%- include('layout-top', { subject: `Order ${order.orderNumber} shipped` }) %>
-<h1 style="margin:0 0 8px;font-size:20px;">Good news, <%= user.fullName.split(" ")[0] %>!</h1>
-<p style="margin:0 0 20px;color:#4b5563;line-height:1.5;">
-  Your order <strong><%= order.orderNumber %></strong> has shipped and is on its way to <%= order.shippingAddress.city %>.
-  <% if (order.paymentMethod === "cod" && order.paymentStatus === "unpaid") { %>
-    Please have <strong><%= formatPrice(order.total) %></strong> ready for the courier.
-  <% } %>
+<h1 style="margin:0 0 8px;font-size:20px;">Your order is on its way, <%= user.fullName.split(" ")[0] %>!</h1>
+<p style="margin:0 0 16px;color:#4b5563;line-height:1.5;">
+  Order <strong><%= order.orderNumber %></strong> left our warehouse on
+  <%= new Date(order.shipment.shippedAt).toLocaleDateString("en-US", { dateStyle: "long" }) %>.
 </p>
-<p style="margin:24px 0 0;">
-  <a href="<%= appUrl %>/orders/<%= order.orderNumber %>" style="display:inline-block;background:#1e3a8a;color:#ffffff;text-decoration:none;padding:10px 20px;border-radius:999px;font-weight:bold;">Track your order</a>
-</p>
+
+<% if (order.shipment.carrier || order.shipment.trackingNumber) { %>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eff6ff;border-radius:10px;font-size:14px;margin:0 0 20px;">
+    <tr><td style="padding:14px 16px;line-height:1.7;">
+      <% if (order.shipment.carrier) { %>Courier: <strong><%= order.shipment.carrier %></strong><br><% } %>
+      <% if (order.shipment.trackingNumber) { %>Tracking number: <strong style="font-family:monospace;font-size:15px;"><%= order.shipment.trackingNumber %></strong><% } %>
+    </td></tr>
+  </table>
+<% } %>
+
+<% if (order.paymentMethod === "cod" && order.paymentStatus === "unpaid") { %>
+  <p style="margin:0 0 20px;color:#92400e;background:#fffbeb;border-radius:10px;padding:12px 16px;font-size:14px;">
+    Cash on delivery: please have <strong><%= formatPrice(order.total) %></strong> ready for the courier.
+  </p>
+<% } %>
+
+<%- include('order-summary', { order, buttonLabel: "Track your order" }) %>
 <%- include('layout-bottom') %>
