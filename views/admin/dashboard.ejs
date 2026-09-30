@@ -16,7 +16,57 @@
     <% }) %>
 </div>
 
-<div class="mt-8 grid lg:grid-cols-2 gap-6">
+<section class="card p-5 mt-8">
+    <h2 class="font-semibold">Revenue, last 30 days</h2>
+    <p class="text-sm muted">Paid orders, by the day they were paid</p>
+    <div class="mt-4 h-64 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" data-chart-frame>
+        <canvas id="revenue-chart" role="img" aria-label="Line chart of daily revenue over the last 30 days"></canvas>
+    </div>
+    <details class="mt-3 text-sm">
+        <summary class="cursor-pointer muted">Show as table</summary>
+        <table class="mt-2 w-full max-w-sm">
+            <% charts.revenue.filter((row) => row.amount > 0).forEach((row) => { %>
+                <tr><td class="py-0.5 muted"><%= row.day %></td><td class="py-0.5 text-right">$<%= row.amount.toFixed(2) %></td></tr>
+            <% }) %>
+        </table>
+    </details>
+</section>
+
+<div class="mt-6 grid lg:grid-cols-2 gap-6">
+    <section class="card p-5">
+        <h2 class="font-semibold">Best sellers</h2>
+        <p class="text-sm muted">Units sold, excluding cancelled orders</p>
+        <div class="mt-4 h-56 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" data-chart-frame>
+            <canvas id="products-chart" role="img" aria-label="Bar chart of the five best-selling products by units sold"></canvas>
+        </div>
+        <details class="mt-3 text-sm">
+            <summary class="cursor-pointer muted">Show as table</summary>
+            <table class="mt-2 w-full">
+                <% charts.topProducts.forEach((row) => { %>
+                    <tr><td class="py-0.5"><%= row.name %></td><td class="py-0.5 text-right"><%= row.units %></td></tr>
+                <% }) %>
+            </table>
+        </details>
+    </section>
+
+    <section class="card p-5">
+        <h2 class="font-semibold">Orders by status</h2>
+        <p class="text-sm muted">All orders</p>
+        <div class="mt-4 h-56 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse" data-chart-frame>
+            <canvas id="status-chart" role="img" aria-label="Bar chart of order counts per status"></canvas>
+        </div>
+        <details class="mt-3 text-sm">
+            <summary class="cursor-pointer muted">Show as table</summary>
+            <table class="mt-2 w-full">
+                <% charts.statuses.forEach((row) => { %>
+                    <tr><td class="py-0.5 capitalize"><%= row.status %></td><td class="py-0.5 text-right"><%= row.count %></td></tr>
+                <% }) %>
+            </table>
+        </details>
+    </section>
+</div>
+
+<div class="mt-6 grid lg:grid-cols-2 gap-6">
     <section class="card p-5">
         <div class="flex items-center justify-between">
             <h2 class="font-semibold">Recent orders</h2>
@@ -54,5 +104,9 @@
         <% } %>
     </section>
 </div>
+
+<script type="application/json" id="dashboard-data"><%- safeJson(charts) %></script>
+<script src="/vendor/chart.js/chart.umd.min.js" defer></script>
+<script src="/js/dashboard.js" defer></script>
 
 <%- include('./partials/shell-bottom') %>

@@ -70,6 +70,10 @@ app.use((req, res, next) => {
 
 // Static files are served before sessions so they never touch the session store
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  "/vendor/chart.js",
+  express.static(path.join(__dirname, "node_modules/chart.js/dist"), { maxAge: "30d" }),
+);
 app.get("/product-images/:productId/:imageId", sendProductImage);
 
 // Needs the raw body to check Stripe's signature, and has no session or CSRF token
@@ -105,6 +109,9 @@ app.use(csrf);
 
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
+// For data embedded in <script type="application/json">: escaping "<" means a
+// value like "</script>" can't end the tag early
+app.locals.safeJson = (data) => JSON.stringify(data).replace(/</g, "\\u003c");
 app.locals.imageUrl = (product, index = 0) =>
   `/product-images/${product._id}/${product.images[index]._id}`;
 
