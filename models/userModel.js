@@ -14,6 +14,9 @@ const userSchema = new mongoose.Schema(
       },
     ],
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "product" }],
+    // Only a hash of the emailed token is stored, so a leaked database can't reset passwords
+    passwordResetHash: String,
+    passwordResetExpires: Date,
   },
   { timestamps: true },
 );

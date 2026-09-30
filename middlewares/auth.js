@@ -8,7 +8,10 @@ async function loadUser(req, res, next) {
   res.locals.wishlistIds = new Set();
   if (!req.session.userId) return next();
 
-  const user = await userModel.findById(req.session.userId).select("-password").lean();
+  const user = await userModel
+    .findById(req.session.userId)
+    .select("-password -passwordResetHash -passwordResetExpires")
+    .lean();
   if (user) {
     req.user = user;
     res.locals.currentUser = user;

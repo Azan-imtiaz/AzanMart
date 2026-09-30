@@ -32,4 +32,12 @@ async function sendOrderShipped(order) {
   });
 }
 
-module.exports = { render, sendOrderConfirmation, sendOrderShipped };
+async function sendPasswordReset(user, resetUrl) {
+  await sendMail({
+    to: user.email,
+    subject: "Reset your AzanMart password",
+    html: await render("password-reset", { user, resetUrl }),
+  });
+}
+
+module.exports = { render, sendOrderConfirmation, sendOrderShipped, sendPasswordReset };
