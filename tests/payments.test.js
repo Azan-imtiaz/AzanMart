@@ -25,6 +25,7 @@ beforeAll(startDatabase);
 afterEach(async () => {
   await clearDatabase();
   jest.clearAllMocks();
+  jest.restoreAllMocks();
 });
 afterAll(stopDatabase);
 
@@ -118,6 +119,7 @@ describe("card checkout", () => {
 
   it("cancels the order and returns the stock if Stripe is unreachable", async () => {
     stripe.checkout.sessions.create.mockRejectedValueOnce(new Error("Stripe is down"));
+    jest.spyOn(console, "error").mockImplementation(() => {}); // the failure is logged on purpose
 
     const { res, order, product } = await startCardCheckout({ stock: 5, quantity: 2 });
 
