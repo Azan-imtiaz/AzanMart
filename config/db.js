@@ -8,6 +8,9 @@ mongoose.set("sanitizeFilter", true);
 async function connectDB(url = process.env.MONGODB_URL) {
   try {
     await mongoose.connect(url);
+    // Indexes are built in the background; waiting for them means a fresh
+    // database can't receive a search before its text index exists
+    await Promise.all(Object.values(mongoose.models).map((model) => model.init()));
     dbgr("Connected to MongoDB");
   } catch (err) {
     console.error(`Could not connect to MongoDB: ${err.message}`);
