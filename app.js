@@ -51,10 +51,10 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         "script-src": ["'self'"],
-        "style-src": ["'self'", "https://cdn.jsdelivr.net"],
+        "style-src": ["'self'"],
         // Product colours come from the database as inline style attributes
         "style-src-attr": ["'unsafe-inline'"],
-        "font-src": ["'self'", "https://cdn.jsdelivr.net"],
+        "font-src": ["'self'"],
         "img-src": ["'self'", "data:"],
         // Checkout posts to us, then redirects to Stripe's hosted payment page
         "form-action": ["'self'", "https://checkout.stripe.com"],
@@ -77,6 +77,10 @@ app.use((req, res, next) => {
 // Asset URLs carry ?v=<version>, so a long cache is safe in production
 const staticMaxAge = isProduction ? "30d" : 0;
 app.use(express.static(path.join(__dirname, "public"), { maxAge: staticMaxAge }));
+app.use(
+  "/vendor/remixicon",
+  express.static(path.join(__dirname, "node_modules/remixicon/fonts"), { maxAge: staticMaxAge }),
+);
 app.use(
   "/vendor/chart.js",
   express.static(path.join(__dirname, "node_modules/chart.js/dist"), { maxAge: staticMaxAge }),

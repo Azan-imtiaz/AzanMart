@@ -26,7 +26,7 @@
     <% if (typeof structuredData !== "undefined") { %>
         <script type="application/ld+json"><%- safeJson(structuredData) %></script>
     <% } %>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="<%= asset("/vendor/remixicon/remixicon.css") %>">
     <script src="<%= asset("/js/theme.js") %>"></script>
     <link rel="stylesheet" href="<%= asset("/css/app.css") %>">
     <script src="<%= asset("/js/app.js") %>" defer></script>
