@@ -1,0 +1,31 @@
+# Runs AzanMart with its own MongoDB: docker compose up --build
+# Then load demo data with: docker compose exec app npm run seed -- --force
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URL: mongodb://mongo:27017/azanmart
+      SESSION_SECRET: ${SESSION_SECRET:-change-me-to-a-long-random-string}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
