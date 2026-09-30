@@ -1,7 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 const validate = require("../middlewares/validate");
-const { requireAuth } = require("../middlewares/auth");
+const { requireAuth, requireVerifiedEmail } = require("../middlewares/auth");
 const checkout = require("../controllers/checkoutController");
 
 const router = express.Router();
@@ -20,7 +20,7 @@ const addressRules = [
   body("paymentMethod").isIn(["cod", "card"]).withMessage("Choose a payment method"),
 ];
 
-router.use(requireAuth);
+router.use(requireAuth, requireVerifiedEmail);
 
 router.get("/", checkout.showCheckout);
 router.post("/", validate(addressRules, "/checkout"), checkout.placeOrder);

@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
+const { sendCode } = require("../services/verification");
 
 exports.showAccount = (req, res) => {
   res.render("account", { title: "Your account" });
@@ -18,9 +19,25 @@ exports.updateProfile = async (req, res) => {
     return res.redirect("/account");
   }
 
-  await userModel.updateOne({ _id: req.user._id }, { fullName: fullname, email });
-  req.flash("success", "Your details were saved");
-  res.redirect("/account");
+  const user = await userModel.findById(req.user._id);
+  const emailChanged = user.email !== email;
+  user.fullName = fullname;
+
+  if (!emailChanged) {
+    await user.save();
+    req.flash("success", "Your details were saved");
+    return res.redirect("/account");
+  }
+
+  // A new address has to be confirmed before it's trusted for orders
+  user.email = email;
+  user.emailVerified = false;
+  user.emailCodeSentAt = undefined;
+  await sendCode(user);
+
+  req.session.afterVerify = "/account";
+  req.flash("success", `Your details were saved. We sent a code to ${email} to confirm it.`);
+  res.redirect("/verify-email");
 };
 
 exports.changePassword = async (req, res) => {

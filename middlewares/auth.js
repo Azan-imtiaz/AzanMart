@@ -41,4 +41,14 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-module.exports = { loadUser, requireAuth, requireAdmin };
+// Accounts from before email verification existed have no emailVerified value
+// at all, so only an explicit false counts as unverified
+function requireVerifiedEmail(req, res, next) {
+  if (req.user.emailVerified !== false) return next();
+
+  req.session.afterVerify = req.method === "GET" ? req.originalUrl : "/checkout";
+  req.flash("error", "Please verify your email address before placing an order.");
+  res.redirect("/verify-email");
+}
+
+module.exports = { loadUser, requireAuth, requireAdmin, requireVerifiedEmail };

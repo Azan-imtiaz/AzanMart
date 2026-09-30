@@ -94,4 +94,13 @@
         </nav>
     </header>
 
+    <% if (locals.currentUser && currentUser.emailVerified === false && currentPath !== "/verify-email") { %>
+        <div class="bg-amber-50 text-amber-900 text-sm dark:bg-amber-900/30 dark:text-amber-100">
+            <div class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-2">
+                <span><i class="ri-mail-unread-line"></i> Please verify your email address to place orders.</span>
+                <a href="/verify-email" class="font-semibold underline">Verify now</a>
+            </div>
+        </div>
+    <% } %>
+
     <%- include("./flash") %>
