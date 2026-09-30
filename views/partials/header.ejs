@@ -24,6 +24,7 @@
     <meta property="og:image" content="<%= appUrl %>/images/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <script src="/js/theme.js"></script>
     <link rel="stylesheet" href="/css/app.css">
     <script src="/js/app.js" defer></script>
 </head>
@@ -47,6 +48,11 @@
             <div class="flex items-center gap-4 sm:gap-6 text-sm font-medium">
                 <a href="/shop" class="hover:text-blue-900 dark:hover:text-blue-300">Shop</a>
                 <a href="/about" class="hidden sm:inline hover:text-blue-900 dark:hover:text-blue-300">About</a>
+
+                <button type="button" data-theme-toggle class="text-xl hover:text-blue-900 dark:hover:text-blue-300" aria-label="Toggle dark mode">
+                    <i class="ri-moon-line dark:hidden"></i>
+                    <i class="ri-sun-line hidden dark:inline"></i>
+                </button>
 
                 <% if (locals.currentUser) { %>
                     <a href="/cart" class="relative text-xl hover:text-blue-900 dark:hover:text-blue-300" aria-label="Cart, <%= cartCount %> items">

@@ -32,3 +32,16 @@ document.querySelectorAll("form[data-confirm]").forEach((form) => {
     if (!window.confirm(form.dataset.confirm)) event.preventDefault();
   });
 });
+
+// Dark mode toggle; the choice is remembered, otherwise the system setting wins
+document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const dark = document.documentElement.classList.toggle("dark");
+    try {
+      localStorage.setItem("theme", dark ? "dark" : "light");
+    } catch {
+      // Not saved, but the toggle still works for this page
+    }
+    document.dispatchEvent(new CustomEvent("themechange"));
+  });
+});

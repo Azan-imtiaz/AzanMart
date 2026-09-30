@@ -47,3 +47,8 @@
 .star-rating label:has(~ label:hover) {
   color: var(--color-amber-500);
 }
+
+/* Native form controls and scrollbars follow the theme too */
+.dark {
+  color-scheme: dark;
+}
