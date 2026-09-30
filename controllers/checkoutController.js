@@ -1,6 +1,6 @@
 const orderModel = require("../models/orderModel");
 const { getCart } = require("../services/cart");
-const { placeOrder, clearCart, cancelOrder } = require("../services/orders");
+const { placeOrder, clearCart, cancelOrder, markOrderPaid } = require("../services/orders");
 const { sendOrderConfirmation } = require("../services/emails");
 const { stripe } = require("../utils/stripe");
 const { CURRENCY } = require("../utils/money");
@@ -49,7 +49,17 @@ async function cancelAbandonedCardOrders(userId) {
     .select("stripeSessionId");
   for (const order of pending) {
     if (order.stripeSessionId) {
-      await stripe.checkout.sessions.expire(order.stripeSessionId).catch(() => {});
+      try {
+        await stripe.checkout.sessions.expire(order.stripeSessionId);
+      } catch {
+        // Stripe won't expire a finished session. If the shopper actually paid
+        // (say, in another tab), keep the order instead of cancelling it.
+        const session = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+        if (session.payment_status === "paid") {
+          await markOrderPaid(order._id);
+          continue;
+        }
+      }
     }
     await cancelOrder(order._id);
   }
