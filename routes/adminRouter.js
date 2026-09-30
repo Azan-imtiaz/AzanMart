@@ -7,6 +7,7 @@ const productModel = require("../models/productModel");
 const dashboard = require("../controllers/admin/dashboardController");
 const products = require("../controllers/admin/productsController");
 const orders = require("../controllers/admin/ordersController");
+const users = require("../controllers/admin/usersController");
 const orderModel = require("../models/orderModel");
 
 const router = express.Router();
@@ -81,5 +82,8 @@ router.post(
   ),
   orders.updateStatus,
 );
+
+router.get("/users", users.listUsers);
+router.post("/users/:id/role", users.changeRole);
 
 module.exports = router;

@@ -1,0 +1,66 @@
+<%- include('./partials/shell-top') %>
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="text-2xl font-bold">Users</h1>
+    <form action="/admin/users" method="get" role="search">
+        <label for="user-q" class="sr-only">Search users</label>
+        <input id="user-q" name="q" type="search" value="<%= q %>" placeholder="Name or email" class="input py-1.5 w-60">
+    </form>
+</div>
+
+<div class="card mt-6 overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="text-left muted border-b border-gray-200 dark:border-gray-800">
+            <tr>
+                <th class="px-4 py-3 font-medium">Name</th>
+                <th class="px-4 py-3 font-medium">Joined</th>
+                <th class="px-4 py-3 font-medium text-right">Orders</th>
+                <th class="px-4 py-3 font-medium text-right">Spent</th>
+                <th class="px-4 py-3 font-medium">Role</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+            <% users.forEach((user) => { %>
+                <% const isSelf = String(user._id) === String(currentUser._id); %>
+                <tr>
+                    <td class="px-4 py-3">
+                        <p class="font-medium"><%= user.fullName %><% if (isSelf) { %> <span class="muted font-normal">(you)</span><% } %></p>
+                        <p class="muted"><%= user.email %></p>
+                    </td>
+                    <td class="px-4 py-3 muted"><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-US", { dateStyle: "medium" }) : "-" %></td>
+                    <td class="px-4 py-3 text-right"><%= user.stats?.orders || 0 %></td>
+                    <td class="px-4 py-3 text-right"><%= formatPrice(user.stats?.spent || 0) %></td>
+                    <td class="px-4 py-3">
+                        <% if (isSelf) { %>
+                            <span class="capitalize"><%= user.role %></span>
+                        <% } else { %>
+                            <form action="/admin/users/<%= user._id %>/role" method="post" data-autosubmit>
+                                <%- include('../partials/csrf') %>
+                                <label for="role-<%= user._id %>" class="sr-only">Role for <%= user.fullName %></label>
+                                <select id="role-<%= user._id %>" name="role" class="input py-1 w-32">
+                                    <option value="customer" <%= user.role === "customer" ? "selected" : "" %>>Customer</option>
+                                    <option value="admin" <%= user.role === "admin" ? "selected" : "" %>>Admin</option>
+                                </select>
+                                <noscript><button type="submit" class="btn btn-outline py-1">Save</button></noscript>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <% if (!users.length) { %>
+        <p class="p-8 text-center muted">No users found.</p>
+    <% } %>
+</div>
+
+<% if (totalPages > 1) { %>
+    <nav class="mt-6 flex items-center justify-between text-sm" aria-label="Pagination">
+        <% const qs = q ? `&q=${encodeURIComponent(q)}` : ""; %>
+        <% if (page > 1) { %><a href="/admin/users?page=<%= page - 1 %><%= qs %>" class="btn btn-outline py-1.5">Previous</a><% } else { %><span></span><% } %>
+        <span class="muted">Page <%= page %> of <%= totalPages %></span>
+        <% if (page < totalPages) { %><a href="/admin/users?page=<%= page + 1 %><%= qs %>" class="btn btn-outline py-1.5">Next</a><% } else { %><span></span><% } %>
+    </nav>
+<% } %>
+
+<%- include('./partials/shell-bottom') %>
