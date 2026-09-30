@@ -53,14 +53,19 @@ left when stock is low.
 ### Your account
 
 - **Sign up:** click **Sign up** and enter your name, email and a password (at least 6 characters).
-  You're logged in straight away.
+  You're logged in straight away, and we email you a **6-digit code** to confirm your address.
+- **Verify your email:** type the code on the **Check your email** page. Codes last 10 minutes; if
+  one expires or doesn't arrive (check spam), click **send a new code** (once a minute at most). You
+  can browse and fill your cart before verifying, but you need a verified email to place an order.
+  After 5 wrong codes, ask for a new one.
 - **Log in / log out:** use **Log in** in the header. To log out, open the menu under your name and
   choose **Log out**.
 - **Forgot your password?** On the login page click **Forgot password?** and enter your email.
   You'll receive a link that lets you choose a new password. The link works once and expires after
   one hour.
 - **Account settings:** open the menu under your name and choose **Account**. There you can change
-  your name, email and password (you'll need your current password).
+  your name, email and password (you'll need your current password). A new email address has to be
+  verified with a code, just like at sign-up.
 - **Dark mode:** click the moon or sun icon in the header. AzanMart remembers your choice; until you
   pick one, it follows your device's setting.
 
@@ -104,8 +109,17 @@ while you're paying.
 ![Order page](screenshots/order.webp)
 
 - **My orders** (in the menu under your name) lists every order with its status and total. Click one
-  to see its items, shipping address and payment details.
-- You get an email when your order is confirmed and another when it ships.
+  to see its items, shipping address, payment details and a **delivery timeline**. Once it ships,
+  the timeline shows the courier and tracking number.
+- We email you at every step:
+
+  | Email           | When                                                      | What's in it                                                |
+  | --------------- | --------------------------------------------------------- | ----------------------------------------------------------- |
+  | Order confirmed | You place a cash order, or your card payment goes through | Items, total and delivery address                           |
+  | On its way      | The order ships                                           | Courier, tracking number, and the cash amount to have ready |
+  | Delivered       | The order arrives                                         | Delivery date, a receipt for cash payments, review links    |
+  | Cancelled       | The order is cancelled                                    | Whether you'll be refunded or weren't charged               |
+
 - Order statuses mean:
 
   | Status     | Meaning                                       |
@@ -186,14 +200,16 @@ wishlists. Past orders keep their own copy of the name and price, so order histo
 **Orders** lists all orders, newest first. Filter by status or search by order number (with or
 without the `AZM-` prefix). Click an order to see its items, customer, address and payment.
 
-Use **Update status** on the order page to move it along:
+Use **Update status** on the order page to move it along. When you mark an order as **Shipped**,
+fill in the **courier** (common ones are suggested as you type) and the **tracking number**. They're
+shown to the customer on their order page and included in the shipping email.
 
-| Change to  | What happens                                                                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------ |
-| Processing | Marks the order as being prepared.                                                                                 |
-| Shipped    | Emails the customer that their order is on its way.                                                                |
-| Delivered  | Final. For cash on delivery, the order is also marked as paid.                                                     |
-| Cancelled  | Final. The items go back into stock. For a card order that was already paid, refund it from your Stripe dashboard. |
+| Change to  | What happens                                                                                                                                 |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Processing | Marks the order as being prepared.                                                                                                           |
+| Shipped    | Emails the customer that their order is on its way.                                                                                          |
+| Delivered  | Final. For cash on delivery, the order is also marked as paid.                                                                               |
+| Cancelled  | Final. Emails the customer and puts the items back into stock. For a card order that was already paid, refund it from your Stripe dashboard. |
 
 Delivered and cancelled orders can't be changed again.
 
@@ -224,9 +240,11 @@ in or out in another tab, refresh the page and submit again.
 **"Too many attempts. Please wait 15 minutes and try again."**
 Logins, sign-ups and password resets are limited to 10 tries per 15 minutes to stop password guessing.
 
-**I didn't get an email.**
-Check your spam folder. On a development setup without SMTP settings, emails aren't sent; the server
-log prints the path of an HTML copy of each email instead.
+**I didn't get an email or verification code.**
+Check your spam folder, then use **send a new code** on the verification page. If nobody is getting
+emails, check the server log at startup: it says whether it could log in to Gmail (see
+[Send email with Gmail](DEPLOYMENT.md#5-send-email-with-gmail)). On a development setup without SMTP
+settings, emails aren't sent; the log prints the path of an HTML copy of each email instead.
 
 **The card payment option is missing.**
 The store owner hasn't set `STRIPE_SECRET_KEY` yet. Cash on delivery still works.

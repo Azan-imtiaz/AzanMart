@@ -24,9 +24,9 @@ services:
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
       - key: SMTP_HOST
-        sync: false
+        value: smtp.gmail.com
       - key: SMTP_PORT
-        sync: false
+        value: "465"
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASS

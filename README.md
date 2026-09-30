@@ -57,7 +57,9 @@ Card payments use Stripe test mode: card `4242 4242 4242 4242`, any future date,
 - Product pages with an image gallery, stock status, related products and reviews with verified-purchase badges
 - Cart with quantities and live stock checks, plus a wishlist
 - Checkout with **Stripe** (hosted payment page) or **cash on delivery**
-- Order history and order status pages, with confirmation and shipping emails
+- Email verification with a 6-digit code before the first order
+- Order history with a delivery timeline, courier and tracking number
+- Emails from Gmail (or any SMTP provider) when an order is confirmed, shipped, delivered or cancelled
 - Account settings and password reset by email
 - Dark mode, keyboard-friendly markup and a layout that works from 320px up
 
@@ -74,7 +76,7 @@ Card payments use Stripe test mode: card `4242 4242 4242 4242`, any future date,
 - Sessions stored in MongoDB, CSRF tokens on every form, Helmet with a strict Content Security Policy, rate-limited auth routes and protection against NoSQL operator injection
 - Stock is reserved atomically, so two shoppers can never buy the last unit
 - Stripe webhooks with signature checks; every payment handler is safe to run twice
-- 62 Jest + Supertest tests, GitHub Actions CI, and a Docker image that CI builds and smoke-tests
+- 75 Jest + Supertest tests, GitHub Actions CI, and a Docker image that CI builds and smoke-tests
 
 ## Tech stack
 
@@ -84,7 +86,7 @@ Card payments use Stripe test mode: card `4242 4242 4242 4242`, any future date,
 | Database | MongoDB, Mongoose, connect-mongo (sessions)                        |
 | Frontend | Tailwind CSS 4, a little vanilla JavaScript, Chart.js, Remix Icon  |
 | Payments | Stripe Checkout and webhooks                                       |
-| Email    | Nodemailer (any SMTP provider)                                     |
+| Email    | Nodemailer with Gmail (or any SMTP provider)                       |
 | Security | Helmet, bcrypt, express-validator, express-rate-limit, custom CSRF |
 | Images   | Multer (memory storage), sharp                                     |
 | Quality  | Jest, Supertest, mongodb-memory-server, ESLint, Prettier           |
@@ -161,17 +163,17 @@ docker compose exec app npm run seed -- --force
 
 ### Environment variables
 
-| Name                                                  | Required | Description                                                                            |
-| ----------------------------------------------------- | -------- | -------------------------------------------------------------------------------------- |
-| `MONGODB_URL`                                         | yes      | MongoDB connection string                                                              |
-| `SESSION_SECRET`                                      | yes      | Long random string used to sign the session cookie                                     |
-| `APP_URL`                                             | prod     | Public URL; `https://` turns on secure cookies and HSTS                                |
-| `PORT`                                                | no       | Defaults to 3000                                                                       |
-| `NODE_ENV`                                            | no       | `production` enables long static caching and combined logs                             |
-| `STRIPE_SECRET_KEY`                                   | no       | Enables card payments                                                                  |
-| `STRIPE_WEBHOOK_SECRET`                               | no       | Verifies Stripe webhook signatures                                                     |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | no       | Sends real email. Without them, emails are saved to a temp file and the path is logged |
-| `MAIL_FROM`                                           | no       | Sender, e.g. `AzanMart <orders@yourdomain.com>`                                        |
+| Name                                                  | Required | Description                                                                                                                                                                   |
+| ----------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MONGODB_URL`                                         | yes      | MongoDB connection string                                                                                                                                                     |
+| `SESSION_SECRET`                                      | yes      | Long random string used to sign the session cookie                                                                                                                            |
+| `APP_URL`                                             | prod     | Public URL; `https://` turns on secure cookies and HSTS                                                                                                                       |
+| `PORT`                                                | no       | Defaults to 3000                                                                                                                                                              |
+| `NODE_ENV`                                            | no       | `production` enables long static caching and combined logs                                                                                                                    |
+| `STRIPE_SECRET_KEY`                                   | no       | Enables card payments                                                                                                                                                         |
+| `STRIPE_WEBHOOK_SECRET`                               | no       | Verifies Stripe webhook signatures                                                                                                                                            |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | no       | Sends real email, e.g. Gmail with an App Password ([setup](docs/DEPLOYMENT.md#5-send-email-with-gmail)). Without them, emails are saved to a temp file and the path is logged |
+| `MAIL_FROM`                                           | no       | Sender, e.g. `AzanMart <orders@yourdomain.com>`                                                                                                                               |
 
 ### Scripts
 
@@ -198,9 +200,10 @@ npm test
 npm run test:coverage
 ```
 
-62 tests cover authentication and security, the cart, checkout and stock reservation (including two
-shoppers racing for the last item), Stripe checkout and webhooks, search and filters, reviews, password
-reset, account settings and the admin area. Line coverage is about 94%.
+75 tests cover authentication and security, email verification, the cart, checkout and stock
+reservation (including two shoppers racing for the last item), Stripe checkout and webhooks, order
+emails, search and filters, reviews, password reset, account settings and the admin area. Line
+coverage is about 94%.
 
 ## Performance, accessibility and SEO
 

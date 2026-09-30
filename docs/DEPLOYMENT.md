@@ -31,7 +31,7 @@ The repository includes a `render.yaml` blueprint.
 
    `SESSION_SECRET` is generated for you. Leave the Stripe and SMTP variables
    empty for now; the store works without them (cash on delivery only, emails
-   written to the log).
+   written to the log). Step 5 sets up Gmail.
 
 3. Deploy. Render runs `npm ci --include=dev && npm run build`, then `npm start`,
    and checks `/health` before sending traffic to the new version.
@@ -76,11 +76,44 @@ stripe listen --forward-to localhost:3000/webhooks/stripe
 
 It prints a `whsec_...` secret to put in your local `.env`.
 
-## 5. Turn on email (optional)
+## 5. Send email with Gmail
 
-Any SMTP provider works (Brevo, Mailgun, Postmark, Gmail with an app password…).
-Set `SMTP_HOST`, `SMTP_PORT` (usually 587), `SMTP_USER`, `SMTP_PASS` and
-`MAIL_FROM`, for example `AzanMart <orders@yourdomain.com>`.
+AzanMart sends verification codes, order confirmations and shipping, delivery and
+cancellation updates. Gmail works well for a small store (about 500 emails a day on a
+normal Gmail account).
+
+1. Sign in to the Gmail account the store should send from. Ideally, create a separate
+   one for the shop.
+2. Turn on **2-Step Verification**: https://myaccount.google.com/security
+3. Create an **App Password**: https://myaccount.google.com/apppasswords. Name it
+   "AzanMart" and copy the 16-character password. Google only shows it once. This is
+   _not_ your normal Gmail password, and Gmail won't accept your normal password here.
+4. Set these variables (in `.env` locally, or in Render's environment settings):
+
+   ```bash
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_USER=yourshop@gmail.com
+   SMTP_PASS=abcd efgh ijkl mnop     # the App Password; spaces are fine
+   MAIL_FROM="AzanMart <yourshop@gmail.com>"   # optional, defaults to SMTP_USER
+   ```
+
+5. Restart the app. The log should say:
+
+   ```
+   Email: sending through smtp.gmail.com as yourshop@gmail.com
+   ```
+
+   If it says `could not log in`, the App Password is wrong or 2-Step Verification is off.
+
+Gmail always sends from the logged-in account, so customers see your Gmail address and
+their replies reach your inbox. Any other SMTP provider (Brevo, Mailgun, Postmark…) works
+the same way with its own host, port and credentials. Without `SMTP_HOST` and `SMTP_USER`,
+emails aren't sent at all: each one is saved to a temporary HTML file and its path is logged.
+
+> Keep the App Password out of git. It only belongs in `.env` (which is gitignored) or
+> in your host's environment settings. If it ever leaks, delete it at
+> https://myaccount.google.com/apppasswords and create a new one.
 
 ## Running with Docker
 
