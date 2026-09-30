@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("../utils/slugify");
 
-const CATEGORIES = ["Backpacks", "Handbags", "Totes", "Travel", "Accessories"];
+const CATEGORIES = ["Backpacks", "Totes", "Travel", "Accessories"];
 
 const imageSchema = new mongoose.Schema({
   data: { type: Buffer, required: true },
