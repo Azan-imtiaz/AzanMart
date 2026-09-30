@@ -3,6 +3,7 @@ const productModel = require("../../models/productModel");
 const userModel = require("../../models/userModel");
 const httpError = require("../../utils/httpError");
 const { toCents } = require("../../utils/money");
+const { optimizeImage } = require("../../utils/images");
 
 const PAGE_SIZE = 20;
 
@@ -28,8 +29,14 @@ function readProductForm(body) {
   };
 }
 
-const imagesFrom = (files) =>
-  files.map((file) => ({ data: file.buffer, contentType: file.mimetype }));
+// Returns null if any upload can't be decoded as an image
+async function imagesFrom(files) {
+  try {
+    return await Promise.all(files.map((file) => optimizeImage(file.buffer)));
+  } catch {
+    return null;
+  }
+}
 
 exports.listProducts = async (req, res) => {
   const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
@@ -70,10 +77,13 @@ exports.createProduct = async (req, res) => {
     return res.redirect("/admin/products/new");
   }
 
-  const product = await productModel.create({
-    ...readProductForm(req.body),
-    images: imagesFrom(req.files),
-  });
+  const images = await imagesFrom(req.files);
+  if (!images) {
+    req.flash("error", "One of the files isn't a valid image");
+    return res.redirect("/admin/products/new");
+  }
+
+  const product = await productModel.create({ ...readProductForm(req.body), images });
 
   req.flash("success", `${product.name} was created`);
   res.redirect("/admin/products");
@@ -93,7 +103,14 @@ exports.updateProduct = async (req, res) => {
 
   product.set(readProductForm(req.body));
   // New uploads replace the gallery; leaving the field empty keeps the current images
-  if (req.files?.length) product.images = imagesFrom(req.files);
+  if (req.files?.length) {
+    const images = await imagesFrom(req.files);
+    if (!images) {
+      req.flash("error", "One of the files isn't a valid image");
+      return res.redirect(`/admin/products/${product._id}/edit`);
+    }
+    product.images = images;
+  }
   await product.save();
 
   req.flash("success", `${product.name} was updated`);
