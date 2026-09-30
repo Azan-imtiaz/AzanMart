@@ -30,6 +30,12 @@ const productSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// Match the shop's filters and sorts so listing pages use an index instead of a scan
+productSchema.index({ category: 1, finalPrice: 1 });
+productSchema.index({ createdAt: -1 });
+productSchema.index({ finalPrice: 1 });
+productSchema.index({ ratingAverage: -1, ratingCount: -1 });
+
 // Powers the shop search box; name matches count most
 productSchema.index(
   { name: "text", description: "text", category: "text" },

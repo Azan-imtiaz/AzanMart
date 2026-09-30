@@ -47,7 +47,9 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-orderSchema.index({ user: 1, createdAt: -1 });
+orderSchema.index({ user: 1, createdAt: -1 }); // a shopper's order history
+orderSchema.index({ status: 1, createdAt: -1 }); // admin list filtered by status
+orderSchema.index({ paymentStatus: 1, paidAt: 1 }); // dashboard revenue chart
 
 module.exports = mongoose.model("order", orderSchema);
 module.exports.STATUSES = STATUSES;
