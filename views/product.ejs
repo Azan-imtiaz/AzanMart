@@ -28,6 +28,12 @@
         <section>
             <p class="text-sm uppercase tracking-wide muted"><%= product.category %></p>
             <h1 class="text-3xl font-bold mt-1"><%= product.name %></h1>
+            <% if (product.ratingCount > 0) { %>
+                <a href="#reviews" class="mt-2 inline-flex items-center gap-2 text-sm">
+                    <%- include('./partials/stars', { rating: product.ratingAverage }) %>
+                    <span class="muted"><%= product.ratingAverage.toFixed(1) %> (<%= product.ratingCount %> <%= product.ratingCount === 1 ? "review" : "reviews" %>)</span>
+                </a>
+            <% } %>
 
             <div class="mt-4 flex items-baseline gap-3">
                 <span class="text-3xl font-semibold text-blue-900 dark:text-blue-300"><%= formatPrice(product.finalPrice) %></span>
@@ -72,6 +78,78 @@
             <% } %>
         </section>
     </div>
+
+    <section id="reviews" class="mt-16 grid lg:grid-cols-[1fr_360px] gap-8 items-start scroll-mt-24">
+        <div>
+            <h2 class="text-2xl font-bold">Reviews</h2>
+            <% if (reviews.length) { %>
+                <ul class="mt-6 space-y-4">
+                    <% reviews.forEach((review) => { %>
+                        <li class="card p-5">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <%- include('./partials/stars', { rating: review.rating }) %>
+                                    <span class="font-medium"><%= review.user ? review.user.fullName.split(" ")[0] : "Former customer" %></span>
+                                    <% if (review.verifiedPurchase) { %>
+                                        <span class="text-xs font-medium text-green-700 dark:text-green-400"><i class="ri-checkbox-circle-line"></i> Verified purchase</span>
+                                    <% } %>
+                                </div>
+                                <span class="text-sm muted"><%= new Date(review.createdAt).toLocaleDateString("en-US", { dateStyle: "medium" }) %></span>
+                            </div>
+                            <% if (review.comment) { %>
+                                <p class="mt-2 whitespace-pre-line text-gray-700 dark:text-gray-300"><%= review.comment %></p>
+                            <% } %>
+                            <% if (locals.currentUser && currentUser.role === "admin" && review !== myReview) { %>
+                                <form action="/products/<%= product.slug %>/reviews/delete" method="post" class="mt-2" data-confirm="Remove this review?">
+                                    <%- include('./partials/csrf') %>
+                                    <input type="hidden" name="reviewId" value="<%= review._id %>">
+                                    <button type="submit" class="text-xs text-red-600 hover:underline">Remove (admin)</button>
+                                </form>
+                            <% } %>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p class="mt-4 muted">No reviews yet. Be the first to share what you think.</p>
+            <% } %>
+        </div>
+
+        <aside class="card p-6">
+            <% if (locals.currentUser) { %>
+                <h3 class="font-semibold"><%= myReview ? "Edit your review" : "Write a review" %></h3>
+                <form action="/products/<%= product.slug %>/reviews" method="post" class="mt-4 space-y-4">
+                    <%- include('./partials/csrf') %>
+                    <fieldset>
+                        <legend class="label">Your rating</legend>
+                        <div class="star-rating flex gap-1 text-2xl">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                                <label class="cursor-pointer text-gray-300 dark:text-gray-600">
+                                    <input type="radio" name="rating" value="<%= i %>" class="sr-only peer" required <%= myReview?.rating === i ? "checked" : "" %>>
+                                    <i class="ri-star-fill peer-focus-visible:ring-2 peer-focus-visible:ring-blue-700 rounded"></i>
+                                    <span class="sr-only"><%= i %> star<%= i > 1 ? "s" : "" %></span>
+                                </label>
+                            <% } %>
+                        </div>
+                    </fieldset>
+                    <div>
+                        <label for="comment" class="label">Comment <span class="muted font-normal">(optional)</span></label>
+                        <textarea id="comment" name="comment" rows="4" maxlength="1000" class="input"><%= myReview?.comment || "" %></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full"><%= myReview ? "Update review" : "Post review" %></button>
+                </form>
+                <% if (myReview) { %>
+                    <form action="/products/<%= product.slug %>/reviews/delete" method="post" class="mt-3 text-center" data-confirm="Delete your review?">
+                        <%- include('./partials/csrf') %>
+                        <button type="submit" class="text-sm text-red-600 hover:underline">Delete my review</button>
+                    </form>
+                <% } %>
+            <% } else { %>
+                <h3 class="font-semibold">Share your thoughts</h3>
+                <p class="text-sm muted mt-1">Log in to review this product.</p>
+                <a href="/login" class="btn btn-outline w-full mt-4">Log in</a>
+            <% } %>
+        </aside>
+    </section>
 
     <% if (related.length) { %>
         <section class="mt-16">

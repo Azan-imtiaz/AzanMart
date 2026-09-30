@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const productModel = require("../models/productModel");
+const reviewModel = require("../models/reviewModel");
 const httpError = require("../utils/httpError");
 const { toCents } = require("../utils/money");
 
@@ -117,16 +118,28 @@ exports.showProduct = async (req, res) => {
     .lean();
   if (!product) throw httpError(404, "We couldn't find that product.");
 
-  const related = await productModel
-    .find({ category: product.category, _id: mongoose.trusted({ $ne: product._id }) })
-    .select("-images.data")
-    .limit(4)
-    .lean();
+  const [related, reviews] = await Promise.all([
+    productModel
+      .find({ category: product.category, _id: mongoose.trusted({ $ne: product._id }) })
+      .select("-images.data")
+      .limit(4)
+      .lean(),
+    reviewModel
+      .find({ product: product._id })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .populate("user", "fullName")
+      .lean(),
+  ]);
+
+  const myReview = req.user && reviews.find((review) => review.user?._id.equals(req.user._id));
 
   res.render("product", {
     title: product.name,
     description: product.description.slice(0, 160) || `${product.name} at AzanMart`,
     product,
     related,
+    reviews,
+    myReview,
   });
 };

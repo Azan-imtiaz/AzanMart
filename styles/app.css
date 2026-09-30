@@ -33,3 +33,17 @@
     @apply text-gray-500 dark:text-gray-400;
   }
 }
+
+/* Star rating input: the chosen star and every star before it light up,
+   and hovering previews the rating */
+.star-rating label:has(input:checked),
+.star-rating label:has(~ label input:checked) {
+  color: var(--color-amber-500);
+}
+.star-rating:hover label {
+  color: var(--color-gray-300);
+}
+.star-rating label:hover,
+.star-rating label:has(~ label:hover) {
+  color: var(--color-amber-500);
+}

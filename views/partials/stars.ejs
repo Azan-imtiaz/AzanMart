@@ -1,0 +1,6 @@
+<span class="inline-flex text-amber-500" aria-hidden="true">
+    <% for (let i = 1; i <= 5; i++) { %>
+        <i class="<%= rating >= i ? 'ri-star-fill' : rating >= i - 0.5 ? 'ri-star-half-line' : 'ri-star-line' %>"></i>
+    <% } %>
+</span>
+<span class="sr-only"><%= rating %> out of 5 stars</span>

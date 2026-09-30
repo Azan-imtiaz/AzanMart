@@ -11,6 +11,12 @@
         <h3 class="font-semibold leading-snug">
             <a href="/products/<%= product.slug %>" class="hover:text-blue-900 dark:hover:text-blue-300"><%= product.name %></a>
         </h3>
+        <% if (product.ratingCount > 0) { %>
+            <p class="flex items-center gap-1 text-sm">
+                <%- include('./stars', { rating: product.ratingAverage }) %>
+                <span class="muted">(<%= product.ratingCount %>)</span>
+            </p>
+        <% } %>
         <div class="mt-auto pt-3 flex items-center justify-between">
             <p>
                 <span class="font-semibold text-blue-900 dark:text-blue-300"><%= formatPrice(product.finalPrice) %></span>
