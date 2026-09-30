@@ -22,6 +22,7 @@ const { formatPrice } = require("./utils/money");
 const { APP_URL } = require("./config/site");
 const { sendProductImage } = require("./controllers/imageController");
 const { handleStripeEvent } = require("./controllers/webhookController");
+const seo = require("./controllers/seoController");
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production";
@@ -76,6 +77,8 @@ app.use(
   express.static(path.join(__dirname, "node_modules/chart.js/dist"), { maxAge: "30d" }),
 );
 app.get("/product-images/:productId/:imageId", sendProductImage);
+app.get("/robots.txt", seo.robots);
+app.get("/sitemap.xml", seo.sitemap);
 
 // Needs the raw body to check Stripe's signature, and has no session or CSRF token
 app.post("/webhooks/stripe", express.raw({ type: "application/json" }), handleStripeEvent);

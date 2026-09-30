@@ -16,13 +16,16 @@
     <link rel="canonical" href="<%= pageUrl %>">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
     <meta property="og:site_name" content="AzanMart">
     <meta property="og:title" content="<%= pageTitle %>">
     <meta property="og:description" content="<%= pageDescription %>">
     <meta property="og:url" content="<%= pageUrl %>">
-    <meta property="og:image" content="<%= appUrl %>/images/og-image.png">
+    <meta property="og:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : appUrl + '/images/og-image.png' %>">
     <meta name="twitter:card" content="summary_large_image">
+    <% if (typeof structuredData !== "undefined") { %>
+        <script type="application/ld+json"><%- safeJson(structuredData) %></script>
+    <% } %>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <script src="/js/theme.js"></script>
     <link rel="stylesheet" href="/css/app.css">

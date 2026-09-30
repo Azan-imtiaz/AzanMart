@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const productModel = require("../models/productModel");
 const reviewModel = require("../models/reviewModel");
 const httpError = require("../utils/httpError");
-const { toCents } = require("../utils/money");
+const { toCents, CURRENCY } = require("../utils/money");
+const { APP_URL } = require("../config/site");
 
 exports.showHome = async (req, res) => {
   const newArrivals = await productModel
@@ -12,7 +13,20 @@ exports.showHome = async (req, res) => {
     .limit(8)
     .lean();
 
-  res.render("home", { newArrivals, categories: productModel.CATEGORIES });
+  // Tells search engines the site has its own search, which can appear as a search box in results
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AzanMart",
+    url: APP_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${APP_URL}/shop?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  res.render("home", { newArrivals, categories: productModel.CATEGORIES, structuredData });
 };
 
 exports.showAbout = (req, res) => {
@@ -134,7 +148,42 @@ exports.showProduct = async (req, res) => {
 
   const myReview = req.user && reviews.find((review) => review.user?._id.equals(req.user._id));
 
+  const productUrl = `${APP_URL}/products/${product.slug}`;
+  const imageUrls = product.images.map(
+    (image) => `${APP_URL}/product-images/${product._id}/${image._id}`,
+  );
+
+  // schema.org Product data lets search engines show price, stock and rating in results
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description || undefined,
+    image: imageUrls,
+    sku: product.slug,
+    category: product.category,
+    brand: { "@type": "Brand", name: "AzanMart" },
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: CURRENCY.toUpperCase(),
+      price: (product.finalPrice / 100).toFixed(2),
+      availability: `https://schema.org/${product.stock > 0 ? "InStock" : "OutOfStock"}`,
+    },
+    aggregateRating:
+      product.ratingCount > 0
+        ? {
+            "@type": "AggregateRating",
+            ratingValue: product.ratingAverage,
+            reviewCount: product.ratingCount,
+          }
+        : undefined,
+  };
+
   res.render("product", {
+    structuredData,
+    ogType: "product",
+    ogImage: imageUrls[0],
     title: product.name,
     description: product.description.slice(0, 160) || `${product.name} at AzanMart`,
     product,
