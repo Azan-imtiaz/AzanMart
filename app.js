@@ -24,6 +24,8 @@ const { formatPrice } = require("./utils/money");
 const { APP_URL, ASSET_VERSION, DEMO_MODE } = require("./config/site");
 const { whenConnected } = require("./config/db");
 const cryptoConfig = require("./config/crypto");
+const { stripe } = require("./utils/stripe");
+const { FREE_SHIPPING_FROM } = require("./services/cart");
 const assistantConfig = require("./config/assistant");
 const { sendProductImage } = require("./controllers/imageController");
 const { handleStripeEvent } = require("./controllers/webhookController");
@@ -137,6 +139,8 @@ app.locals.formatPrice = formatPrice;
 app.locals.demoMode = DEMO_MODE;
 app.locals.assistantEnabled = assistantConfig.enabled;
 app.locals.cryptoEnabled = cryptoConfig.enabled;
+app.locals.cardEnabled = Boolean(stripe);
+app.locals.freeShippingFrom = FREE_SHIPPING_FROM;
 app.locals.paymentLabels = {
   cod: "Cash on delivery",
   card: "Card (Stripe)",
