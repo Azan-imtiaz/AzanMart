@@ -33,6 +33,13 @@ services:
         sync: false
       - key: MAIL_FROM
         sync: false
+      # Free instances block SMTP, so email goes through the Gmail API there
+      - key: GMAIL_CLIENT_ID
+        sync: false
+      - key: GMAIL_CLIENT_SECRET
+        sync: false
+      - key: GMAIL_REFRESH_TOKEN
+        sync: false
       - key: CRYPTO_RECEIVER_ADDRESS
         sync: false
       - key: NVIDIA_API_KEY

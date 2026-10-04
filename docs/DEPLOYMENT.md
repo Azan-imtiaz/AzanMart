@@ -118,6 +118,44 @@ emails aren't sent at all: each one is saved to a temporary HTML file and its pa
 > in your host's environment settings. If it ever leaks, delete it at
 > https://myaccount.google.com/apppasswords and create a new one.
 
+### On Render's free plan: send through the Gmail API
+
+Render's free web services block outgoing SMTP (ports 25, 465 and 587), so the steps above
+can't connect from there; the log shows the SMTP server can't be reached. Either upgrade the
+service to a paid instance, or send through the **Gmail API**, which uses ordinary HTTPS and
+still sends from your Gmail account. When the three `GMAIL_*` variables below are set, the app
+uses the Gmail API instead of SMTP.
+
+1. Open the [Google Cloud console](https://console.cloud.google.com), signed in as the shop's
+   Gmail account, and create a project (for example "AzanMart").
+2. **APIs & Services → Library**: search for **Gmail API** and click **Enable**.
+3. **Google Auth Platform** (the OAuth consent screen): click **Get started**, enter an app name
+   and your email, choose **External**, and finish. Then, under **Audience**, click
+   **Publish app**. While the app is in "Testing", Google expires the refresh token after 7 days.
+4. **Clients → Create client**: type **Web application**, and add
+   `https://developers.google.com/oauthplayground` under **Authorized redirect URIs**. Copy the
+   **Client ID** and **Client secret**.
+5. Open the [OAuth Playground](https://developers.google.com/oauthplayground). Click the gear icon,
+   tick **Use your own OAuth credentials**, and paste the client ID and secret.
+6. In **Step 1**, type `https://www.googleapis.com/auth/gmail.send` in the box and click
+   **Authorize APIs**. Sign in with the shop's Gmail. Google warns that the app isn't verified;
+   it's your own app, so click **Advanced → Go to AzanMart** and allow sending email.
+7. In **Step 2**, click **Exchange authorization code for tokens** and copy the **Refresh token**.
+8. Set these variables in Render (you can delete the `SMTP_*` ones):
+
+   ```bash
+   GMAIL_CLIENT_ID=1234567890-abc.apps.googleusercontent.com
+   GMAIL_CLIENT_SECRET=GOCSPX-...
+   GMAIL_REFRESH_TOKEN=1//0g...
+   MAIL_FROM="AzanMart <yourshop@gmail.com>"   # the same Gmail address you signed in with
+   ```
+
+9. After the redeploy, the log should say `Email: sending through the Gmail API`. If it says
+   `could not connect to the Gmail API`, the message after it explains what Google rejected.
+
+The refresh token is as sensitive as a password: keep it out of git. To revoke it, remove
+AzanMart at https://myaccount.google.com/permissions.
+
 ## 6. Turn on crypto payments (optional)
 
 Shoppers can pay in USDC from a wallet such as MetaMask. The server checks every payment on the
