@@ -14,6 +14,7 @@ const wishlistRouter = require("./routes/wishlistRouter");
 const checkoutRouter = require("./routes/checkoutRouter");
 const ordersRouter = require("./routes/ordersRouter");
 const accountRouter = require("./routes/accountRouter");
+const assistantRouter = require("./routes/assistantRouter");
 const index = require("./routes/index");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const flash = require("./middlewares/flash");
@@ -23,6 +24,7 @@ const { formatPrice } = require("./utils/money");
 const { APP_URL, ASSET_VERSION } = require("./config/site");
 const { whenConnected } = require("./config/db");
 const cryptoConfig = require("./config/crypto");
+const assistantConfig = require("./config/assistant");
 const { sendProductImage } = require("./controllers/imageController");
 const { handleStripeEvent } = require("./controllers/webhookController");
 const seo = require("./controllers/seoController");
@@ -127,6 +129,7 @@ app.use(csrf);
 
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
+app.locals.assistantEnabled = assistantConfig.enabled;
 app.locals.paymentLabels = {
   cod: "Cash on delivery",
   card: "Card (Stripe)",
@@ -146,6 +149,7 @@ app.use("/wishlist", wishlistRouter);
 app.use("/checkout", checkoutRouter);
 app.use("/orders", ordersRouter);
 app.use("/account", accountRouter);
+app.use("/assistant", assistantRouter);
 app.use("/admin", adminRouter);
 app.use("/", index);
 
