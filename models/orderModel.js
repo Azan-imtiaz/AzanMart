@@ -38,10 +38,19 @@ const orderSchema = new mongoose.Schema(
     shipping: { type: Number, required: true },
     total: { type: Number, required: true },
     shippingAddress: { type: addressSchema, required: true },
-    paymentMethod: { type: String, enum: ["card", "cod"], required: true },
+    paymentMethod: { type: String, enum: ["card", "cod", "crypto"], required: true },
     paymentStatus: { type: String, enum: ["unpaid", "paid"], default: "unpaid" },
     status: { type: String, enum: STATUSES, default: "pending" },
     stripeSessionId: String,
+    // USDC payments: the exact amount asked for (in token units), and the
+    // transaction that paid it once verified
+    crypto: {
+      amount: String,
+      chainId: Number,
+      expiresAt: Date,
+      txHash: String,
+      payer: String,
+    },
     paidAt: Date,
     shipment: {
       carrier: String,
@@ -57,6 +66,8 @@ const orderSchema = new mongoose.Schema(
 orderSchema.index({ user: 1, createdAt: -1 }); // a shopper's order history
 orderSchema.index({ status: 1, createdAt: -1 }); // admin list filtered by status
 orderSchema.index({ paymentStatus: 1, paidAt: 1 }); // dashboard revenue chart
+// A blockchain transaction can only ever pay for one order
+orderSchema.index({ "crypto.txHash": 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model("order", orderSchema);
 module.exports.STATUSES = STATUSES;

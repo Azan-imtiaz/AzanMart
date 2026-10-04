@@ -35,7 +35,7 @@ function newOrderNumber() {
 }
 
 // Turns the current cart into an order. Returns { order } or { error }.
-async function placeOrder({ user, cart, shippingAddress, paymentMethod }) {
+async function placeOrder({ user, cart, shippingAddress, paymentMethod, crypto }) {
   const reservation = await reserveStock(cart.items);
   if (!reservation.ok) {
     return { error: `Sorry, ${reservation.productName} just sold out. Please update your cart.` };
@@ -57,6 +57,7 @@ async function placeOrder({ user, cart, shippingAddress, paymentMethod }) {
     total: cart.total,
     shippingAddress,
     paymentMethod,
+    crypto,
     status: paymentMethod === "cod" ? "processing" : "pending",
   });
 
@@ -69,10 +70,11 @@ async function clearCart(userId) {
 
 // Safe to call more than once (redirect and webhook can both confirm the same
 // payment): only the call that flips the order from unpaid does any work.
-async function markOrderPaid(orderId) {
+// `details` is saved in the same update, e.g. the transaction that paid a crypto order.
+async function markOrderPaid(orderId, details = {}) {
   const order = await orderModel.findOneAndUpdate(
-    { _id: orderId, paymentStatus: "unpaid" },
-    { paymentStatus: "paid", status: "processing", paidAt: new Date() },
+    { _id: orderId, paymentStatus: "unpaid", status: "pending" },
+    { ...details, paymentStatus: "paid", status: "processing", paidAt: new Date() },
     { new: true },
   );
   if (order) {
