@@ -1,5 +1,6 @@
-    <footer class="w-full border-t border-gray-200 bg-white mt-auto dark:border-gray-800 dark:bg-gray-950">
-        <div class="max-w-6xl mx-auto px-5 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-600 dark:text-gray-400">
+    <%# Room for the floating Ask AI button so it never covers the footer links %>
+    <footer class="w-full border-t border-gray-200 bg-white mt-auto dark:border-gray-800 dark:bg-gray-950 <%= assistantEnabled && !currentPath.startsWith('/admin') ? 'pb-16 sm:pb-0' : '' %>">
+        <div class="max-w-6xl mx-auto px-5 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-600 dark:text-gray-400 <%= assistantEnabled && !currentPath.startsWith('/admin') ? 'sm:pr-40' : '' %>">
             <p>&copy; <%= new Date().getFullYear() %> AzanMart. Designed &amp; developed by
                 <a href="https://github.com/Azan-imtiaz" class="font-medium text-blue-900 hover:underline dark:text-blue-300" target="_blank" rel="noopener">Azan Imtiaz</a>
             </p>
