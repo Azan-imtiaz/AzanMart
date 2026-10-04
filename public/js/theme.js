@@ -4,10 +4,10 @@
   try {
     saved = localStorage.getItem("theme");
   } catch {
-    // Storage can be blocked (private mode); fall back to the system setting
+    // Storage can be blocked (private mode); fall back to dark
   }
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  document.documentElement.classList.toggle("dark", saved ? saved === "dark" : prefersDark);
+  // Dark by default; light only for visitors who switched to it
+  document.documentElement.classList.toggle("dark", saved !== "light");
 })();
 
 // Hide the demo banner early if the visitor already dismissed it
