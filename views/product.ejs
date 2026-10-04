@@ -66,9 +66,15 @@
                     </button>
                 </form>
             <% } %>
-            <div class="mt-4">
+            <div class="mt-4 flex flex-wrap gap-3">
                 <%- include("./partials/wishlist-button", { product, floating: false }) %>
+                <% if (assistantEnabled) { %>
+                    <button type="button" data-assistant-trigger class="btn btn-outline">
+                        <i class="ri-sparkling-2-fill text-blue-700 dark:text-blue-300"></i> Ask AI about this
+                    </button>
+                <% } %>
             </div>
+            <span hidden data-assistant-product="<%= product.slug %>" data-assistant-product-name="<%= product.name %>"></span>
 
             <% if (product.description) { %>
                 <div class="mt-8">

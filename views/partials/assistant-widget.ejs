@@ -1,0 +1,35 @@
+<% if (assistantEnabled && !currentPath.startsWith("/admin")) { %>
+<div data-assistant data-crypto-enabled="<%= typeof cryptoEnabled !== 'undefined' && cryptoEnabled %>">
+    <button type="button" data-assistant-open aria-haspopup="dialog" aria-controls="assistant-panel"
+        class="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-900 to-blue-600 px-4 py-3 text-white shadow-lg shadow-blue-900/30 hover:scale-105 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-700">
+        <i class="ri-sparkling-2-fill text-lg"></i>
+        <span class="font-medium">Ask AI</span>
+    </button>
+
+    <section id="assistant-panel" role="dialog" aria-modal="false" aria-labelledby="assistant-title" hidden
+        class="fixed bottom-5 right-5 z-50 flex w-[min(390px,calc(100vw-2.5rem))] h-[min(620px,calc(100vh-2.5rem))] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-800 dark:bg-gray-900">
+        <header class="flex items-center gap-3 bg-gradient-to-r from-blue-900 to-blue-700 px-4 py-3 text-white">
+            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/15"><i class="ri-sparkling-2-fill"></i></span>
+            <div class="flex-1 min-w-0">
+                <h2 id="assistant-title" class="font-semibold leading-tight">AzanMart Assistant</h2>
+                <p class="text-xs text-blue-100 truncate" data-assistant-subtitle>Ask about products, shipping or payments</p>
+            </div>
+            <button type="button" data-assistant-reset class="rounded-full p-1.5 hover:bg-white/15" aria-label="Start a new chat" title="New chat"><i class="ri-refresh-line"></i></button>
+            <button type="button" data-assistant-close class="rounded-full p-1.5 hover:bg-white/15" aria-label="Close the assistant"><i class="ri-close-line text-lg"></i></button>
+        </header>
+
+        <div data-assistant-messages aria-live="polite" class="flex-1 overflow-y-auto space-y-3 px-4 py-4 bg-gray-50 dark:bg-gray-950"></div>
+
+        <form data-assistant-form class="border-t border-gray-200 p-3 dark:border-gray-800">
+            <div class="flex items-end gap-2">
+                <label for="assistant-input" class="sr-only">Your question</label>
+                <textarea id="assistant-input" rows="1" maxlength="1000" required placeholder="Ask anything about AzanMart…"
+                    class="input max-h-28 resize-none py-2"></textarea>
+                <button type="submit" class="btn btn-primary h-10 w-10 shrink-0 p-0" aria-label="Send"><i class="ri-send-plane-2-fill"></i></button>
+            </div>
+            <p class="mt-2 text-[11px] muted">AI answers can be wrong. Check the product page before you buy.</p>
+        </form>
+    </section>
+</div>
+<script src="<%= asset('/js/assistant.js') %>" defer></script>
+<% } %>

@@ -130,6 +130,7 @@ app.use(csrf);
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
 app.locals.assistantEnabled = assistantConfig.enabled;
+app.locals.cryptoEnabled = cryptoConfig.enabled;
 app.locals.paymentLabels = {
   cod: "Cash on delivery",
   card: "Card (Stripe)",
