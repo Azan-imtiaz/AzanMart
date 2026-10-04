@@ -84,6 +84,11 @@ app.use((req, res, next) => {
 // Asset URLs carry ?v=<version>, so a long cache is safe in production
 const staticMaxAge = isProduction ? "30d" : 0;
 app.use(express.static(path.join(__dirname, "public"), { maxAge: staticMaxAge }));
+// Screenshots used by the in-app user guide
+app.use(
+  "/guide/screenshots",
+  express.static(path.join(__dirname, "docs/screenshots"), { maxAge: staticMaxAge }),
+);
 app.use(
   "/vendor/remixicon",
   express.static(path.join(__dirname, "node_modules/remixicon/fonts"), { maxAge: staticMaxAge }),

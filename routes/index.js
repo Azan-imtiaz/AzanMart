@@ -10,6 +10,7 @@ const router = express.Router();
 router.get("/", shop.showHome);
 router.get("/about", shop.showAbout);
 router.get("/features", shop.showFeatures);
+router.get("/guide", shop.showGuide);
 router.get("/shop", shop.showShop);
 router.get("/products/:slug", shop.showProduct);
 

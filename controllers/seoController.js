@@ -32,6 +32,7 @@ exports.sitemap = async (req, res) => {
       priority: "0.8",
     })),
     { loc: "/features", priority: "0.6" },
+    { loc: "/guide", priority: "0.5" },
     { loc: "/about", priority: "0.3" },
   ];
 

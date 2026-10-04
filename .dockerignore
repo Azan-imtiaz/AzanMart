@@ -9,3 +9,4 @@ coverage
 tests
 public/css
 *.md
+!docs/USER_GUIDE.md

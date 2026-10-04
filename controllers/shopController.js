@@ -8,6 +8,7 @@ const { stripe } = require("../utils/stripe");
 const cryptoConfig = require("../config/crypto");
 const assistantConfig = require("../config/assistant");
 const { emailEnabled } = require("../utils/mailer");
+const { getGuide } = require("../services/guide");
 
 exports.showHome = async (req, res) => {
   const newArrivals = await productModel
@@ -94,6 +95,16 @@ exports.showFeatures = (req, res) => {
       assistant: assistantConfig.enabled,
       email: emailEnabled,
     },
+  });
+};
+
+exports.showGuide = async (req, res) => {
+  const guide = await getGuide();
+  res.render("guide", {
+    title: "User guide",
+    description:
+      "How to shop, pay (card, crypto or cash), track orders and run the store on AzanMart.",
+    guide,
   });
 };
 

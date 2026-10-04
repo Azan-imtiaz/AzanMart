@@ -132,6 +132,17 @@ describe("SEO and health", () => {
     expect(res.body).toEqual({ status: "ok", db: "up" });
   });
 
+  it("shows the features page and the user guide with working in-page links", async () => {
+    expect((await request(app).get("/features")).text).toContain("Everything inside");
+
+    const guide = await request(app).get("/guide");
+    expect(guide.status).toBe(200);
+    const anchors = [...guide.text.matchAll(/href="#([\w-]+)"/g)].map((match) => match[1]);
+    expect(anchors.length).toBeGreaterThan(10);
+    for (const anchor of anchors) expect(guide.text).toContain(`id="${anchor}"`);
+    expect(guide.text).toContain('src="/guide/screenshots/');
+  });
+
   it("renders a friendly 404 page", async () => {
     const res = await request(app).get("/nowhere");
     expect(res.status).toBe(404);
