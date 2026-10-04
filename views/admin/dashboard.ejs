@@ -95,7 +95,7 @@
                 <% lowStock.forEach((product) => { %>
                     <li class="py-2.5 flex items-center justify-between">
                         <a href="/admin/products/<%= product._id %>/edit" class="hover:underline"><%= product.name %></a>
-                        <span class="font-medium <%= product.stock === 0 ? 'text-red-600' : 'text-amber-600' %>"><%= product.stock === 0 ? "Sold out" : `${product.stock} left` %></span>
+                        <span class="font-medium <%= product.stock === 0 ? 'text-red-600' : 'text-amber-700 dark:text-amber-400' %>"><%= product.stock === 0 ? "Sold out" : `${product.stock} left` %></span>
                     </li>
                 <% }) %>
             </ul>

@@ -54,7 +54,7 @@
 
     <!-- Payments -->
     <section id="payments" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
-        <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Payments</p>
+        <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Payments</p>
         <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Three ways to pay, each done properly</h2>
         <p class="mt-3 max-w-2xl muted">Stock is reserved the moment an order is placed, so two shoppers can never buy the last item, and every payment is confirmed on the server before an order counts as paid.</p>
 
@@ -85,7 +85,7 @@
     <section id="assistant" class="scroll-mt-32 bg-white dark:bg-gray-900/40 border-y border-gray-200 dark:border-gray-800">
         <div class="max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-12 items-center">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">AI shopping assistant</p>
+                <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">AI shopping assistant</p>
                 <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Ask for what you need, in your own words</h2>
                 <p class="mt-3 muted leading-relaxed">
                     "A bag for my laptop and gym clothes under $100." The assistant searches the real catalog with tools,
@@ -129,7 +129,7 @@
 
     <!-- Shopping -->
     <section id="shopping" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
-        <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Shopping experience</p>
+        <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Shopping experience</p>
         <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Everything a shopper expects</h2>
         <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <% [
@@ -153,7 +153,7 @@
     <!-- Orders & delivery -->
     <section id="orders" class="scroll-mt-32 bg-white dark:bg-gray-900/40 border-y border-gray-200 dark:border-gray-800">
         <div class="max-w-6xl mx-auto px-4 py-20">
-            <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Orders &amp; delivery</p>
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Orders &amp; delivery</p>
             <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Shoppers always know where their order is</h2>
             <p class="mt-3 max-w-2xl muted">Each step updates the order's timeline and emails the shopper, with the courier and tracking number once it ships.</p>
             <%- badge(live.email) %>
@@ -180,7 +180,7 @@
     <section id="admin" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
         <div class="grid lg:grid-cols-[1fr_380px] gap-10 items-start">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Admin back office</p>
+                <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Admin back office</p>
                 <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Run the whole store from one place</h2>
                 <div class="mt-8 grid sm:grid-cols-2 gap-5">
                     <% [["ri-line-chart-line", "Sales dashboard", "Revenue over 30 days, best sellers and orders by status, with a table view for every chart."], ["ri-shopping-bag-line", "Products", "Create, edit and delete products; photos are resized and converted to WebP automatically."], ["ri-truck-line", "Order workflow", "Move orders from pending to delivered, add tracking details, and restock on cancel."], ["ri-group-line", "Users and roles", "See every customer's orders and spending, and promote or demote admins instantly."]].forEach(([icon, title, text]) => { %>
@@ -224,7 +224,7 @@
     <section id="performance" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-                <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Performance &amp; SEO</p>
+                <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Performance &amp; SEO</p>
                 <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Fast pages that search engines understand</h2>
                 <p class="mt-3 muted leading-relaxed">
                     Every page arrives as complete HTML from the server, with meta tags, Open Graph previews, a live
@@ -254,7 +254,7 @@
     <!-- Engineering -->
     <section id="engineering" class="scroll-mt-32 bg-white dark:bg-gray-900/40 border-y border-gray-200 dark:border-gray-800">
         <div class="max-w-6xl mx-auto px-4 py-20">
-            <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Engineering</p>
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Engineering</p>
             <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Built and shipped like a real product</h2>
             <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <% [["ri-test-tube-line", "100+ automated tests", "Jest and Supertest against an in-memory MongoDB, including payment races and webhooks. About 94% line coverage."], ["ri-git-branch-line", "CI on every push", "GitHub Actions runs lint, formatting and tests, then builds the Docker image and checks it boots."], ["ri-ship-line", "Docker ready", "A multi-stage image running as a non-root user, plus docker compose with MongoDB."], ["ri-book-open-line", "Documented", "A user guide, deployment guide for Render and Atlas, and a clear README."]].forEach(([icon, title, text]) => { %>
@@ -275,7 +275,7 @@
 
     <!-- Try it -->
     <section id="try-it" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
-        <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Try it yourself</p>
+        <p class="text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">Try it yourself</p>
         <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Buy something. It's free.</h2>
         <p class="mt-3 max-w-2xl muted">Payments in this demo run in test mode, so you can go through the whole journey without spending anything.</p>
 
