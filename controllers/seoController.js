@@ -31,6 +31,7 @@ exports.sitemap = async (req, res) => {
       lastmod: product.updatedAt?.toISOString().slice(0, 10),
       priority: "0.8",
     })),
+    { loc: "/features", priority: "0.6" },
     { loc: "/about", priority: "0.3" },
   ];
 

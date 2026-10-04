@@ -1,0 +1,340 @@
+<%- include('./partials/header') %>
+<%
+  const badge = (on) => on
+    ? '<span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800 dark:bg-green-900/40 dark:text-green-300"><span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>Live in this demo</span>'
+    : '<span class="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2.5 py-0.5 text-xs font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-300">Turns on with your own keys</span>';
+  const sections = [["payments", "Payments"], ["assistant", "AI assistant"], ["shopping", "Shopping"], ["orders", "Orders & delivery"], ["admin", "Admin"], ["security", "Security"], ["performance", "Performance & SEO"], ["engineering", "Engineering"], ["try-it", "Try it"]];
+%>
+
+<main id="main" class="flex-1">
+    <!-- Hero -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-900 text-white">
+        <div class="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-amber-400/20 blur-3xl" aria-hidden="true"></div>
+        <div class="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-blue-400/20 blur-3xl" aria-hidden="true"></div>
+        <div class="relative max-w-6xl mx-auto px-4 py-20 sm:py-24">
+            <p class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm text-blue-100">
+                <i class="ri-hammer-line"></i> Designed &amp; built from scratch by Azan Imtiaz
+            </p>
+            <h1 class="mt-5 max-w-3xl text-4xl sm:text-6xl font-bold leading-tight tracking-tight">
+                Everything inside <span class="text-amber-400">AzanMart</span>
+            </h1>
+            <p class="mt-5 max-w-2xl text-lg text-blue-100">
+                A complete online store, rendered on the server: card, crypto and cash payments, an AI shopping assistant,
+                order tracking with emails at every step, and an admin back office with live sales charts.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <a href="#try-it" class="btn bg-amber-400 text-gray-950 hover:bg-amber-300 px-6 py-3">Try the demo <i class="ri-arrow-down-line"></i></a>
+                <a href="/shop" class="btn border border-white/30 hover:bg-white/10 px-6 py-3">Browse the shop</a>
+                <a href="https://github.com/Azan-imtiaz/AzanMart" target="_blank" rel="noopener" class="btn border border-white/30 hover:bg-white/10 px-6 py-3"><i class="ri-github-fill"></i> Source code</a>
+            </div>
+
+            <dl class="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <% [["3", "ways to pay", "Card, USDC crypto, cash on delivery"], ["100+", "automated tests", "Run on every push in CI"], ["100", "Lighthouse accessibility & SEO", "On the home, shop and product pages"], ["0", "third-party requests", "Every script, font and icon is self-hosted"]].forEach(([value, label, hint]) => { %>
+                    <div class="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur">
+                        <dt class="sr-only"><%= label %></dt>
+                        <dd>
+                            <span class="block text-4xl font-bold text-amber-400"><%= value %></span>
+                            <span class="mt-1 block font-semibold"><%= label %></span>
+                            <span class="mt-1 block text-sm text-blue-200"><%= hint %></span>
+                        </dd>
+                    </div>
+                <% }) %>
+            </dl>
+        </div>
+    </section>
+
+    <!-- Jump links -->
+    <nav aria-label="Feature sections" class="sticky top-16 z-30 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-950/90">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex gap-2 overflow-x-auto">
+            <% sections.forEach(([id, label]) => { %>
+                <a href="#<%= id %>" class="shrink-0 rounded-full border border-gray-200 px-3 py-1 text-sm hover:border-blue-900 hover:text-blue-900 dark:border-gray-700 dark:hover:border-blue-400 dark:hover:text-blue-300"><%= label %></a>
+            <% }) %>
+        </div>
+    </nav>
+
+    <!-- Payments -->
+    <section id="payments" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
+        <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Payments</p>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Three ways to pay, each done properly</h2>
+        <p class="mt-3 max-w-2xl muted">Stock is reserved the moment an order is placed, so two shoppers can never buy the last item, and every payment is confirmed on the server before an order counts as paid.</p>
+
+        <div class="mt-10 grid lg:grid-cols-3 gap-6">
+            <% [
+              { icon: "ri-bank-card-line", title: "Card with Stripe", live: live.card, text: "Stripe's hosted checkout, confirmed twice: when the shopper returns and by a signed webhook. Duplicate events are harmless, and abandoned payments release their stock after 30 minutes.", steps: ["Hosted, PCI-compliant payment page", "Signature-verified webhooks", "Safe to confirm more than once"] },
+              { icon: "ri-wallet-3-line", title: "USDC with MetaMask", live: live.crypto, featured: true, text: "Pay in a stablecoin straight from a crypto wallet. The server reads the blockchain itself before accepting a payment, and each order gets a unique amount so one transaction can only ever pay one order.", steps: ["One click: switch network and send", "Verified on-chain with ethers.js", "Old or reused transactions rejected"] },
+              { icon: "ri-hand-coin-line", title: "Cash on delivery", live: true, text: "The order is confirmed straight away and marked as paid when the courier delivers it, with a receipt in the delivery email.", steps: ["No account details needed", "Paid status set on delivery", "Receipt emailed automatically"] },
+            ].forEach((method) => { %>
+                <article class="card p-6 flex flex-col <%= method.featured ? 'ring-2 ring-amber-400 lg:-translate-y-2' : '' %>">
+                    <div class="flex items-start justify-between gap-3">
+                        <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl text-blue-900 dark:bg-blue-900/40 dark:text-blue-200"><i class="<%= method.icon %>"></i></span>
+                        <%- badge(method.live) %>
+                    </div>
+                    <h3 class="mt-5 text-xl font-semibold"><%= method.title %></h3>
+                    <p class="mt-2 text-sm muted leading-relaxed flex-1"><%= method.text %></p>
+                    <ul class="mt-5 space-y-2 text-sm">
+                        <% method.steps.forEach((step) => { %>
+                            <li class="flex gap-2"><i class="ri-checkbox-circle-fill text-green-600"></i><%= step %></li>
+                        <% }) %>
+                    </ul>
+                </article>
+            <% }) %>
+        </div>
+    </section>
+
+    <!-- AI assistant -->
+    <section id="assistant" class="scroll-mt-32 bg-white dark:bg-gray-900/40 border-y border-gray-200 dark:border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">AI shopping assistant</p>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Ask for what you need, in your own words</h2>
+                <p class="mt-3 muted leading-relaxed">
+                    "A bag for my laptop and gym clothes under $100." The assistant searches the real catalog with tools,
+                    reads product details and reviews, and answers with clickable product cards. It can't make up products
+                    or prices: anything it recommends comes from the store's own data.
+                </p>
+                <ul class="mt-6 space-y-3 text-sm">
+                    <% ["Searches by need, category, price and discounts", "Knows which product page you're on and can answer questions about it", "Product cards are built from the database, never from AI text", "Rate limited, CSRF-protected and grounded in the store's policies"].forEach((point) => { %>
+                        <li class="flex gap-2"><i class="ri-sparkling-2-fill text-blue-700 dark:text-blue-300"></i><%= point %></li>
+                    <% }) %>
+                </ul>
+                <div class="mt-8 flex flex-wrap items-center gap-3">
+                    <% if (live.assistant) { %>
+                        <button type="button" data-assistant-trigger class="btn btn-primary px-6 py-3"><i class="ri-sparkling-2-fill"></i> Open the assistant</button>
+                    <% } %>
+                    <%- badge(live.assistant) %>
+                </div>
+            </div>
+
+            <div class="card p-5 bg-gray-50 dark:bg-gray-950" aria-hidden="true">
+                <div class="flex items-center gap-3 border-b border-gray-200 pb-3 dark:border-gray-800">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-900 text-white"><i class="ri-sparkling-2-fill"></i></span>
+                    <span class="font-semibold">AzanMart Assistant</span>
+                </div>
+                <div class="mt-4 space-y-3 text-sm">
+                    <p class="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-sm bg-blue-900 px-3.5 py-2 text-white">I need a backpack for a 15-inch laptop, under $100.</p>
+                    <p class="w-fit max-w-[85%] rounded-2xl rounded-bl-sm bg-white px-3.5 py-2 shadow-sm dark:bg-gray-800">The Navy Commuter Backpack fits laptops up to 15 inches and costs $69. If you'd like something tougher, the Anti-Theft Laptop Backpack is $79.20 on sale.</p>
+                    <div class="space-y-2">
+                        <% [["Navy Commuter Backpack", "$69.00", "#dbeafe"], ["Anti-Theft Laptop Backpack", "$79.20", "#f3f4f6"]].forEach(([name, price, color]) => { %>
+                            <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-2 dark:border-gray-700 dark:bg-gray-800">
+                                <span class="h-10 w-10 rounded-lg" style="background-color: <%= color %>"></span>
+                                <span class="flex-1"><span class="block font-medium"><%= name %></span><span class="text-blue-900 dark:text-blue-300"><%= price %></span></span>
+                                <i class="ri-arrow-right-s-line muted"></i>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping -->
+    <section id="shopping" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
+        <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Shopping experience</p>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Everything a shopper expects</h2>
+        <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <% [
+              ["ri-search-line", "Search and filters", "Full-text search with category, price, sale and stock filters, sorting and pagination.", "/shop?q=backpack", "Search for backpacks"],
+              ["ri-image-line", "Product pages", "Photo gallery, stock warnings, related products and structured data for Google.", "/products/heritage-leather-backpack", "Open a product"],
+              ["ri-star-smile-line", "Reviews and ratings", "One review per shopper, with a verified-purchase badge for people who bought it.", "/products/navy-commuter-backpack#reviews", "Read reviews"],
+              ["ri-heart-line", "Wishlist", "Save products with a tap and come back to them later.", "/wishlist", "Open your wishlist"],
+              ["ri-shopping-bag-3-line", "Smart cart", "Quantities, live stock checks, discounts and a free-shipping hint.", "/cart", "View your cart"],
+              ["ri-contrast-2-line", "Dark mode and mobile", "A theme toggle that remembers your choice and a layout that works from 320px up.", null, null],
+            ].forEach(([icon, title, text, href, cta]) => { %>
+                <article class="card p-6 transition hover:-translate-y-1 hover:shadow-md">
+                    <i class="<%= icon %> text-3xl text-blue-900 dark:text-blue-300"></i>
+                    <h3 class="mt-4 font-semibold text-lg"><%= title %></h3>
+                    <p class="mt-2 text-sm muted leading-relaxed"><%= text %></p>
+                    <% if (href) { %><a href="<%= href %>" class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-900 hover:underline dark:text-blue-300"><%= cta %> <i class="ri-arrow-right-line"></i></a><% } %>
+                </article>
+            <% }) %>
+        </div>
+    </section>
+
+    <!-- Orders & delivery -->
+    <section id="orders" class="scroll-mt-32 bg-white dark:bg-gray-900/40 border-y border-gray-200 dark:border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 py-20">
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Orders &amp; delivery</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Shoppers always know where their order is</h2>
+            <p class="mt-3 max-w-2xl muted">Each step updates the order's timeline and emails the shopper, with the courier and tracking number once it ships.</p>
+            <%- badge(live.email) %>
+
+            <ol class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <% [["ri-file-list-3-line", "Order placed", "Confirmation email with items, total and delivery address"], ["ri-secure-payment-line", "Payment confirmed", "Card or crypto verified on the server; cash collected on delivery"], ["ri-truck-line", "Shipped", "Courier and tracking number shown on the order and emailed"], ["ri-home-smile-line", "Delivered", "Delivery email with a receipt and links to review each product"]].forEach(([icon, title, text], index) => { %>
+                    <li class="relative card p-6">
+                        <span class="absolute -top-3 left-6 rounded-full bg-amber-400 px-2.5 py-0.5 text-xs font-bold text-gray-950">Step <%= index + 1 %></span>
+                        <i class="<%= icon %> text-3xl text-blue-900 dark:text-blue-300"></i>
+                        <h3 class="mt-3 font-semibold"><%= title %></h3>
+                        <p class="mt-1 text-sm muted"><%= text %></p>
+                    </li>
+                <% }) %>
+            </ol>
+
+            <div class="mt-6 grid md:grid-cols-2 gap-5">
+                <div class="card p-6 flex gap-4"><i class="ri-mail-check-line text-3xl text-blue-900 dark:text-blue-300"></i><div><h3 class="font-semibold">Email verification with a 6-digit code</h3><p class="mt-1 text-sm muted">Codes expire in 10 minutes, lock after 5 wrong tries and are stored only as a keyed hash.</p></div></div>
+                <div class="card p-6 flex gap-4"><i class="ri-lock-password-line text-3xl text-blue-900 dark:text-blue-300"></i><div><h3 class="font-semibold">Password reset by email</h3><p class="mt-1 text-sm muted">Single-use links that expire in an hour, with the same answer whether or not an email is registered.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin -->
+    <section id="admin" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
+        <div class="grid lg:grid-cols-[1fr_380px] gap-10 items-start">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Admin back office</p>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Run the whole store from one place</h2>
+                <div class="mt-8 grid sm:grid-cols-2 gap-5">
+                    <% [["ri-line-chart-line", "Sales dashboard", "Revenue over 30 days, best sellers and orders by status, with a table view for every chart."], ["ri-shopping-bag-line", "Products", "Create, edit and delete products; photos are resized and converted to WebP automatically."], ["ri-truck-line", "Order workflow", "Move orders from pending to delivered, add tracking details, and restock on cancel."], ["ri-group-line", "Users and roles", "See every customer's orders and spending, and promote or demote admins instantly."]].forEach(([icon, title, text]) => { %>
+                        <div class="flex gap-4">
+                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-900 dark:bg-blue-900/40 dark:text-blue-200"><i class="<%= icon %>"></i></span>
+                            <div><h3 class="font-semibold"><%= title %></h3><p class="mt-1 text-sm muted"><%= text %></p></div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+            <aside class="card p-6">
+                <h3 class="font-semibold"><i class="ri-shield-user-line"></i> Explore the admin area</h3>
+                <p class="mt-2 text-sm muted">Log in with the demo admin account:</p>
+                <dl class="mt-4 space-y-2 rounded-lg bg-gray-50 p-4 font-mono text-sm dark:bg-gray-950">
+                    <div class="flex justify-between gap-3"><dt class="muted">Email</dt><dd>admin@azanmart.dev</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="muted">Password</dt><dd>Admin@12345</dd></div>
+                </dl>
+                <a href="/login" class="btn btn-primary w-full mt-5">Log in as admin</a>
+            </aside>
+        </div>
+    </section>
+
+    <!-- Security -->
+    <section id="security" class="scroll-mt-32 bg-gradient-to-br from-gray-900 to-blue-950 text-white">
+        <div class="max-w-6xl mx-auto px-4 py-20">
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-400">Security</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Secure by default, not as an afterthought</h2>
+            <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <% [["Sessions in MongoDB", "Revocable logins; a new session id on every login stops session fixation."], ["CSRF tokens", "Every form and API call carries a per-session token, compared in constant time."], ["Strict CSP", "Helmet with a Content Security Policy that only allows the site's own scripts."], ["Rate limiting", "Logins, sign-ups, password resets and the AI assistant are all rate limited."], ["NoSQL injection blocked", "Mongoose sanitizeFilter, with only server-built operators marked as trusted."], ["Hashed secrets", "bcrypt passwords; reset tokens and email codes stored only as hashes."], ["Atomic stock", "Conditional updates mean the last item can't be sold twice."], ["Safe uploads", "Images are decoded and re-encoded; SVG and fake image files are rejected."]].forEach(([title, text]) => { %>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                        <i class="ri-shield-check-line text-2xl text-amber-400"></i>
+                        <h3 class="mt-3 font-semibold"><%= title %></h3>
+                        <p class="mt-1 text-sm text-blue-100"><%= text %></p>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance & SEO -->
+    <section id="performance" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Performance &amp; SEO</p>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Fast pages that search engines understand</h2>
+                <p class="mt-3 muted leading-relaxed">
+                    Every page arrives as complete HTML from the server, with meta tags, Open Graph previews, a live
+                    sitemap and schema.org product data (price, stock and rating) for rich search results.
+                </p>
+                <ul class="mt-6 grid sm:grid-cols-2 gap-3 text-sm">
+                    <% ["Gzip: the shop page shrinks from 30 KB to under 4 KB", "Images cached for a year with immutable URLs", "Uploads resized and converted to WebP", "An index behind every listing query", "Versioned assets with long cache headers", "No third-party scripts, fonts or icons"].forEach((point) => { %>
+                        <li class="flex gap-2"><i class="ri-flashlight-line text-amber-500"></i><%= point %></li>
+                    <% }) %>
+                </ul>
+            </div>
+            <div class="card p-8">
+                <p class="text-sm font-medium muted">Lighthouse, desktop (home, shop and product pages)</p>
+                <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-6">
+                    <% ["Performance", "Accessibility", "Best practices", "SEO"].forEach((label) => { %>
+                        <div class="text-center">
+                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-[6px] border-green-500 text-2xl font-bold text-green-700 dark:text-green-400">100</div>
+                            <p class="mt-2 text-sm"><%= label %></p>
+                        </div>
+                    <% }) %>
+                </div>
+                <p class="mt-6 text-xs muted">Measured on the seeded demo in production mode. On a simulated slow mobile connection, performance scores 91 to 95 and the other three stay at 100.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Engineering -->
+    <section id="engineering" class="scroll-mt-32 bg-white dark:bg-gray-900/40 border-y border-gray-200 dark:border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 py-20">
+            <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Engineering</p>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Built and shipped like a real product</h2>
+            <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <% [["ri-test-tube-line", "100+ automated tests", "Jest and Supertest against an in-memory MongoDB, including payment races and webhooks. About 94% line coverage."], ["ri-git-branch-line", "CI on every push", "GitHub Actions runs lint, formatting and tests, then builds the Docker image and checks it boots."], ["ri-ship-line", "Docker ready", "A multi-stage image running as a non-root user, plus docker compose with MongoDB."], ["ri-book-open-line", "Documented", "A user guide, deployment guide for Render and Atlas, and a clear README."]].forEach(([icon, title, text]) => { %>
+                    <article class="card p-6">
+                        <i class="<%= icon %> text-3xl text-blue-900 dark:text-blue-300"></i>
+                        <h3 class="mt-4 font-semibold"><%= title %></h3>
+                        <p class="mt-2 text-sm muted"><%= text %></p>
+                    </article>
+                <% }) %>
+            </div>
+            <ul class="mt-10 flex flex-wrap gap-2" aria-label="Technologies">
+                <% ["Node.js", "Express 5", "EJS", "MongoDB", "Mongoose", "Tailwind CSS 4", "Stripe", "ethers.js", "USDC", "Anthropic API", "Nodemailer", "Chart.js", "sharp", "Helmet", "Jest", "Supertest", "Docker", "GitHub Actions"].forEach((tech) => { %>
+                    <li class="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-900 dark:bg-blue-900/40 dark:text-blue-200"><%= tech %></li>
+                <% }) %>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Try it -->
+    <section id="try-it" class="scroll-mt-32 max-w-6xl mx-auto px-4 py-20">
+        <p class="text-sm font-semibold uppercase tracking-wide text-amber-600">Try it yourself</p>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-bold">Buy something. It's free.</h2>
+        <p class="mt-3 max-w-2xl muted">Payments in this demo run in test mode, so you can go through the whole journey without spending anything.</p>
+
+        <div class="mt-10 grid lg:grid-cols-[1fr_400px] gap-8 items-start [&>*]:min-w-0">
+            <ol class="space-y-5">
+                <% [
+                  ["Log in", "Use the demo shopper below, or create an account and verify your email with the code we send."],
+                  ["Add something to your cart", "Search, filter, or ask the AI assistant for a recommendation."],
+                  ["Check out", live.card ? "Pay by card with Stripe's test card, or choose another option." : "Choose cash on delivery (card and crypto turn on with your own keys)."],
+                  ["Track your order", "Open My orders to see the timeline, then log in as the admin to ship it and add a tracking number."],
+                ].forEach(([title, text], index) => { %>
+                    <li class="flex gap-4">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-900 font-bold text-white"><%= index + 1 %></span>
+                        <div><h3 class="font-semibold"><%= title %></h3><p class="mt-1 text-sm muted"><%= text %></p></div>
+                    </li>
+                <% }) %>
+            </ol>
+
+            <aside class="card p-6 space-y-5">
+                <div>
+                    <h3 class="font-semibold">Demo accounts</h3>
+                    <table class="mt-3 w-full text-sm">
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-800 font-mono break-all">
+                            <tr><td class="py-1.5 font-sans muted">Shopper</td><td class="py-1.5">demo@azanmart.dev</td><td class="py-1.5">Demo@12345</td></tr>
+                            <tr><td class="py-1.5 font-sans muted">Admin</td><td class="py-1.5">admin@azanmart.dev</td><td class="py-1.5">Admin@12345</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="rounded-xl bg-amber-50 p-4 text-sm text-amber-950 dark:bg-amber-900/20 dark:text-amber-100">
+                    <h3 class="font-semibold"><i class="ri-bank-card-line"></i> Test card</h3>
+                    <p class="mt-1 flex flex-wrap items-center gap-3"><span class="font-mono text-base tracking-wider">4242 4242 4242 4242</span><button type="button" data-copy="4242424242424242" class="underline"><span data-copy-label>Copy</span></button></p>
+                    <p class="mt-1">Any future expiry date, any CVC, any postcode.</p>
+                </div>
+                <div class="text-sm">
+                    <h3 class="font-semibold"><i class="ri-wallet-3-line"></i> Paying with USDC</h3>
+                    <p class="mt-1 muted">Install MetaMask, then get free test USDC from the <a href="https://faucet.circle.com" target="_blank" rel="noopener" class="underline">Circle faucet</a> (Base Sepolia) and test ETH for fees from the <a href="https://portal.cdp.coinbase.com/products/faucet" target="_blank" rel="noopener" class="underline">Coinbase faucet</a>.</p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="/login" class="btn btn-primary flex-1">Log in</a>
+                    <a href="/guide" class="btn btn-outline flex-1">User guide</a>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- Built by -->
+    <section class="max-w-6xl mx-auto px-4 pb-20">
+        <div class="card p-8 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 bg-gradient-to-r from-blue-50 to-amber-50 dark:from-blue-950/40 dark:to-amber-900/10">
+            <img src="<%= asset('/favicon.svg') %>" alt="" class="h-16 w-16 shrink-0 rounded-2xl">
+            <div class="flex-1">
+                <h2 class="text-2xl font-bold">Built by Azan Imtiaz</h2>
+                <p class="mt-1 muted">Software Engineering graduate and MERN &amp; Blockchain developer. Every part of AzanMart, from the payment flows to the deployment pipeline, is mine to walk you through.</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="https://github.com/Azan-imtiaz" target="_blank" rel="noopener" class="btn btn-outline"><i class="ri-github-fill"></i> GitHub</a>
+                <a href="https://www.linkedin.com/in/azan-imtiaz" target="_blank" rel="noopener" class="btn btn-primary"><i class="ri-linkedin-box-fill"></i> LinkedIn</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('./partials/footer') %>

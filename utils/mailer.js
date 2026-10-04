@@ -60,4 +60,4 @@ async function checkMailer() {
   }
 }
 
-module.exports = { sendMail, checkMailer };
+module.exports = { sendMail, checkMailer, emailEnabled: useSmtp };

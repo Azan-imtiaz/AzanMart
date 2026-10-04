@@ -4,6 +4,10 @@ const reviewModel = require("../models/reviewModel");
 const httpError = require("../utils/httpError");
 const { toCents, CURRENCY } = require("../utils/money");
 const { APP_URL } = require("../config/site");
+const { stripe } = require("../utils/stripe");
+const cryptoConfig = require("../config/crypto");
+const assistantConfig = require("../config/assistant");
+const { emailEnabled } = require("../utils/mailer");
 
 exports.showHome = async (req, res) => {
   const newArrivals = await productModel
@@ -78,6 +82,20 @@ function buildFilter({ q, category, min, max, sale, inStock }) {
   if (inStock) filter.stock = mongoose.trusted({ $gt: 0 });
   return filter;
 }
+
+exports.showFeatures = (req, res) => {
+  res.render("features", {
+    title: "Features",
+    description:
+      "Everything inside AzanMart: card, crypto and cash payments, an AI shopping assistant, order tracking, an admin dashboard, and the security and performance work behind them.",
+    live: {
+      card: Boolean(stripe),
+      crypto: cryptoConfig.enabled,
+      assistant: assistantConfig.enabled,
+      email: emailEnabled,
+    },
+  });
+};
 
 exports.showShop = async (req, res) => {
   const options = readShopQuery(req.query);
