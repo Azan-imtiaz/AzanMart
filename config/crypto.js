@@ -4,6 +4,8 @@
 const config = {
   receiver: (process.env.CRYPTO_RECEIVER_ADDRESS || "").toLowerCase(),
   rpcUrl: process.env.CRYPTO_RPC_URL || "https://sepolia.base.org",
+  // Sent to the shopper's wallet. Kept separate because CRYPTO_RPC_URL may contain an API key.
+  publicRpcUrl: process.env.CRYPTO_PUBLIC_RPC_URL || "https://sepolia.base.org",
   chainId: Number(process.env.CRYPTO_CHAIN_ID) || 84532,
   networkName: process.env.CRYPTO_NETWORK_NAME || "Base Sepolia",
   // Circle's test USDC on Base Sepolia

@@ -1,4 +1,7 @@
+const mongoose = require("mongoose");
 const orderModel = require("../models/orderModel");
+const cryptoConfig = require("../config/crypto");
+const { uniquePaymentAmount } = require("../services/crypto");
 const { getCart } = require("../services/cart");
 const { placeOrder, clearCart, cancelOrder, markOrderPaid } = require("../services/orders");
 const { sendOrderConfirmation } = require("../services/emails");
@@ -41,11 +44,15 @@ function stripeLineItems(order) {
   return lineItems;
 }
 
-// A shopper who went to Stripe and came back without paying still has a
-// pending order holding stock. Starting a new checkout cancels it.
-async function cancelAbandonedCardOrders(userId) {
+// A shopper who left a card or crypto payment unfinished still has a pending
+// order holding stock. Starting a new checkout cancels it.
+async function cancelAbandonedOrders(userId) {
   const pending = await orderModel
-    .find({ user: userId, paymentMethod: "card", status: "pending" })
+    .find({
+      user: userId,
+      paymentMethod: mongoose.trusted({ $in: ["card", "crypto"] }),
+      status: "pending",
+    })
     .select("stripeSessionId");
   for (const order of pending) {
     if (order.stripeSessionId) {
@@ -81,22 +88,35 @@ exports.showCheckout = async (req, res) => {
     cart,
     address: lastOrder?.shippingAddress || { fullName: req.user.fullName },
     cardPayments: Boolean(stripe),
+    cryptoPayments: cryptoConfig.enabled,
+    cryptoNetwork: cryptoConfig.networkName,
   });
 };
 
 exports.placeOrder = async (req, res) => {
-  const paymentMethod = req.body.paymentMethod === "card" && stripe ? "card" : "cod";
-  if (paymentMethod === "card") await cancelAbandonedCardOrders(req.user._id);
+  const available = { card: Boolean(stripe), crypto: cryptoConfig.enabled, cod: true };
+  const paymentMethod = available[req.body.paymentMethod] ? req.body.paymentMethod : "cod";
+  await cancelAbandonedOrders(req.user._id);
 
   const cart = await loadCheckoutCart(req, res);
   if (!cart) return;
 
   const { fullName, phone, line1, line2, city, postalCode, country } = req.body;
+  const crypto =
+    paymentMethod === "crypto"
+      ? {
+          amount: await uniquePaymentAmount(cart.total),
+          chainId: cryptoConfig.chainId,
+          expiresAt: new Date(Date.now() + cryptoConfig.paymentWindowMinutes * 60 * 1000),
+        }
+      : undefined;
+
   const { order, error } = await placeOrder({
     user: req.user,
     cart,
     shippingAddress: { fullName, phone, line1, line2, city, postalCode, country },
     paymentMethod,
+    crypto,
   });
 
   if (error) {
@@ -110,6 +130,9 @@ exports.placeOrder = async (req, res) => {
     req.flash("success", "Thank you! Your order has been placed.");
     return res.redirect(`/orders/${order.orderNumber}`);
   }
+
+  // Crypto: the shopper pays from their wallet on the next page
+  if (paymentMethod === "crypto") return res.redirect(`/orders/${order.orderNumber}/pay`);
 
   // Card: the cart is only cleared once Stripe confirms the payment
   try {

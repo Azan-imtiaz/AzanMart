@@ -49,3 +49,20 @@ document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
 // Shop filters are collapsible on phones but always open on wide screens
 const filters = document.querySelector("details[data-filters]");
 if (filters && window.matchMedia("(min-width: 1024px)").matches) filters.open = true;
+
+// Copy buttons, e.g. the wallet address and amount on the crypto payment page
+document.querySelectorAll("[data-copy]").forEach((button) => {
+  button.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(button.dataset.copy);
+      const label = button.querySelector("[data-copy-label]");
+      if (label) {
+        const original = label.textContent;
+        label.textContent = "Copied";
+        setTimeout(() => (label.textContent = original), 1500);
+      }
+    } catch {
+      // Clipboard access can be blocked; the value is still visible to copy by hand
+    }
+  });
+});

@@ -11,6 +11,7 @@ if (missingEnv.length > 0) {
 const app = require("./app");
 const connectDB = require("./config/db");
 const { checkMailer } = require("./utils/mailer");
+const { cancelExpiredCryptoOrders } = require("./services/orders");
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,4 +20,7 @@ connectDB().then(() => {
     console.log(`AzanMart is running on http://localhost:${PORT}`);
   });
   checkMailer();
+
+  // Release stock held by crypto orders that were never paid
+  setInterval(() => cancelExpiredCryptoOrders().catch((err) => console.error(err)), 60_000).unref();
 });

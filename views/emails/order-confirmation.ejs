@@ -5,6 +5,9 @@
     We've received order <strong><%= order.orderNumber %></strong>. Please have <strong><%= formatPrice(order.total) %></strong> ready when it arrives.
   <% } else { %>
     Your payment for order <strong><%= order.orderNumber %></strong> went through. We'll let you know when it ships.
+    <% if (order.crypto?.txHash) { %>
+      <br><a href="<%= txUrl(order.crypto.txHash) %>" style="color:#1e3a8a;">View your USDC transaction</a>
+    <% } %>
   <% } %>
 </p>
 <%- include('order-summary', { order }) %>

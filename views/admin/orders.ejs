@@ -34,7 +34,7 @@
                     <td class="px-4 py-3"><a href="/admin/orders/<%= order.orderNumber %>" class="font-medium text-blue-900 hover:underline dark:text-blue-300"><%= order.orderNumber %></a></td>
                     <td class="px-4 py-3"><%= order.shippingAddress.fullName %></td>
                     <td class="px-4 py-3 muted"><%= new Date(order.createdAt).toLocaleDateString("en-US", { dateStyle: "medium" }) %></td>
-                    <td class="px-4 py-3 muted"><%= order.paymentMethod === "cod" ? "COD" : "Card" %> &middot; <%= order.paymentStatus %></td>
+                    <td class="px-4 py-3 muted"><%= { cod: "COD", card: "Card", crypto: "USDC" }[order.paymentMethod] %> &middot; <%= order.paymentStatus %></td>
                     <td class="px-4 py-3"><%- include('../partials/order-status', { status: order.status }) %></td>
                     <td class="px-4 py-3 text-right font-medium"><%= formatPrice(order.total) %></td>
                 </tr>

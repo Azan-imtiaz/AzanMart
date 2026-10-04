@@ -1,0 +1,120 @@
+<%- include('./partials/header') %>
+<% const shortAddress = (address) => `${address.slice(0, 6)}…${address.slice(-4)}`; %>
+
+<main id="main" class="flex-1 max-w-5xl w-full mx-auto px-4 py-10">
+    <a href="/orders/<%= order.orderNumber %>" class="text-sm muted hover:underline">&larr; Order <%= order.orderNumber %></a>
+    <h1 class="text-3xl font-bold mt-2">Pay with USDC</h1>
+    <p class="muted mt-1">Send the exact amount below from your wallet. We confirm it on the blockchain automatically.</p>
+
+    <div class="mt-8 grid lg:grid-cols-[1fr_320px] gap-8 items-start">
+        <section class="card p-6 sm:p-8" data-crypto-pay
+            data-order="<%= order.orderNumber %>"
+            data-csrf="<%= csrfToken() %>"
+            data-chain-id="<%= network.chainId %>"
+            data-chain-name="<%= network.name %>"
+            data-rpc-url="<%= network.rpcUrl %>"
+            data-explorer-url="<%= network.explorerUrl %>"
+            data-token="<%= network.token %>"
+            data-receiver="<%= network.receiver %>"
+            data-amount="<%= order.crypto.amount %>"
+            data-expires="<%= order.crypto.expiresAt.toISOString() %>">
+
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-900 dark:bg-blue-900/40 dark:text-blue-200">
+                    <span class="h-2 w-2 rounded-full bg-blue-600"></span>
+                    <%= network.name %><%= network.isTestnet ? " · test network" : "" %>
+                </span>
+                <span class="text-sm muted"><i class="ri-time-line"></i> Time left: <strong class="font-mono text-gray-800 dark:text-gray-100" data-countdown>30:00</strong></span>
+            </div>
+
+            <div class="mt-6">
+                <p class="text-sm muted">Amount to send</p>
+                <div class="mt-1 flex flex-wrap items-baseline gap-3">
+                    <p class="text-3xl sm:text-4xl font-bold tracking-tight"><%= amount %> <span class="text-xl font-semibold muted">USDC</span></p>
+                    <button type="button" class="text-sm text-blue-900 hover:underline dark:text-blue-300" data-copy="<%= amount %>">
+                        <i class="ri-file-copy-line"></i> <span data-copy-label>Copy</span>
+                    </button>
+                </div>
+                <p class="text-sm muted mt-1">
+                    That's <%= formatPrice(order.total) %>. The last few digits identify your order, so please send this exact amount.
+                </p>
+            </div>
+
+            <dl class="mt-6 grid sm:grid-cols-2 gap-4 text-sm">
+                <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-800">
+                    <dt class="muted">Store wallet</dt>
+                    <dd class="mt-1 flex items-center justify-between gap-2">
+                        <span class="font-mono" title="<%= network.receiver %>"><%= shortAddress(network.receiver) %></span>
+                        <button type="button" class="text-blue-900 hover:underline dark:text-blue-300" data-copy="<%= network.receiver %>"><span data-copy-label>Copy</span></button>
+                    </dd>
+                </div>
+                <div class="rounded-lg border border-gray-200 p-3 dark:border-gray-800">
+                    <dt class="muted">Token</dt>
+                    <dd class="mt-1 flex items-center justify-between gap-2">
+                        <span>USDC <span class="font-mono muted" title="<%= network.token %>">(<%= shortAddress(network.token) %>)</span></span>
+                        <button type="button" class="text-blue-900 hover:underline dark:text-blue-300" data-copy="<%= network.token %>"><span data-copy-label>Copy</span></button>
+                    </dd>
+                </div>
+            </dl>
+
+            <button type="button" class="btn btn-primary w-full mt-6 py-3 text-base" data-pay-button>
+                <i class="ri-wallet-3-line"></i> Pay with MetaMask
+            </button>
+            <div data-pay-status aria-live="polite"></div>
+
+            <details class="mt-6 text-sm">
+                <summary class="cursor-pointer font-medium">Paid from another wallet or your phone?</summary>
+                <form action="/orders/<%= order.orderNumber %>/crypto" method="post" class="mt-3 flex flex-col sm:flex-row gap-2">
+                    <%- include('./partials/csrf') %>
+                    <label for="txHash" class="sr-only">Transaction hash</label>
+                    <input id="txHash" name="txHash" required pattern="0x[0-9a-fA-F]{64}" placeholder="Transaction hash (0x…)" class="input font-mono text-xs">
+                    <button type="submit" class="btn btn-outline shrink-0">Check payment</button>
+                </form>
+            </details>
+
+            <% if (network.isTestnet) { %>
+                <div class="mt-6 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-900/30 dark:text-amber-100">
+                    <p class="font-semibold"><i class="ri-flask-line"></i> Demo payment on a test network</p>
+                    <p class="mt-1">
+                        No real money is used. Get free test USDC from the
+                        <a href="https://faucet.circle.com" target="_blank" rel="noopener" class="underline">Circle faucet</a>
+                        (choose <%= network.name %>), plus a little test ETH for network fees from the
+                        <a href="https://portal.cdp.coinbase.com/products/faucet" target="_blank" rel="noopener" class="underline">Coinbase faucet</a>.
+                    </p>
+                </div>
+            <% } %>
+        </section>
+
+        <aside class="space-y-6">
+            <section class="card p-5 text-sm">
+                <h2 class="font-semibold">Your order</h2>
+                <ul class="mt-3 space-y-2">
+                    <% order.items.forEach((item) => { %>
+                        <li class="flex justify-between gap-3">
+                            <span><%= item.name %> <span class="muted">&times; <%= item.quantity %></span></span>
+                            <span><%= formatPrice(item.price * item.quantity) %></span>
+                        </li>
+                    <% }) %>
+                </ul>
+                <p class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-800 flex justify-between font-semibold">
+                    <span>Total</span><span><%= formatPrice(order.total) %></span>
+                </p>
+            </section>
+
+            <section class="card p-5 text-sm">
+                <h2 class="font-semibold">How it works</h2>
+                <ol class="mt-3 space-y-3">
+                    <% [["ri-links-line", "Connect your wallet", "MetaMask switches to " + network.name + " for you."], ["ri-send-plane-line", "Approve the transfer", "One click sends the exact USDC amount."], ["ri-shield-check-line", "We verify it on-chain", "Your order is confirmed as soon as the network does."]].forEach(([icon, step, detail]) => { %>
+                        <li class="flex gap-3">
+                            <i class="<%= icon %> text-lg text-blue-900 dark:text-blue-300"></i>
+                            <span><span class="font-medium"><%= step %></span><span class="block muted"><%= detail %></span></span>
+                        </li>
+                    <% }) %>
+                </ol>
+            </section>
+        </aside>
+    </div>
+</main>
+
+<script src="<%= asset('/js/crypto-pay.js') %>" defer></script>
+<%- include('./partials/footer') %>

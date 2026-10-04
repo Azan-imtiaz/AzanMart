@@ -54,8 +54,18 @@
                             <i class="ri-bank-card-line ml-auto text-2xl muted"></i>
                         </label>
                     <% } %>
+                    <% if (cryptoPayments) { %>
+                        <label class="flex items-center gap-3 rounded-lg border border-gray-300 p-4 has-checked:border-blue-900 dark:border-gray-700 dark:has-checked:border-blue-400">
+                            <input type="radio" name="paymentMethod" value="crypto" <%= cardPayments ? "" : "checked" %>>
+                            <span>
+                                <span class="font-medium">USDC (crypto)</span>
+                                <span class="block text-sm muted">Pay from MetaMask on <%= cryptoNetwork %>. 1 USDC = 1 US dollar.</span>
+                            </span>
+                            <i class="ri-wallet-3-line ml-auto text-2xl muted"></i>
+                        </label>
+                    <% } %>
                     <label class="flex items-center gap-3 rounded-lg border border-gray-300 p-4 has-checked:border-blue-900 dark:border-gray-700 dark:has-checked:border-blue-400">
-                        <input type="radio" name="paymentMethod" value="cod" <%= cardPayments ? "" : "checked" %>>
+                        <input type="radio" name="paymentMethod" value="cod" <%= cardPayments || cryptoPayments ? "" : "checked" %>>
                         <span>
                             <span class="font-medium">Cash on delivery</span>
                             <span class="block text-sm muted">Pay when your order arrives.</span>

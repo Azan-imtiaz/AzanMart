@@ -4,10 +4,12 @@ const userModel = require("../models/userModel");
 const { sendMail } = require("../utils/mailer");
 const { formatPrice } = require("../utils/money");
 const { APP_URL } = require("../config/site");
+const cryptoConfig = require("../config/crypto");
 
 function render(template, data) {
   const file = path.join(__dirname, "../views/emails", `${template}.ejs`);
-  return ejs.renderFile(file, { ...data, formatPrice, appUrl: APP_URL });
+  const txUrl = (hash) => `${cryptoConfig.explorerUrl}/tx/${hash}`;
+  return ejs.renderFile(file, { ...data, formatPrice, txUrl, appUrl: APP_URL });
 }
 
 async function sendOrderConfirmation(order) {

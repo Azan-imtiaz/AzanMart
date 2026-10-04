@@ -1,7 +1,7 @@
 <%
   const fmt = (date) => new Date(date).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
   const steps = [{ label: "Order placed", at: order.createdAt }];
-  if (order.paymentMethod === "card") steps.push({ label: "Payment received", at: order.paidAt });
+  if (order.paymentMethod !== "cod") steps.push({ label: "Payment received", at: order.paidAt });
   if (order.status === "cancelled") {
     steps.push({ label: "Cancelled", at: order.cancelledAt, cancelled: true });
   } else {

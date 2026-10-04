@@ -82,7 +82,11 @@
 
         <section class="card p-5 text-sm">
             <h2 class="font-semibold">Payment</h2>
-            <p class="mt-2 muted"><%= order.paymentMethod === "cod" ? "Cash on delivery" : "Card (Stripe)" %> &middot; <%= order.paymentStatus %></p>
+            <p class="mt-2 muted"><%= paymentLabels[order.paymentMethod] %> &middot; <%= order.paymentStatus %></p>
+            <% if (order.crypto?.txHash) { %>
+                <p class="muted break-all">From <span class="font-mono text-xs"><%= order.crypto.payer %></span></p>
+                <a href="<%= txUrl(order.crypto.txHash) %>" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-blue-900 hover:underline dark:text-blue-300">View transaction <i class="ri-external-link-line"></i></a>
+            <% } %>
             <% if (order.paidAt) { %><p class="muted">Paid <%= new Date(order.paidAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) %></p><% } %>
         </section>
     </aside>

@@ -95,6 +95,23 @@ async function cancelOrder(orderId) {
   return order;
 }
 
+// Crypto orders hold stock while the shopper pays; give it back once the
+// payment window has passed. The grace period lets a payment sent in the last
+// seconds still confirm. Called on a timer from server.js.
+const CRYPTO_GRACE_MS = 5 * 60 * 1000;
+
+async function cancelExpiredCryptoOrders() {
+  const expired = await orderModel
+    .find({
+      paymentMethod: "crypto",
+      status: "pending",
+      "crypto.expiresAt": mongoose.trusted({ $lt: new Date(Date.now() - CRYPTO_GRACE_MS) }),
+    })
+    .select("_id");
+  for (const order of expired) await cancelOrder(order._id);
+  return expired.length;
+}
+
 const FINAL_STATUSES = ["delivered", "cancelled"];
 
 // Admin status changes. `shipment` holds the courier and tracking number when
@@ -138,5 +155,6 @@ module.exports = {
   markOrderPaid,
   cancelOrder,
   updateOrderStatus,
+  cancelExpiredCryptoOrders,
   FINAL_STATUSES,
 };

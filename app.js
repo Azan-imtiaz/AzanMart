@@ -22,6 +22,7 @@ const csrf = require("./middlewares/csrf");
 const { formatPrice } = require("./utils/money");
 const { APP_URL, ASSET_VERSION } = require("./config/site");
 const { whenConnected } = require("./config/db");
+const cryptoConfig = require("./config/crypto");
 const { sendProductImage } = require("./controllers/imageController");
 const { handleStripeEvent } = require("./controllers/webhookController");
 const seo = require("./controllers/seoController");
@@ -126,6 +127,12 @@ app.use(csrf);
 
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
+app.locals.paymentLabels = {
+  cod: "Cash on delivery",
+  card: "Card (Stripe)",
+  crypto: "USDC (crypto)",
+};
+app.locals.txUrl = (hash) => `${cryptoConfig.explorerUrl}/tx/${hash}`;
 app.locals.asset = (url) => `${url}?v=${ASSET_VERSION}`;
 // For data embedded in <script type="application/json">: escaping "<" means a
 // value like "</script>" can't end the tag early

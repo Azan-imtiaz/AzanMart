@@ -9,6 +9,13 @@
         <%- include('./partials/order-status', { status: order.status }) %>
     </div>
 
+    <% if (order.paymentMethod === "crypto" && order.status === "pending") { %>
+        <div class="mt-6 rounded-xl bg-amber-50 px-5 py-4 flex flex-wrap items-center justify-between gap-3 text-amber-900 dark:bg-amber-900/30 dark:text-amber-100">
+            <span><i class="ri-time-line"></i> This order is waiting for your USDC payment.</span>
+            <a href="/orders/<%= order.orderNumber %>/pay" class="btn btn-primary py-1.5">Complete payment</a>
+        </div>
+    <% } %>
+
     <div class="mt-8 grid md:grid-cols-[1fr_280px] gap-6 items-start">
         <section class="card">
             <ul class="divide-y divide-gray-200 dark:divide-gray-800">
@@ -54,9 +61,14 @@
             <section class="card p-5 text-sm">
                 <h2 class="font-semibold">Payment</h2>
                 <p class="mt-2 muted">
-                    <%= order.paymentMethod === "cod" ? "Cash on delivery" : "Card" %>
+                    <%= paymentLabels[order.paymentMethod] %>
                     &middot; <%= order.paymentStatus === "paid" ? "Paid" : "Not paid yet" %>
                 </p>
+                <% if (order.crypto?.txHash) { %>
+                    <a href="<%= txUrl(order.crypto.txHash) %>" target="_blank" rel="noopener" class="mt-1 inline-flex items-center gap-1 text-blue-900 hover:underline dark:text-blue-300">
+                        View transaction <i class="ri-external-link-line"></i>
+                    </a>
+                <% } %>
             </section>
         </aside>
     </div>
