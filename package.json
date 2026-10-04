@@ -28,7 +28,6 @@
   "author": "Azan Imtiaz (https://github.com/Azan-imtiaz)",
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.131.0",
     "bcrypt": "^6.0.0",
     "chart.js": "^4.5.1",
     "compression": "^1.8.2",

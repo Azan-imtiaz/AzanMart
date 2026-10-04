@@ -1,4 +1,3 @@
-const Anthropic = require("@anthropic-ai/sdk").default;
 const mongoose = require("mongoose");
 const productModel = require("../models/productModel");
 const reviewModel = require("../models/reviewModel");
@@ -7,13 +6,37 @@ const cryptoConfig = require("../config/crypto");
 const { formatPrice } = require("../utils/money");
 const { FREE_SHIPPING_FROM, SHIPPING_FEE } = require("./cart");
 
-let client;
-function getClient() {
-  client ??= new Anthropic();
-  return client;
+// An error from the NVIDIA API, with its HTTP status (0 when it couldn't be reached)
+class AssistantApiError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
 }
 
-// Kept identical between requests so it can be cached
+// One chat completion from NVIDIA's OpenAI-compatible API
+async function callNvidia(body) {
+  let res;
+  try {
+    res = await fetch(`${config.baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(config.timeoutMs),
+    });
+  } catch (err) {
+    throw new AssistantApiError(0, err.message);
+  }
+  if (!res.ok) throw new AssistantApiError(res.status, (await res.text()).slice(0, 200));
+  return res.json();
+}
+
+// Swapped for a fake in tests
+let client = callNvidia;
+
 const SYSTEM_PROMPT = `You are the shopping assistant for AzanMart, an online store for bags and everyday essentials.
 
 Help shoppers find products and answer questions about them and about how the store works.
@@ -37,8 +60,7 @@ const TOOLS = [
     name: "search_products",
     description:
       "Search the AzanMart catalog. Returns up to 6 products with price, discount, stock and rating. Use an empty query to list products in a category or under a price.",
-    strict: true,
-    input_schema: {
+    parameters: {
       type: "object",
       properties: {
         query: {
@@ -59,15 +81,14 @@ const TOOLS = [
   {
     name: "get_product",
     description: "Get the full description and recent reviews of one product by its slug.",
-    strict: true,
-    input_schema: {
+    parameters: {
       type: "object",
       properties: { slug: { type: "string" } },
       required: ["slug"],
       additionalProperties: false,
     },
   },
-];
+].map((tool) => ({ type: "function", function: tool }));
 
 const CARD_FIELDS =
   "name slug category price finalPrice discount stock ratingAverage ratingCount bgcolor images._id";
@@ -88,7 +109,11 @@ function describe(product) {
   };
 }
 
-async function searchProducts({ query, category, max_price, on_sale_only }) {
+async function searchProducts(input) {
+  const query = String(input.query ?? "");
+  const category = String(input.category ?? "any");
+  const max_price = Number(input.max_price) || 0;
+  const on_sale_only = input.on_sale_only === true || input.on_sale_only === "true";
   const filter = {};
   if (query.trim()) filter.$text = mongoose.trusted({ $search: query.slice(0, 100) });
   if (category !== "any" && productModel.CATEGORIES.includes(category)) filter.category = category;
@@ -171,7 +196,7 @@ function productCards(reply, seen) {
 async function answer({ history, productSlug }) {
   const messages = history.map(({ role, content }) => ({ role, content }));
 
-  // Page context goes in the latest message, not the system prompt, so the cached prefix stays the same
+  // Page context goes in the latest message, so the system prompt stays the same for every question
   if (productSlug) {
     const product = await productModel
       .findOne({ slug: String(productSlug) })
@@ -184,66 +209,45 @@ async function answer({ history, productSlug }) {
   }
 
   const seen = new Map();
+  messages.unshift({ role: "system", content: SYSTEM_PROMPT });
   for (let round = 0; round <= config.maxToolRounds; round++) {
-    const response = await getClient().beta.messages.create({
+    const response = await client({
       model: config.model,
       max_tokens: config.maxTokens,
-      output_config: { effort: config.effort },
-      // If the model declines, the API retries on a suitable fallback model
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      cache_control: { type: "ephemeral" },
-      system: SYSTEM_PROMPT,
+      temperature: config.temperature,
       tools: TOOLS,
       messages,
     });
 
-    if (response.stop_reason === "refusal") {
-      return {
-        reply:
-          "Sorry, I can't help with that one. Ask me anything about our products or your order.",
-        products: [],
-      };
-    }
-
-    // Keep the whole assistant turn (including thinking blocks) for the next request
-    messages.push({ role: "assistant", content: response.content });
-
-    if (response.stop_reason === "pause_turn") continue;
-
-    const toolCalls = response.content.filter((block) => block.type === "tool_use");
-    if (response.stop_reason !== "tool_use" || toolCalls.length === 0) {
-      const reply = response.content
-        .filter((block) => block.type === "text")
-        .map((block) => block.text)
-        .join("\n")
-        .trim();
+    const message = response.choices?.[0]?.message;
+    const toolCalls = message?.tool_calls || [];
+    if (!toolCalls.length) {
+      // Some models show their reasoning in <think> tags; shoppers only see the answer
+      const reply = (message?.content || "").replace(/<think>[\s\S]*?<\/think>/g, "").trim();
       return {
         reply: reply || "Sorry, I didn't catch that. Could you ask again?",
         products: productCards(reply, seen),
       };
     }
 
-    // All results go back in one message so the model keeps making parallel calls
+    // Keep the assistant turn so the model sees which tools it called
+    messages.push({ role: "assistant", content: message.content || "", tool_calls: toolCalls });
     const results = await Promise.all(
       toolCalls.map(async (call) => {
+        let content;
         try {
-          return {
-            type: "tool_result",
-            tool_use_id: call.id,
-            content: await runTool(call.name, call.input, seen),
-          };
+          content = await runTool(
+            call.function.name,
+            JSON.parse(call.function.arguments || "{}"),
+            seen,
+          );
         } catch (err) {
-          return {
-            type: "tool_result",
-            tool_use_id: call.id,
-            content: `Tool failed: ${err.message}`,
-            is_error: true,
-          };
+          content = JSON.stringify({ error: `Tool failed: ${err.message}` });
         }
+        return { role: "tool", tool_call_id: call.id, content };
       }),
     );
-    messages.push({ role: "user", content: results });
+    messages.push(...results);
   }
 
   return {
@@ -252,4 +256,10 @@ async function answer({ history, productSlug }) {
   };
 }
 
-module.exports = { answer, SYSTEM_PROMPT, TOOLS, setClient: (fake) => (client = fake) };
+module.exports = {
+  answer,
+  SYSTEM_PROMPT,
+  TOOLS,
+  AssistantApiError,
+  setClient: (fake) => (client = fake),
+};

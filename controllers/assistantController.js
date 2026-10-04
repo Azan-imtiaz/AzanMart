@@ -1,6 +1,5 @@
-const Anthropic = require("@anthropic-ai/sdk").default;
 const config = require("../config/assistant");
-const { answer } = require("../services/assistant");
+const { answer, AssistantApiError } = require("../services/assistant");
 
 const BUSY = "I'm getting a lot of questions right now. Please try again in a minute.";
 const UNAVAILABLE =
@@ -40,15 +39,14 @@ exports.chat = async (req, res) => {
     });
     res.json({ reply, products });
   } catch (err) {
-    if (err instanceof Anthropic.RateLimitError) return res.status(429).json({ error: BUSY });
-    if (err instanceof Anthropic.AuthenticationError) {
-      console.error("Assistant: the Anthropic API key was rejected");
-    } else if (err instanceof Anthropic.APIConnectionError) {
-      console.error("Assistant: could not reach the Anthropic API:", err.message);
-    } else if (err instanceof Anthropic.APIError) {
-      console.error(`Assistant: API error ${err.status}:`, err.message);
+    if (!(err instanceof AssistantApiError)) throw err;
+    if (err.status === 429) return res.status(429).json({ error: BUSY });
+    if (err.status === 401 || err.status === 403) {
+      console.error("Assistant: the NVIDIA API key was rejected");
+    } else if (err.status === 0) {
+      console.error("Assistant: could not reach the NVIDIA API:", err.message);
     } else {
-      throw err;
+      console.error(`Assistant: API error ${err.status}:`, err.message);
     }
     res.status(503).json({ error: UNAVAILABLE });
   }

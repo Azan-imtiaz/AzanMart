@@ -340,7 +340,7 @@ later, or paste the transaction hash under **Paid from another wallet or your ph
 
 **The AI assistant says it's busy or unavailable.**
 You may have asked a lot of questions in a short time; wait a few minutes. If it never answers, the
-store owner hasn't set `ANTHROPIC_API_KEY`, or the service is temporarily down. Search and filters
+store owner hasn't set `NVIDIA_API_KEY`, or the service is temporarily down. Search and filters
 always work.
 
 **An item disappeared from my cart.**

@@ -64,7 +64,7 @@ dashboard) works the same either way.
   (and a webhook secret into `STRIPE_WEBHOOK_SECRET`). Test mode never charges real money.
 - **Gmail:** turn on 2-Step Verification, create an App Password and set `SMTP_USER` and `SMTP_PASS`.
 - **Crypto:** set `CRYPTO_RECEIVER_ADDRESS` to a wallet address you control (the address only, never a private key). The defaults use the Base Sepolia test network.
-- **AI assistant:** set `ANTHROPIC_API_KEY` to a key from the Anthropic Console.
+- **AI assistant:** set `NVIDIA_API_KEY` to a key from [build.nvidia.com](https://build.nvidia.com).
 
 Step-by-step instructions for each are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#4-turn-on-card-payments-optional).
 Use your own accounts: keys are never included in this repository.
@@ -136,7 +136,7 @@ Use your own accounts: keys are never included in this repository.
 | Database | MongoDB, Mongoose, connect-mongo (sessions)                                            |
 | Frontend | Tailwind CSS 4, a little vanilla JavaScript, Chart.js, Remix Icon, marked (user guide) |
 | Payments | Stripe Checkout and webhooks; USDC on Base with ethers.js                              |
-| AI       | Anthropic API (Claude) with tool use                                                   |
+| AI       | NVIDIA API (Nemotron) with tool calling                                                |
 | Email    | Nodemailer with Gmail (or any SMTP provider)                                           |
 | Security | Helmet, bcrypt, express-validator, express-rate-limit, custom CSRF                     |
 | Images   | Multer (memory storage), sharp                                                         |
@@ -167,7 +167,7 @@ flowchart LR
     Services -->|SMTP| Mail[Nodemailer]
     Browser -->|USDC transfer via MetaMask| Chain[(Base blockchain)]
     Services -->|verify transaction| Chain
-    Services -->|questions + catalog tools| Anthropic[Anthropic API]
+    Services -->|questions + catalog tools| NVIDIA[NVIDIA API]
 ```
 
 A request passes through the middleware stack, a router maps it to a controller, and the controller
@@ -230,7 +230,7 @@ docker compose exec app npm run seed -- --force
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | no       | Sends real email, e.g. Gmail with an App Password ([setup](docs/DEPLOYMENT.md#5-send-email-with-gmail)). Without them, emails are saved to a temp file and the path is logged |
 | `MAIL_FROM`                                           | no       | Sender, e.g. `AzanMart <orders@yourdomain.com>`                                                                                                                               |
 | `CRYPTO_RECEIVER_ADDRESS`                             | no       | Store wallet address; turns on USDC payments (other `CRYPTO_*` settings in [the deployment guide](docs/DEPLOYMENT.md#6-turn-on-crypto-payments-optional))                     |
-| `ANTHROPIC_API_KEY`                                   | no       | Turns on the AI shopping assistant                                                                                                                                            |
+| `NVIDIA_API_KEY`                                      | no       | Turns on the AI shopping assistant                                                                                                                                            |
 | `DEMO_MODE`                                           | no       | On by default: demo banner and test payment details. Set to `false` for a real store                                                                                          |
 
 ### Scripts
@@ -252,7 +252,7 @@ docker compose exec app npm run seed -- --force
 The tests run the real Express app over HTTP against an in-memory MongoDB, reading CSRF tokens out of
 the rendered forms like a browser would. Stripe API calls are mocked, while webhook signatures are
 created and checked with the real Stripe SDK. Crypto tests use a fake blockchain provider with real
-ethers.js log encoding, and the AI assistant tests use a scripted stand-in for the Anthropic client.
+ethers.js log encoding, and the AI assistant tests use a scripted stand-in for the NVIDIA API.
 
 ```bash
 npm test

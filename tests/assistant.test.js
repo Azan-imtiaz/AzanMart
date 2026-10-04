@@ -1,33 +1,35 @@
 // The assistant must be switched on before the app is loaded
-process.env.ANTHROPIC_API_KEY = "test-key";
+process.env.NVIDIA_API_KEY = "test-key";
 
-const Anthropic = require("@anthropic-ai/sdk").default;
 const config = require("../config/assistant");
-const { setClient } = require("../services/assistant");
+const { setClient, AssistantApiError } = require("../services/assistant");
 const { startDatabase, clearDatabase, stopDatabase } = require("./helpers/db");
 const { createUser, createProduct } = require("./helpers/factories");
 const { app, request } = require("./helpers/http");
 
-// Stand-in for the Anthropic client; each test scripts its responses. Requests
-// are copied as they're made, because the service keeps adding to the array.
+// Stand-in for the NVIDIA API; each test scripts its responses. Requests are
+// copied as they're made, because the service keeps adding to the array.
 const create = jest.fn();
 const requests = [];
-setClient({
-  beta: {
-    messages: {
-      create: (params) => {
-        requests.push(structuredClone(params));
-        return create(params);
-      },
-    },
-  },
+setClient((params) => {
+  requests.push(structuredClone(params));
+  return create(params);
 });
 
-const toolUse = (name, input, id = "toolu_1") => ({
-  stop_reason: "tool_use",
-  content: [{ type: "tool_use", id, name, input }],
+const toolUse = (name, input, id = "call_1") => ({
+  choices: [
+    {
+      message: {
+        role: "assistant",
+        content: null,
+        tool_calls: [
+          { id, type: "function", function: { name, arguments: JSON.stringify(input) } },
+        ],
+      },
+    },
+  ],
 });
-const text = (reply) => ({ stop_reason: "end_turn", content: [{ type: "text", text: reply }] });
+const text = (reply) => ({ choices: [{ message: { role: "assistant", content: reply } }] });
 
 // Gets a CSRF token the same way the chat widget does
 async function ask(messages, extra = {}) {
@@ -66,7 +68,7 @@ describe("shopping assistant", () => {
         }),
       )
       .mockImplementationOnce(async ({ messages }) => {
-        const results = JSON.parse(messages.at(-1).content[0].content);
+        const results = JSON.parse(messages.at(-1).content);
         return text(`Try the ${results[0].name} for ${results[0].price}.`);
       });
 
@@ -99,21 +101,15 @@ describe("shopping assistant", () => {
     await ask([{ role: "user", content: "Show me backpacks" }]);
 
     const first = requests[0];
-    expect(first).toMatchObject({
-      model: "claude-opus-5-5",
-      output_config: { effort: "low" },
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-    });
-    expect(
-      first.tools.every((tool) => tool.strict && tool.input_schema.additionalProperties === false),
-    ).toBe(true);
+    expect(first).toMatchObject({ model: config.model, temperature: 0.2 });
+    expect(first.messages[0].role).toBe("system");
+    expect(first.tools.every((tool) => tool.type === "function" && tool.function.parameters)).toBe(
+      true,
+    );
 
     const second = requests[1].messages;
-    expect(second.map((m) => m.role)).toEqual(["user", "assistant", "user"]);
-    expect(second[2].content).toEqual([
-      expect.objectContaining({ type: "tool_result", tool_use_id: "toolu_1" }),
-    ]);
+    expect(second.map((m) => m.role)).toEqual(["system", "user", "assistant", "tool"]);
+    expect(second[3]).toMatchObject({ role: "tool", tool_call_id: "call_1" });
   });
 
   it("applies the price, category and sale filters in the search tool", async () => {
@@ -131,7 +127,7 @@ describe("shopping assistant", () => {
         }),
       )
       .mockImplementationOnce(async ({ messages }) => {
-        found = JSON.parse(messages.at(-1).content[0].content).map((p) => p.name);
+        found = JSON.parse(messages.at(-1).content).map((p) => p.name);
         return text("Here you go.");
       });
 
@@ -149,7 +145,7 @@ describe("shopping assistant", () => {
     create
       .mockResolvedValueOnce(toolUse("get_product", { slug: product.slug }))
       .mockImplementationOnce(async ({ messages }) => {
-        details = JSON.parse(messages.at(-1).content[0].content);
+        details = JSON.parse(messages.at(-1).content);
         return text("It fits.");
       });
 
@@ -176,7 +172,7 @@ describe("shopping assistant", () => {
 
     await ask([{ role: "user", content: "Is it leather?" }], { productSlug: product.slug });
 
-    const message = requests[0].messages[0].content;
+    const message = requests[0].messages[1].content;
     expect(message).toContain('product page for "Tan Weekender"');
     expect(message).toContain("Is it leather?");
   });
@@ -197,12 +193,12 @@ describe("shopping assistant", () => {
     expect(res.body.reply).toMatch(/narrow it down/);
   });
 
-  it("answers politely when the model declines", async () => {
-    create.mockResolvedValueOnce({ stop_reason: "refusal", content: [] });
+  it("hides the model's reasoning from the reply", async () => {
+    create.mockResolvedValueOnce(text("<think>The shopper wants a tote.</think>Try a tote!"));
 
-    const res = await ask([{ role: "user", content: "Something off-topic" }]);
+    const res = await ask([{ role: "user", content: "Something for the beach?" }]);
 
-    expect(res.body.reply).toMatch(/can't help with that/);
+    expect(res.body.reply).toBe("Try a tote!");
   });
 
   it("cleans up the conversation it receives", async () => {
@@ -214,7 +210,7 @@ describe("shopping assistant", () => {
       { role: "user", content: "x".repeat(5000) },
     ]);
 
-    const { messages } = requests[0];
+    const messages = requests[0].messages.filter((m) => m.role !== "system");
     expect(messages).toHaveLength(1);
     expect(messages[0]).toMatchObject({ role: "user" });
     expect(messages[0].content).toHaveLength(config.maxMessageLength);
@@ -227,12 +223,23 @@ describe("shopping assistant", () => {
   });
 
   it("returns a friendly 429 when the API is rate limited", async () => {
-    create.mockRejectedValueOnce(Object.create(Anthropic.RateLimitError.prototype));
+    create.mockRejectedValueOnce(new AssistantApiError(429, "Too many requests"));
 
     const res = await ask([{ role: "user", content: "Hi" }]);
 
     expect(res.status).toBe(429);
     expect(res.body.error).toMatch(/try again/);
+  });
+
+  it("says it's unavailable when the API key is rejected", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    create.mockRejectedValueOnce(new AssistantApiError(401, "Unauthorized"));
+
+    const res = await ask([{ role: "user", content: "Hi" }]);
+
+    expect(res.status).toBe(503);
+    expect(console.error).toHaveBeenCalledWith("Assistant: the NVIDIA API key was rejected");
+    console.error.mockRestore();
   });
 
   it("is unavailable without an API key", async () => {

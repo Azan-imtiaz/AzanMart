@@ -151,11 +151,12 @@ period for payments already on their way), and their stock goes back on sale.
 
 ## 7. Turn on the AI assistant (optional)
 
-1. Create an API key in the [Anthropic Console](https://console.anthropic.com) and add some credit.
-2. Set `ANTHROPIC_API_KEY` and redeploy. An **Ask AI** button appears on every store page.
+1. Create an API key at [build.nvidia.com](https://build.nvidia.com) (click your profile, then **API Keys**).
+2. Set `NVIDIA_API_KEY` and redeploy. An **Ask AI** button appears on every store page.
 
 Each question costs a small amount of API usage. The assistant is limited to 20 questions per visitor
-every 10 minutes, and you can set a monthly spend limit in the Anthropic Console as a safety net.
+every 10 minutes, and you can watch your usage on build.nvidia.com. The model defaults to
+`nvidia/nemotron-3-super-120b-a12b`; set `NVIDIA_MODEL` to use another one that supports tool calling.
 
 ## 8. Demo mode
 

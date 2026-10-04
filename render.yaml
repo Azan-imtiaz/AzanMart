@@ -35,7 +35,7 @@ services:
         sync: false
       - key: CRYPTO_RECEIVER_ADDRESS
         sync: false
-      - key: ANTHROPIC_API_KEY
+      - key: NVIDIA_API_KEY
         sync: false
       - key: DEMO_MODE
         value: "true"
