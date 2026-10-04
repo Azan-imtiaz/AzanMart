@@ -9,3 +9,12 @@
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   document.documentElement.classList.toggle("dark", saved ? saved === "dark" : prefersDark);
 })();
+
+// Hide the demo banner early if the visitor already dismissed it
+try {
+  if (localStorage.getItem("demo-banner-dismissed")) {
+    document.documentElement.classList.add("demo-banner-dismissed");
+  }
+} catch {
+  // Storage blocked: the banner just shows
+}

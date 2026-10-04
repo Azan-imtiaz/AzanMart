@@ -73,6 +73,38 @@
                         <i class="ri-money-dollar-circle-line ml-auto text-2xl muted"></i>
                     </label>
                 </div>
+
+                <% if (demoMode && ((cardPayments && stripeTestMode) || (cryptoPayments && cryptoTestnet))) { %>
+                    <div class="mt-5 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-100">
+                        <p class="font-semibold"><i class="ri-flask-line"></i> Demo payment details</p>
+                        <p class="mt-1">This is a demo store, so you can complete a real checkout without paying anything.</p>
+                        <dl class="mt-3 space-y-3">
+                            <% if (cardPayments && stripeTestMode) { %>
+                                <div>
+                                    <dt class="font-medium">Card (Stripe test mode)</dt>
+                                    <dd class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                                        <span class="font-mono text-base tracking-wider">4242 4242 4242 4242</span>
+                                        <button type="button" data-copy="4242424242424242" class="underline"><span data-copy-label>Copy</span></button>
+                                        <span>Any future expiry date, any 3-digit CVC, any postcode.</span>
+                                    </dd>
+                                </div>
+                            <% } %>
+                            <% if (cryptoPayments && cryptoTestnet) { %>
+                                <div>
+                                    <dt class="font-medium">USDC (<%= cryptoNetwork %> test network)</dt>
+                                    <dd class="mt-1">
+                                        Get free test USDC from the <a href="https://faucet.circle.com" target="_blank" rel="noopener" class="underline">Circle faucet</a>
+                                        and a little test ETH for fees from the <a href="https://portal.cdp.coinbase.com/products/faucet" target="_blank" rel="noopener" class="underline">Coinbase faucet</a>.
+                                    </dd>
+                                </div>
+                            <% } %>
+                            <div>
+                                <dt class="font-medium">Cash on delivery</dt>
+                                <dd class="mt-1">Nothing to enter. The order is placed straight away.</dd>
+                            </div>
+                        </dl>
+                    </div>
+                <% } %>
             </section>
         </div>
 

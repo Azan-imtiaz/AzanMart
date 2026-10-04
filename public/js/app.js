@@ -66,3 +66,13 @@ document.querySelectorAll("[data-copy]").forEach((button) => {
     }
   });
 });
+
+// Dismissing the demo banner is remembered on this device
+document.querySelector("[data-dismiss-banner]")?.addEventListener("click", () => {
+  document.documentElement.classList.add("demo-banner-dismissed");
+  try {
+    localStorage.setItem("demo-banner-dismissed", "1");
+  } catch {
+    // Hidden for this page only
+  }
+});

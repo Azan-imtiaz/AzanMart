@@ -21,7 +21,7 @@ const flash = require("./middlewares/flash");
 const { loadUser } = require("./middlewares/auth");
 const csrf = require("./middlewares/csrf");
 const { formatPrice } = require("./utils/money");
-const { APP_URL, ASSET_VERSION } = require("./config/site");
+const { APP_URL, ASSET_VERSION, DEMO_MODE } = require("./config/site");
 const { whenConnected } = require("./config/db");
 const cryptoConfig = require("./config/crypto");
 const assistantConfig = require("./config/assistant");
@@ -129,6 +129,7 @@ app.use(csrf);
 
 app.set("view engine", "ejs");
 app.locals.formatPrice = formatPrice;
+app.locals.demoMode = DEMO_MODE;
 app.locals.assistantEnabled = assistantConfig.enabled;
 app.locals.cryptoEnabled = cryptoConfig.enabled;
 app.locals.paymentLabels = {

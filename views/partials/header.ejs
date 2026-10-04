@@ -33,6 +33,14 @@
 </head>
 
 <body class="font-sans antialiased text-gray-800 bg-gray-50 min-h-screen flex flex-col dark:bg-gray-950 dark:text-gray-100">
+    <% if (demoMode) { %>
+        <div data-demo-banner class="bg-gradient-to-r from-amber-400 to-amber-500 text-gray-950 text-sm">
+            <div class="max-w-6xl mx-auto px-4 py-1.5 flex items-center justify-center gap-3 text-center">
+                <span><i class="ri-flask-line"></i> <strong>Demo store:</strong> payments run in test mode, nothing is charged. <a href="/features#try-it" class="underline font-medium whitespace-nowrap">How to try it</a></span>
+                <button type="button" data-dismiss-banner class="shrink-0 rounded p-0.5 hover:bg-black/10" aria-label="Hide this message"><i class="ri-close-line"></i></button>
+            </div>
+        </div>
+    <% } %>
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 btn btn-primary">Skip to content</a>
     <header class="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur dark:border-gray-800 dark:bg-gray-950/90">
         <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4" aria-label="Main">

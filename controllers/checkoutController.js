@@ -88,7 +88,10 @@ exports.showCheckout = async (req, res) => {
     cart,
     address: lastOrder?.shippingAddress || { fullName: req.user.fullName },
     cardPayments: Boolean(stripe),
+    // Test card numbers only work with Stripe test keys
+    stripeTestMode: !process.env.STRIPE_SECRET_KEY?.startsWith("sk_live_"),
     cryptoPayments: cryptoConfig.enabled,
+    cryptoTestnet: cryptoConfig.isTestnet,
     cryptoNetwork: cryptoConfig.networkName,
   });
 };
