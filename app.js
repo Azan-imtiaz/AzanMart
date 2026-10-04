@@ -39,8 +39,9 @@ const isHttps = APP_URL.startsWith("https://");
 const SESSION_TTL_DAYS = 7;
 
 app.disable("x-powered-by");
-// Behind Render/Railway's proxy, so secure cookies work over HTTPS
-if (isProduction) app.set("trust proxy", 1);
+// Behind Render/Railway's proxy, so secure cookies work over HTTPS. Without
+// this, the session cookie is never sent and every form fails its CSRF check.
+if (isProduction || isHttps) app.set("trust proxy", 1);
 
 // Used by uptime checks and the hosting platform; registered before
 // logging and sessions so health pings stay cheap and quiet.

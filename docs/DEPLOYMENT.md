@@ -38,7 +38,8 @@ The repository includes a `render.yaml` blueprint.
 
 Prefer to set it up by hand? Create a **Web Service** with the same build and
 start commands, set the health check path to `/health`, and add the variables
-from `.env.example`.
+from `.env.example`, plus `NODE_ENV=production` (it turns on production logging
+and long-lived caching of CSS, JavaScript and images).
 
 > `APP_URL` must start with `https://` in production. It turns on secure
 > cookies, HSTS and `upgrade-insecure-requests`, and it's used for links in
