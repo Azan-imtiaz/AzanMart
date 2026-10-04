@@ -8,11 +8,17 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Stripe](https://img.shields.io/badge/Payments-Stripe-635BFF?logo=stripe&logoColor=white)
+![USDC](https://img.shields.io/badge/Crypto-USDC_on_Base-2775CA?logo=ethereum&logoColor=white)
+![AI assistant](https://img.shields.io/badge/AI-shopping_assistant-D97706)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 AzanMart is a full-stack online store rendered on the server with **Node.js, Express 5, EJS and MongoDB**.
-Shoppers can search the catalog, save favourites, check out with Stripe or cash on delivery and track
-their orders. Admins get a dashboard with sales charts and tools to manage products, orders and users.
+Shoppers can search the catalog, ask an **AI shopping assistant** for recommendations, and pay by
+**card (Stripe)**, **USDC from a crypto wallet** or **cash on delivery**, then track every order with
+email updates. Admins get a dashboard with sales charts and tools to manage products, orders and users.
+
+The app has its own **[features page](#features)** (`/features`) and **[user guide](docs/USER_GUIDE.md)**
+(`/guide`), and runs in a clearly labelled demo mode where nothing is ever charged.
 
 Designed and developed by **Azan Imtiaz** · [GitHub](https://github.com/Azan-imtiaz) · [LinkedIn](https://www.linkedin.com/in/azan-imtiaz)
 
@@ -29,17 +35,25 @@ After running `npm run seed`, you can log in with:
 | Admin    | `admin@azanmart.dev` | `Admin@12345` |
 | Customer | `demo@azanmart.dev`  | `Demo@12345`  |
 
-Card payments use Stripe test mode: card `4242 4242 4242 4242`, any future date, any CVC.
+Payments run in test mode, so you can buy anything for free:
 
-### Stripe and Gmail are optional
+- **Card:** `4242 4242 4242 4242`, any future date, any CVC
+- **USDC:** free test tokens from the [Circle faucet](https://faucet.circle.com) (Base Sepolia), plus test ETH for fees from the [Coinbase faucet](https://portal.cdp.coinbase.com/products/faucet)
+- **Cash on delivery:** nothing to enter
 
-AzanMart runs without any Stripe or Gmail keys, but a few features are limited until you add them:
+The checkout page shows these details too, and the [user guide](docs/USER_GUIDE.md#trying-the-demo) walks through each one.
+
+### Stripe, crypto, Gmail and the AI assistant are optional
+
+AzanMart runs without any of these keys, but a few features are limited until you add them:
 
 | Feature                    | Without the keys                                                                                                                                    | With the keys                                                          |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | **Card payments (Stripe)** | Only **cash on delivery** is offered at checkout; the card option is hidden                                                                         | Shoppers can pay by card on Stripe's secure page, confirmed by webhook |
 | **Emails (Gmail)**         | Nothing is sent. Each email (verification codes, order updates, password resets) is saved as an HTML file and its path is printed in the server log | Real emails reach the shopper's inbox                                  |
 | **New account sign-up**    | The 6-digit verification code has to be read from the server log (the seeded demo accounts are already verified)                                    | The code arrives by email                                              |
+| **Crypto payments (USDC)** | The USDC option is hidden at checkout                                                                                                               | Shoppers pay from MetaMask; the server verifies each payment on-chain  |
+| **AI assistant**           | The **Ask AI** button is hidden                                                                                                                     | Shoppers can ask for recommendations and product answers               |
 
 Everything else (browsing, search, cart, wishlist, reviews, cash-on-delivery orders, the admin
 dashboard) works the same either way.
@@ -49,8 +63,10 @@ dashboard) works the same either way.
 - **Stripe:** create a free account and copy your **test** secret key into `STRIPE_SECRET_KEY`
   (and a webhook secret into `STRIPE_WEBHOOK_SECRET`). Test mode never charges real money.
 - **Gmail:** turn on 2-Step Verification, create an App Password and set `SMTP_USER` and `SMTP_PASS`.
+- **Crypto:** set `CRYPTO_RECEIVER_ADDRESS` to a wallet address you control (the address only, never a private key). The defaults use the Base Sepolia test network.
+- **AI assistant:** set `ANTHROPIC_API_KEY` to a key from the Anthropic Console.
 
-Step-by-step instructions for both are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#4-turn-on-card-payments-optional).
+Step-by-step instructions for each are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#4-turn-on-card-payments-optional).
 Use your own accounts: keys are never included in this repository.
 
 ## Screenshots
@@ -67,6 +83,14 @@ Use your own accounts: keys are never included in this repository.
 | ----------------------------------------------- | -------------------------------------------------------- |
 | ![Admin](docs/screenshots/admin-dashboard.webp) | ![Dark mode](docs/screenshots/admin-dashboard-dark.webp) |
 
+| Pay with USDC                                      | AI shopping assistant                            |
+| -------------------------------------------------- | ------------------------------------------------ |
+| ![Pay with USDC](docs/screenshots/pay-crypto.webp) | ![AI assistant](docs/screenshots/assistant.webp) |
+
+| Features page                               | In-app user guide                     |
+| ------------------------------------------- | ------------------------------------- |
+| ![Features](docs/screenshots/features.webp) | ![Guide](docs/screenshots/guide.webp) |
+
 | Order management                              | Mobile                                                            |
 | --------------------------------------------- | ----------------------------------------------------------------- |
 | ![Orders](docs/screenshots/admin-orders.webp) | <img src="docs/screenshots/mobile.webp" alt="Mobile" width="260"> |
@@ -78,12 +102,14 @@ Use your own accounts: keys are never included in this repository.
 - Full-text search, category, price, sale and stock filters, sorting and pagination
 - Product pages with an image gallery, stock status, related products and reviews with verified-purchase badges
 - Cart with quantities and live stock checks, plus a wishlist
-- Checkout with **Stripe** (hosted payment page) or **cash on delivery**
+- An **AI shopping assistant** that searches the catalog and answers product questions, with clickable product cards
+- Checkout with **Stripe** (hosted payment page), **USDC from MetaMask** (verified on-chain) or **cash on delivery**
 - Email verification with a 6-digit code before the first order
 - Order history with a delivery timeline, courier and tracking number
 - Emails from Gmail (or any SMTP provider) when an order is confirmed, shipped, delivered or cancelled
 - Account settings and password reset by email
 - Dark mode, keyboard-friendly markup and a layout that works from 320px up
+- A features page and an in-app user guide, plus a demo mode that shows the test card at checkout
 
 **For admins**
 
@@ -98,21 +124,24 @@ Use your own accounts: keys are never included in this repository.
 - Sessions stored in MongoDB, CSRF tokens on every form, Helmet with a strict Content Security Policy, rate-limited auth routes and protection against NoSQL operator injection
 - Stock is reserved atomically, so two shoppers can never buy the last unit
 - Stripe webhooks with signature checks; every payment handler is safe to run twice
-- 75 Jest + Supertest tests, GitHub Actions CI, and a Docker image that CI builds and smoke-tests
+- Crypto payments checked on the blockchain: right token, right wallet, exact amount, mined after the order, never reused, with a unique amount per order so one payment can only match one order
+- The AI assistant works through read-only tools over the catalog; product cards are built from the database, never from model output
+- 100+ Jest + Supertest tests, GitHub Actions CI, and a Docker image that CI builds and smoke-tests
 
 ## Tech stack
 
-| Area     | Tools                                                              |
-| -------- | ------------------------------------------------------------------ |
-| Server   | Node.js 22, Express 5, EJS                                         |
-| Database | MongoDB, Mongoose, connect-mongo (sessions)                        |
-| Frontend | Tailwind CSS 4, a little vanilla JavaScript, Chart.js, Remix Icon  |
-| Payments | Stripe Checkout and webhooks                                       |
-| Email    | Nodemailer with Gmail (or any SMTP provider)                       |
-| Security | Helmet, bcrypt, express-validator, express-rate-limit, custom CSRF |
-| Images   | Multer (memory storage), sharp                                     |
-| Quality  | Jest, Supertest, mongodb-memory-server, ESLint, Prettier           |
-| Delivery | Docker, docker compose, GitHub Actions, Render blueprint           |
+| Area     | Tools                                                                                  |
+| -------- | -------------------------------------------------------------------------------------- |
+| Server   | Node.js 22, Express 5, EJS                                                             |
+| Database | MongoDB, Mongoose, connect-mongo (sessions)                                            |
+| Frontend | Tailwind CSS 4, a little vanilla JavaScript, Chart.js, Remix Icon, marked (user guide) |
+| Payments | Stripe Checkout and webhooks; USDC on Base with ethers.js                              |
+| AI       | Anthropic API (Claude) with tool use                                                   |
+| Email    | Nodemailer with Gmail (or any SMTP provider)                                           |
+| Security | Helmet, bcrypt, express-validator, express-rate-limit, custom CSRF                     |
+| Images   | Multer (memory storage), sharp                                                         |
+| Quality  | Jest, Supertest, mongodb-memory-server, ESLint, Prettier                               |
+| Delivery | Docker, docker compose, GitHub Actions, Render blueprint                               |
 
 ## Architecture
 
@@ -136,23 +165,27 @@ flowchart LR
     Stripe -->|signed webhook| Webhook["/webhooks/stripe"]
     Webhook --> Services
     Services -->|SMTP| Mail[Nodemailer]
+    Browser -->|USDC transfer via MetaMask| Chain[(Base blockchain)]
+    Services -->|verify transaction| Chain
+    Services -->|questions + catalog tools| Anthropic[Anthropic API]
 ```
 
 A request passes through the middleware stack, a router maps it to a controller, and the controller
 renders an EJS view with data from Mongoose. Logic shared between pages (cart totals, placing and
-confirming orders, emails) lives in a small `services/` folder; everything else stays in the controller.
+confirming orders, crypto verification, the AI assistant, emails) lives in a small `services/` folder;
+everything else stays in the controller.
 
 ## Project structure
 
 ```
 app.js             Express app: middleware, routes, error handling
 server.js          loads .env, connects to MongoDB and starts listening
-config/            database connection, uploads, site URL
+config/            database, uploads, site URL, crypto network, AI assistant
 controllers/       request handlers (admin ones in controllers/admin/)
 middlewares/       auth, CSRF, flash messages, validation, rate limiting, errors
 models/            Mongoose schemas: user, product, order, review
 routes/            URL → middleware → controller mapping
-services/          shared logic: cart totals, orders and stock, emails
+services/          shared logic: cart, orders and stock, crypto, assistant, emails, guide
 utils/             small helpers: money, slugs, images, mailer, Stripe client
 views/             EJS templates (partials/, auth/, admin/, emails/)
 public/            static files: JS, logo, favicon
@@ -196,6 +229,9 @@ docker compose exec app npm run seed -- --force
 | `STRIPE_WEBHOOK_SECRET`                               | no       | Verifies Stripe webhook signatures                                                                                                                                            |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` | no       | Sends real email, e.g. Gmail with an App Password ([setup](docs/DEPLOYMENT.md#5-send-email-with-gmail)). Without them, emails are saved to a temp file and the path is logged |
 | `MAIL_FROM`                                           | no       | Sender, e.g. `AzanMart <orders@yourdomain.com>`                                                                                                                               |
+| `CRYPTO_RECEIVER_ADDRESS`                             | no       | Store wallet address; turns on USDC payments (other `CRYPTO_*` settings in [the deployment guide](docs/DEPLOYMENT.md#6-turn-on-crypto-payments-optional))                     |
+| `ANTHROPIC_API_KEY`                                   | no       | Turns on the AI shopping assistant                                                                                                                                            |
+| `DEMO_MODE`                                           | no       | On by default: demo banner and test payment details. Set to `false` for a real store                                                                                          |
 
 ### Scripts
 
@@ -215,27 +251,33 @@ docker compose exec app npm run seed -- --force
 
 The tests run the real Express app over HTTP against an in-memory MongoDB, reading CSRF tokens out of
 the rendered forms like a browser would. Stripe API calls are mocked, while webhook signatures are
-created and checked with the real Stripe SDK.
+created and checked with the real Stripe SDK. Crypto tests use a fake blockchain provider with real
+ethers.js log encoding, and the AI assistant tests use a scripted stand-in for the Anthropic client.
 
 ```bash
 npm test
 npm run test:coverage
 ```
 
-75 tests cover authentication and security, email verification, the cart, checkout and stock
-reservation (including two shoppers racing for the last item), Stripe checkout and webhooks, order
-emails, search and filters, reviews, password reset, account settings and the admin area. Line
-coverage is about 94%.
+More than 100 tests cover authentication and security, email verification, the cart, checkout and stock
+reservation (including two shoppers racing for the last item), Stripe checkout and webhooks, crypto
+payment verification, the AI assistant, order emails, search and filters, reviews, password reset,
+account settings, the features page and user guide, and the admin area. Line coverage is about 94%.
+
+The crypto checkout was also tested end to end in a real browser against a local Ethereum node, with a
+simulated wallet sending real token transfers.
 
 ## Performance, accessibility and SEO
 
 Lighthouse on the seeded demo, measured locally in production mode:
 
-| Page    | Desktop (Perf / A11y / Best practices / SEO) | Mobile (Perf / A11y / Best practices / SEO) |
-| ------- | -------------------------------------------- | ------------------------------------------- |
-| Home    | 100 / 100 / 100 / 100                        | 95 / 100 / 100 / 100                        |
-| Shop    | 100 / 100 / 100 / 100                        | 91 / 100 / 100 / 100                        |
-| Product | 100 / 100 / 100 / 100                        | 95 / 100 / 100 / 100                        |
+| Page     | Desktop (Perf / A11y / Best practices / SEO) | Mobile (Perf / A11y / Best practices / SEO) |
+| -------- | -------------------------------------------- | ------------------------------------------- |
+| Home     | 100 / 100 / 100 / 100                        | 95 / 100 / 100 / 100                        |
+| Shop     | 100 / 100 / 100 / 100                        | 95 / 100 / 100 / 100                        |
+| Product  | 100 / 100 / 100 / 100                        | 95 / 100 / 100 / 100                        |
+| Features | 100 / 100 / 100 / 100                        | 96 / 100 / 100 / 100                        |
+| Guide    | 100 / 100 / 100 / 100                        | 95 / 100 / 100 / 100                        |
 
 What helps: gzip compression, images served from their own cacheable URL instead of inline base64,
 WebP uploads, versioned static assets with long cache headers, indexes for every listing query, and no
@@ -244,7 +286,7 @@ third-party requests at all.
 ## Deploying
 
 See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for Render + MongoDB Atlas (a `render.yaml` blueprint
-is included), Stripe webhooks, email and Docker. A guide for shoppers and admins is in
+is included), Stripe webhooks, Gmail, crypto payments, the AI assistant and Docker. A guide for shoppers and admins is in
 **[docs/USER_GUIDE.md](docs/USER_GUIDE.md)**.
 
 ## Challenges and what I learned
@@ -270,6 +312,19 @@ injection (without it, a crafted login body could match the admin account), but 
 shop's own `$gte` and `$text` filters. The fix was to mark only the operators the server builds as
 trusted. Similarly, tying secure cookies to `NODE_ENV` broke logins when the production build ran over
 plain HTTP in Docker, so they now follow `APP_URL` instead.
+
+**One payment must only ever match one order.** Verifying a USDC transfer is easy; making it
+impossible to claim someone else's payment is not. If two open orders both cost $39.99, an attacker
+could watch the store's wallet and submit another shopper's transaction hash for their own order. Each
+order now asks for a unique amount (the total plus a fraction of a cent), transfers older than the order
+are rejected, and a unique index on the transaction hash stops it from being used twice. Testing against
+a real local blockchain also caught that ethers.js could report a slightly stale block number, making a
+just-mined payment look unconfirmed; the server now asks the node directly.
+
+**AI output is untrusted input.** The assistant's replies are inserted as text, never HTML, and the
+product cards under each reply are built from the database using only products the catalog tools
+actually returned. A prompt that tricks the model into "recommending" a fake product or link produces
+nothing clickable.
 
 **Tests find bugs that clicking around misses.** Writing the test suite exposed a startup race where the
 session store was handed a database client that didn't exist yet, and CI on a fresh machine exposed

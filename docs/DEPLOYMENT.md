@@ -71,7 +71,9 @@ Test with card `4242 4242 4242 4242`, any future expiry date and any CVC.
 To try webhooks locally, use the [Stripe CLI](https://docs.stripe.com/stripe-cli):
 
 ```bash
-stripe listen --forward-to localhost:3000/webhooks/stripe
+stripe listen \
+  --events checkout.session.completed,checkout.session.expired,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed \
+  --forward-to localhost:3000/webhooks/stripe
 ```
 
 It prints a `whsec_...` secret to put in your local `.env`.
@@ -115,6 +117,52 @@ emails aren't sent at all: each one is saved to a temporary HTML file and its pa
 > in your host's environment settings. If it ever leaks, delete it at
 > https://myaccount.google.com/apppasswords and create a new one.
 
+## 6. Turn on crypto payments (optional)
+
+Shoppers can pay in USDC from a wallet such as MetaMask. The server checks every payment on the
+blockchain itself; there is no third-party payment provider.
+
+1. Create a wallet for the store (for example a new MetaMask account) and copy its address.
+   **Only the address goes on the server.** Never put a private key or seed phrase in `.env` or in
+   your host's settings; the app never needs it.
+2. Set `CRYPTO_RECEIVER_ADDRESS` to that address and redeploy. A **USDC (crypto)** option appears
+   at checkout.
+
+That's all for the demo: the defaults use **Base Sepolia**, a free test network. Test USDC comes
+from the [Circle faucet](https://faucet.circle.com) and test ETH for fees from the
+[Coinbase faucet](https://portal.cdp.coinbase.com/products/faucet).
+
+| Variable                  | Default (Base Sepolia test network)          | Base mainnet (real money)                    |
+| ------------------------- | -------------------------------------------- | -------------------------------------------- |
+| `CRYPTO_RECEIVER_ADDRESS` | (required to turn crypto on)                 | your store wallet                            |
+| `CRYPTO_CHAIN_ID`         | `84532`                                      | `8453`                                       |
+| `CRYPTO_TOKEN_ADDRESS`    | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` |
+| `CRYPTO_RPC_URL`          | `https://sepolia.base.org`                   | an RPC provider URL (Alchemy, Infura…)       |
+| `CRYPTO_PUBLIC_RPC_URL`   | `https://sepolia.base.org`                   | `https://mainnet.base.org`                   |
+| `CRYPTO_NETWORK_NAME`     | `Base Sepolia`                               | `Base`                                       |
+| `CRYPTO_EXPLORER_URL`     | `https://sepolia.basescan.org`               | `https://basescan.org`                       |
+| `CRYPTO_CONFIRMATIONS`    | `1`                                          | `3` or more                                  |
+
+`CRYPTO_RPC_URL` is what the server uses to read the blockchain and may contain a private API key;
+`CRYPTO_PUBLIC_RPC_URL` is the one shown to shoppers' wallets, so keep it a public endpoint.
+
+Unpaid crypto orders are cancelled automatically 30 minutes after checkout (plus a 5-minute grace
+period for payments already on their way), and their stock goes back on sale.
+
+## 7. Turn on the AI assistant (optional)
+
+1. Create an API key in the [Anthropic Console](https://console.anthropic.com) and add some credit.
+2. Set `ANTHROPIC_API_KEY` and redeploy. An **Ask AI** button appears on every store page.
+
+Each question costs a small amount of API usage. The assistant is limited to 20 questions per visitor
+every 10 minutes, and you can set a monthly spend limit in the Anthropic Console as a safety net.
+
+## 8. Demo mode
+
+`DEMO_MODE` is on unless you set it to `false`. It shows a banner saying payments run in test mode and,
+at checkout, the Stripe test card and test-USDC instructions. Turn it off before taking real orders,
+along with switching Stripe to live keys and crypto to mainnet.
+
 ## Running with Docker
 
 ```bash
@@ -131,3 +179,6 @@ The app is then on http://localhost:3000, with MongoDB data kept in a Docker vol
 - [ ] `/sitemap.xml` lists your products with the right domain
 - [ ] You can log in, check out with cash on delivery, and see the order in `/admin/orders`
 - [ ] If Stripe is on: a test card payment shows as **paid** in the admin area
+- [ ] If crypto is on: a test USDC payment shows as **paid**, with a link to the transaction
+- [ ] If the assistant is on: **Ask AI** answers a question with product cards
+- [ ] `/features` and `/guide` load, and the demo banner is on or off as intended

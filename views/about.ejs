@@ -8,7 +8,7 @@
 
         <p class="mt-6 leading-relaxed">
             Hi, I'm Azan. I built AzanMart to practise building a complete, server-rendered web store from the
-            ground up: search and filters, a cart and checkout with Stripe, order emails, reviews, and an admin
+            ground up: search and filters, an AI shopping assistant, checkout by card, USDC or cash, order emails, reviews, and an admin
             dashboard with sales charts, all rendered on the server with Node.js and MongoDB.
             I work mostly with the MERN stack and blockchain technologies, and I enjoy turning ideas into
             products people can actually use.
@@ -33,7 +33,7 @@
     <section class="card p-8 mt-6">
         <h2 class="text-xl font-semibold text-blue-900 dark:text-white">How AzanMart is built</h2>
         <ul class="flex flex-wrap gap-2 mt-4">
-            <% ["Node.js", "Express 5", "EJS (server-side rendering)", "MongoDB", "Mongoose", "Tailwind CSS", "Stripe", "Nodemailer", "Chart.js", "express-session", "bcrypt", "Helmet", "Multer"].forEach(function (tech) { %>
+            <% ["Node.js", "Express 5", "EJS (server-side rendering)", "MongoDB", "Mongoose", "Tailwind CSS", "Stripe", "ethers.js (USDC payments)", "Anthropic API (AI assistant)", "Nodemailer", "Chart.js", "express-session", "bcrypt", "Helmet", "Multer"].forEach(function (tech) { %>
                 <li class="px-3 py-1 rounded-full bg-blue-50 text-blue-900 text-sm dark:bg-blue-900/40 dark:text-blue-200"><%= tech %></li>
             <% }) %>
         </ul>

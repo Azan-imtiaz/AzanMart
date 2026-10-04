@@ -17,6 +17,9 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
       MAIL_FROM: ${MAIL_FROM:-}
+      CRYPTO_RECEIVER_ADDRESS: ${CRYPTO_RECEIVER_ADDRESS:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      DEMO_MODE: ${DEMO_MODE:-true}
     depends_on:
       mongo:
         condition: service_healthy

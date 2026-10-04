@@ -4,11 +4,14 @@ This guide explains how to use AzanMart, first as a shopper and then as a store 
 For installing and deploying the app, see the [README](../README.md) and the
 [deployment guide](DEPLOYMENT.md).
 
+- [Trying the demo](#trying-the-demo)
 - [For shoppers](#for-shoppers)
   - [Browsing and searching](#browsing-and-searching)
+  - [Asking the AI assistant](#asking-the-ai-assistant)
   - [Your account](#your-account)
   - [Cart and wishlist](#cart-and-wishlist)
   - [Checking out](#checking-out)
+  - [Paying with USDC (crypto)](#paying-with-usdc-crypto)
   - [Orders and emails](#orders-and-emails)
   - [Reviews](#reviews)
 - [For store admins](#for-store-admins)
@@ -19,6 +22,24 @@ For installing and deploying the app, see the [README](../README.md) and the
   - [Managing users](#managing-users)
   - [Moderating reviews](#moderating-reviews)
 - [Troubleshooting](#troubleshooting)
+
+---
+
+## Trying the demo
+
+The public AzanMart demo runs payments in **test mode**, so you can buy anything without spending
+money. A banner at the top of the page reminds you, and the **Features** page has everything in one
+place.
+
+| What               | Use this                                                                                                                                                                     |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Demo shopper       | `demo@azanmart.dev` / `Demo@12345`                                                                                                                                           |
+| Demo admin         | `admin@azanmart.dev` / `Admin@12345`                                                                                                                                         |
+| Test card (Stripe) | `4242 4242 4242 4242`, any future expiry date, any 3-digit CVC, any postcode                                                                                                 |
+| Test USDC (crypto) | Free from the [Circle faucet](https://faucet.circle.com) on Base Sepolia, plus test ETH for fees from the [Coinbase faucet](https://portal.cdp.coinbase.com/products/faucet) |
+| Cash on delivery   | Nothing to enter                                                                                                                                                             |
+
+The checkout page shows the same details under **Demo payment details**.
 
 ---
 
@@ -49,6 +70,26 @@ Each product card shows the price (with the original price crossed out when it's
 rating and a **+** button to add it to your cart. Click a product to open its page, where you can
 flip through its photos, read the description and reviews, choose a quantity, and see how many are
 left when stock is low.
+
+### Asking the AI assistant
+
+![The AI shopping assistant](screenshots/assistant.webp)
+
+Not sure what to buy? Click **Ask AI** in the bottom-right corner of any page and ask in your own
+words, for example "a bag for my laptop and gym clothes under $100" or "what's on sale?". The
+assistant searches the catalog, reads product details and reviews, and shows the products it
+recommends as cards you can click.
+
+- **On a product page**, click **Ask AI about this** and ask about that product: size, materials,
+  what reviewers say, or something similar for less.
+- Tap one of the **suggested questions** to get started quickly.
+- Your conversation stays open while you move between pages. Click the refresh icon to start over.
+- The assistant only knows what's in the store, so it won't invent products or prices. It can't
+  place orders or see your account. AI answers can still be wrong, so check the product page before
+  you buy.
+- To keep it fair for everyone, you can ask about 20 questions every 10 minutes.
+
+The assistant only appears when the store owner has set it up.
 
 ### Your account
 
@@ -95,20 +136,57 @@ left when stock is low.
    - **Card:** you'll be taken to Stripe's secure payment page. AzanMart never sees your card
      details. When the payment goes through, you come back to your order page. If you cancel,
      your items stay in your cart. An unfinished card payment is released after 30 minutes.
+   - **USDC (crypto):** pay from a crypto wallet such as MetaMask. See
+     [Paying with USDC](#paying-with-usdc-crypto) below.
    - **Cash on delivery:** pay the courier when your order arrives.
 4. Click **Place order**.
 
 The items are reserved for you the moment you place the order, so nobody else can buy the last one
 while you're paying.
 
-> The card option only appears when the store owner has connected Stripe. In test mode, use card
-> `4242 4242 4242 4242`, any future expiry date and any CVC.
+> The card and USDC options only appear when the store owner has set them up. In the demo, the
+> **Demo payment details** box under the payment options shows the test card number
+> (`4242 4242 4242 4242`, any future expiry date and any CVC) and where to get test USDC.
+
+### Paying with USDC (crypto)
+
+![Paying with USDC](screenshots/pay-crypto.webp)
+
+USDC is a digital dollar: 1 USDC is always worth 1 US dollar. In the demo it runs on **Base
+Sepolia**, a free test network, so no real money is involved.
+
+**Before your first payment (demo only):**
+
+1. Install [MetaMask](https://metamask.io) in your browser and create a wallet.
+2. Get free test USDC from the [Circle faucet](https://faucet.circle.com) (choose Base Sepolia) and
+   a little test ETH to pay network fees from the
+   [Coinbase faucet](https://portal.cdp.coinbase.com/products/faucet).
+
+**Paying:**
+
+1. At checkout, choose **USDC (crypto)** and click **Place order**. Your items are reserved and
+   the payment page opens.
+2. Click **Pay with MetaMask**. MetaMask asks to connect, switches to the right network (or offers
+   to add it), and asks you to confirm the transfer. The amount is filled in for you.
+3. Wait a few seconds while the network confirms the payment. The page then takes you to your order,
+   now marked **Paid**, and you get a confirmation email with a link to the transaction.
+
+**Good to know:**
+
+- **Send the exact amount shown**, for example `69.005354` USDC for a $69.00 order. The extra fraction
+  of a cent identifies your order, so a payment can never be confused with someone else's.
+- You have **30 minutes** to pay. After that the order is cancelled and the items go back on sale.
+- Paid from another wallet or your phone? Open **Paid from another wallet or your phone?** on the
+  payment page and paste the transaction hash.
+- If you close the page after sending, come back to the order and click **Complete payment**; it
+  picks up where you left off.
 
 ### Orders and emails
 
 ![Order page](screenshots/order.webp)
 
-- **My orders** (in the menu under your name) lists every order with its status and total. Click one
+- **My orders** (in the menu under your name) lists every order with its status and total. USDC orders
+  link to their transaction on the block explorer. Click one
   to see its items, shipping address, payment details and a **delivery timeline**. Once it ships,
   the timeline shows the courier and tracking number.
 - We email you at every step:
@@ -122,13 +200,13 @@ while you're paying.
 
 - Order statuses mean:
 
-  | Status     | Meaning                                       |
-  | ---------- | --------------------------------------------- |
-  | Pending    | Waiting for your card payment to be confirmed |
-  | Processing | Confirmed and being prepared                  |
-  | Shipped    | On its way to you                             |
-  | Delivered  | Arrived                                       |
-  | Cancelled  | Cancelled; any items were returned to stock   |
+  | Status     | Meaning                                               |
+  | ---------- | ----------------------------------------------------- |
+  | Pending    | Waiting for your card or USDC payment to be confirmed |
+  | Processing | Confirmed and being prepared                          |
+  | Shipped    | On its way to you                                     |
+  | Delivered  | Arrived                                               |
+  | Cancelled  | Cancelled; any items were returned to stock           |
 
 ### Reviews
 
@@ -213,9 +291,10 @@ shown to the customer on their order page and included in the shipping email.
 
 Delivered and cancelled orders can't be changed again.
 
-Card orders you see as **Pending** are waiting for Stripe. They become **Processing** automatically
-when payment is confirmed, or **Cancelled** (with stock returned) if the customer doesn't pay within
-30 minutes.
+Card and USDC orders you see as **Pending** are waiting for payment. They become **Processing**
+automatically when payment is confirmed (by Stripe, or on the blockchain for USDC), or **Cancelled**
+(with stock returned) if the customer doesn't pay within 30 minutes. For USDC orders the order page
+shows the paying wallet and a link to the transaction.
 
 ### Managing users
 
@@ -246,8 +325,23 @@ emails, check the server log at startup: it says whether it could log in to Gmai
 [Send email with Gmail](DEPLOYMENT.md#5-send-email-with-gmail)). On a development setup without SMTP
 settings, emails aren't sent; the log prints the path of an HTML copy of each email instead.
 
-**The card payment option is missing.**
-The store owner hasn't set `STRIPE_SECRET_KEY` yet. Cash on delivery still works.
+**The card or USDC payment option is missing.**
+The store owner hasn't set them up yet (`STRIPE_SECRET_KEY` for cards, `CRYPTO_RECEIVER_ADDRESS` for
+USDC). Cash on delivery still works.
+
+**MetaMask says I don't have enough funds, or the payment fails.**
+You need both test USDC (the payment) and a little test ETH (the network fee) on Base Sepolia. Get them
+from the faucets listed in [Trying the demo](#trying-the-demo), then try again.
+
+**My USDC payment is taking a long time.**
+The page keeps checking for a few minutes. If it gives up, your payment is safe: reload the order page
+later, or paste the transaction hash under **Paid from another wallet or your phone?**. If the
+30-minute window closed before it confirmed, contact the store with the transaction hash.
+
+**The AI assistant says it's busy or unavailable.**
+You may have asked a lot of questions in a short time; wait a few minutes. If it never answers, the
+store owner hasn't set `ANTHROPIC_API_KEY`, or the service is temporarily down. Search and filters
+always work.
 
 **An item disappeared from my cart.**
 The product was removed from the store. Your past orders are not affected.
