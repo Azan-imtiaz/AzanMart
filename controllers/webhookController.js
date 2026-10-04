@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const { stripe } = require("../utils/stripe");
 const { markOrderPaid, cancelOrder } = require("../services/orders");
+const { ensureDB } = require("../config/db");
 
 exports.handleStripeEvent = async (req, res) => {
+  await ensureDB();
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!stripe || !secret) return res.status(404).end();
 

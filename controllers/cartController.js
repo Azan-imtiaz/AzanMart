@@ -4,6 +4,7 @@ const productModel = require("../models/productModel");
 const httpError = require("../utils/httpError");
 const safeRedirect = require("../utils/safeRedirect");
 const { getCart, FREE_SHIPPING_FROM } = require("../services/cart");
+const { ensureDB } = require("../config/db");
 
 async function findProduct(productId) {
   if (!mongoose.isValidObjectId(productId)) throw httpError(404, "Product not found");
@@ -13,6 +14,7 @@ async function findProduct(productId) {
 }
 
 exports.showCart = async (req, res) => {
+  await ensureDB();
   const cart = await getCart(req.user._id);
   res.render("cart", {
     title: "Your cart",
@@ -23,6 +25,7 @@ exports.showCart = async (req, res) => {
 };
 
 exports.addItem = async (req, res) => {
+  await ensureDB();
   const product = await findProduct(req.params.productId);
   const quantity = Math.max(1, parseInt(req.body.quantity, 10) || 1);
   const back = safeRedirect(req.body.returnTo, "/cart");
@@ -49,6 +52,7 @@ exports.addItem = async (req, res) => {
 };
 
 exports.updateItem = async (req, res) => {
+  await ensureDB();
   const product = await findProduct(req.params.productId);
   const quantity = parseInt(req.body.quantity, 10);
 
@@ -69,6 +73,7 @@ exports.updateItem = async (req, res) => {
 };
 
 exports.removeItem = async (req, res) => {
+  await ensureDB();
   if (!mongoose.isValidObjectId(req.params.productId)) throw httpError(404, "Product not found");
 
   await userModel.updateOne(

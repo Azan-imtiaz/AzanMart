@@ -3,8 +3,10 @@ const userModel = require("../models/userModel");
 const productModel = require("../models/productModel");
 const httpError = require("../utils/httpError");
 const safeRedirect = require("../utils/safeRedirect");
+const { ensureDB } = require("../config/db");
 
 exports.showWishlist = async (req, res) => {
+  await ensureDB();
   const user = await userModel
     .findById(req.user._id)
     .select("wishlist")
@@ -18,6 +20,7 @@ exports.showWishlist = async (req, res) => {
 };
 
 exports.toggleItem = async (req, res) => {
+  await ensureDB();
   const { productId } = req.params;
   if (!mongoose.isValidObjectId(productId) || !(await productModel.exists({ _id: productId }))) {
     throw httpError(404, "Product not found");

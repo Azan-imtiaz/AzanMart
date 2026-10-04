@@ -9,8 +9,10 @@ const cryptoConfig = require("../config/crypto");
 const assistantConfig = require("../config/assistant");
 const { emailEnabled } = require("../utils/mailer");
 const { getGuide } = require("../services/guide");
+const { ensureDB } = require("../config/db");
 
 exports.showHome = async (req, res) => {
+  await ensureDB();
   const newArrivals = await productModel
     .find()
     .select("-images.data")
@@ -109,6 +111,7 @@ exports.showGuide = async (req, res) => {
 };
 
 exports.showShop = async (req, res) => {
+  await ensureDB();
   const options = readShopQuery(req.query);
   const filter = buildFilter(options);
 
@@ -155,6 +158,7 @@ exports.showShop = async (req, res) => {
 };
 
 exports.showProduct = async (req, res) => {
+  await ensureDB();
   const product = await productModel
     .findOne({ slug: req.params.slug })
     .select("-images.data")

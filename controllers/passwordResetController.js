@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const { sendPasswordReset } = require("../services/emails");
 const { APP_URL } = require("../config/site");
+const { ensureDB } = require("../config/db");
 
 const RESET_LINK_TTL = 60 * 60 * 1000; // 1 hour
 
@@ -21,6 +22,7 @@ exports.showForgotForm = (req, res) => {
 };
 
 exports.sendResetLink = async (req, res) => {
+  await ensureDB();
   const user = await userModel.findOne({ email: req.body.email });
 
   if (user) {
@@ -41,6 +43,7 @@ exports.sendResetLink = async (req, res) => {
 };
 
 exports.showResetForm = async (req, res) => {
+  await ensureDB();
   if (!(await findUserByToken(req.params.token))) {
     req.flash("error", "That reset link is invalid or has expired. Please request a new one.");
     return res.redirect("/forgot-password");
@@ -49,6 +52,7 @@ exports.showResetForm = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
+  await ensureDB();
   const user = await findUserByToken(req.params.token);
   if (!user) {
     req.flash("error", "That reset link is invalid or has expired. Please request a new one.");

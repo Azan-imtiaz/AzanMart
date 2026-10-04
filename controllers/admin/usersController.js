@@ -2,12 +2,14 @@ const mongoose = require("mongoose");
 const userModel = require("../../models/userModel");
 const orderModel = require("../../models/orderModel");
 const httpError = require("../../utils/httpError");
+const { ensureDB } = require("../../config/db");
 
 const PAGE_SIZE = 25;
 
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 exports.listUsers = async (req, res) => {
+  await ensureDB();
   const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
   const page = Math.max(1, parseInt(req.query.page, 10) || 1);
   const pattern = mongoose.trusted({ $regex: escapeRegex(q), $options: "i" });
@@ -41,6 +43,7 @@ exports.listUsers = async (req, res) => {
 };
 
 exports.changeRole = async (req, res) => {
+  await ensureDB();
   const { id } = req.params;
   const role = req.body.role === "admin" ? "admin" : "customer";
   if (!mongoose.isValidObjectId(id)) throw httpError(404, "User not found");

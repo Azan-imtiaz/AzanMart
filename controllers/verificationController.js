@@ -1,8 +1,10 @@
 const userModel = require("../models/userModel");
 const safeRedirect = require("../utils/safeRedirect");
 const { sendCode, verifyCode, hasActiveCode } = require("../services/verification");
+const { ensureDB } = require("../config/db");
 
 exports.showForm = async (req, res) => {
+  await ensureDB();
   if (req.user.emailVerified !== false) return res.redirect("/account");
 
   // Send a code automatically if there isn't a usable one yet
@@ -13,6 +15,7 @@ exports.showForm = async (req, res) => {
 };
 
 exports.verify = async (req, res) => {
+  await ensureDB();
   const user = await userModel.findById(req.user._id);
   if (user.emailVerified) return res.redirect("/account");
 
@@ -32,6 +35,7 @@ exports.verify = async (req, res) => {
 };
 
 exports.resend = async (req, res) => {
+  await ensureDB();
   const user = await userModel.findById(req.user._id);
   if (user.emailVerified) return res.redirect("/account");
 

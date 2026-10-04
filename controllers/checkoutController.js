@@ -7,6 +7,7 @@ const { placeOrder, clearCart, cancelOrder, markOrderPaid } = require("../servic
 const { sendOrderConfirmation } = require("../services/emails");
 const { stripe } = require("../utils/stripe");
 const { CURRENCY } = require("../utils/money");
+const { ensureDB } = require("../config/db");
 
 async function loadCheckoutCart(req, res) {
   const cart = await getCart(req.user._id);
@@ -73,6 +74,7 @@ async function cancelAbandonedOrders(userId) {
 }
 
 exports.showCheckout = async (req, res) => {
+  await ensureDB();
   const cart = await loadCheckoutCart(req, res);
   if (!cart) return;
 
@@ -97,6 +99,7 @@ exports.showCheckout = async (req, res) => {
 };
 
 exports.placeOrder = async (req, res) => {
+  await ensureDB();
   const available = { card: Boolean(stripe), crypto: cryptoConfig.enabled, cod: true };
   const paymentMethod = available[req.body.paymentMethod] ? req.body.paymentMethod : "cod";
   await cancelAbandonedOrders(req.user._id);

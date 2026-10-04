@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const productModel = require("../models/productModel");
 const httpError = require("../utils/httpError");
+const { ensureDB } = require("../config/db");
 
 exports.sendProductImage = async (req, res) => {
+  await ensureDB();
   const { productId, imageId } = req.params;
   if (!mongoose.isValidObjectId(productId) || !mongoose.isValidObjectId(imageId)) {
     throw httpError(404, "Image not found");

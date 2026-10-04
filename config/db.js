@@ -30,5 +30,23 @@ function whenConnected() {
   });
 }
 
+// Called at the top of every endpoint that uses the database. On serverless
+// hosts (like Vercel) a request can arrive before the app has connected, or
+// after an idle connection was dropped. Connects once and reuses it after that.
+let connecting = null;
+async function ensureDB() {
+  const state = mongoose.connection.readyState;
+  if (state === 1) return; // connected
+  if (state === 2) {
+    await whenConnected(); // already connecting
+    return;
+  }
+  connecting ??= connectDB().finally(() => {
+    connecting = null;
+  });
+  await connecting;
+}
+
 module.exports = connectDB;
 module.exports.whenConnected = whenConnected;
+module.exports.ensureDB = ensureDB;

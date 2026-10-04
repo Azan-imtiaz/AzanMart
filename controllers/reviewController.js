@@ -3,6 +3,7 @@ const productModel = require("../models/productModel");
 const orderModel = require("../models/orderModel");
 const reviewModel = require("../models/reviewModel");
 const httpError = require("../utils/httpError");
+const { ensureDB } = require("../config/db");
 
 async function findProduct(slug) {
   const product = await productModel.findOne({ slug }).select("_id slug").lean();
@@ -11,6 +12,7 @@ async function findProduct(slug) {
 }
 
 exports.saveReview = async (req, res) => {
+  await ensureDB();
   const product = await findProduct(req.params.slug);
   const { rating, comment } = req.body;
 
@@ -35,6 +37,7 @@ exports.saveReview = async (req, res) => {
 };
 
 exports.deleteReview = async (req, res) => {
+  await ensureDB();
   const product = await findProduct(req.params.slug);
 
   // Shoppers remove their own review; admins can remove any (for moderation)

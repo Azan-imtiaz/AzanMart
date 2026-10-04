@@ -1,6 +1,7 @@
 const orderModel = require("../../models/orderModel");
 const httpError = require("../../utils/httpError");
 const { updateOrderStatus } = require("../../services/orders");
+const { ensureDB } = require("../../config/db");
 
 const PAGE_SIZE = 20;
 
@@ -11,6 +12,7 @@ async function findOrder(orderNumber) {
 }
 
 exports.listOrders = async (req, res) => {
+  await ensureDB();
   const status = orderModel.STATUSES.includes(req.query.status) ? req.query.status : "";
   const q = typeof req.query.q === "string" ? req.query.q.trim().toUpperCase() : "";
   const page = Math.max(1, parseInt(req.query.page, 10) || 1);
@@ -44,6 +46,7 @@ exports.listOrders = async (req, res) => {
 };
 
 exports.showOrder = async (req, res) => {
+  await ensureDB();
   const order = await findOrder(req.params.orderNumber);
   res.render("admin/order", {
     title: `Order ${order.orderNumber}`,
@@ -53,6 +56,7 @@ exports.showOrder = async (req, res) => {
 };
 
 exports.updateStatus = async (req, res) => {
+  await ensureDB();
   const order = await findOrder(req.params.orderNumber);
   const { status, carrier, trackingNumber } = req.body;
   const error = await updateOrderStatus(order, status, { carrier, trackingNumber });

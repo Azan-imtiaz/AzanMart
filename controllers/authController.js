@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const safeRedirect = require("../utils/safeRedirect");
 const { sendCode } = require("../services/verification");
+const { ensureDB } = require("../config/db");
 
 // A new session id on login prevents session fixation attacks
 function regenerateSession(req) {
@@ -35,6 +36,7 @@ exports.showRegister = (req, res) => {
 };
 
 exports.register = async (req, res) => {
+  await ensureDB();
   const { email, password, fullname } = req.body;
 
   if (await userModel.exists({ email })) {
@@ -56,6 +58,7 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  await ensureDB();
   const { email, password } = req.body;
 
   const user = await userModel.findOne({ email });
@@ -70,6 +73,7 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
+  await ensureDB();
   await regenerateSession(req);
   req.flash("success", "You have been logged out");
   res.redirect("/");

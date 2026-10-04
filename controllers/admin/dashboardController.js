@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const orderModel = require("../../models/orderModel");
 const productModel = require("../../models/productModel");
 const userModel = require("../../models/userModel");
+const { ensureDB } = require("../../config/db");
 
 const CHART_DAYS = 30;
 
@@ -51,6 +52,7 @@ async function getChartData() {
 }
 
 exports.showDashboard = async (req, res) => {
+  await ensureDB();
   const [revenue, orderCount, customerCount, productCount, lowStock, recentOrders, charts] =
     await Promise.all([
       orderModel.aggregate([

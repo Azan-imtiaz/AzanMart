@@ -1,5 +1,6 @@
 const config = require("../config/assistant");
 const { answer, AssistantApiError } = require("../services/assistant");
+const { ensureDB } = require("../config/db");
 
 const BUSY = "I'm getting a lot of questions right now. Please try again in a minute.";
 const UNAVAILABLE =
@@ -27,6 +28,7 @@ function readHistory(body) {
 }
 
 exports.chat = async (req, res) => {
+  await ensureDB();
   if (!config.enabled) return res.status(503).json({ error: UNAVAILABLE });
 
   const history = readHistory(req.body);

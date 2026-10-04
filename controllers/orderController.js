@@ -2,8 +2,10 @@ const orderModel = require("../models/orderModel");
 const httpError = require("../utils/httpError");
 const { stripe } = require("../utils/stripe");
 const { markOrderPaid } = require("../services/orders");
+const { ensureDB } = require("../config/db");
 
 exports.listOrders = async (req, res) => {
+  await ensureDB();
   const orders = await orderModel
     .find({ user: req.user._id })
     .sort({ createdAt: -1 })
@@ -14,6 +16,7 @@ exports.listOrders = async (req, res) => {
 };
 
 exports.showOrder = async (req, res) => {
+  await ensureDB();
   const order = await orderModel.findOne({ orderNumber: req.params.orderNumber }).lean();
 
   // Shoppers can only see their own orders; admins can see any

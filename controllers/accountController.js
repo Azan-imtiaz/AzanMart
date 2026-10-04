@@ -2,12 +2,14 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const { sendCode } = require("../services/verification");
+const { ensureDB } = require("../config/db");
 
 exports.showAccount = (req, res) => {
   res.render("account", { title: "Your account" });
 };
 
 exports.updateProfile = async (req, res) => {
+  await ensureDB();
   const { fullname, email } = req.body;
 
   const emailTaken = await userModel.exists({
@@ -41,6 +43,7 @@ exports.updateProfile = async (req, res) => {
 };
 
 exports.changePassword = async (req, res) => {
+  await ensureDB();
   const { currentPassword, newPassword } = req.body;
 
   const user = await userModel.findById(req.user._id);

@@ -4,6 +4,7 @@ const userModel = require("../../models/userModel");
 const httpError = require("../../utils/httpError");
 const { toCents } = require("../../utils/money");
 const { optimizeImage } = require("../../utils/images");
+const { ensureDB } = require("../../config/db");
 
 const PAGE_SIZE = 20;
 
@@ -39,6 +40,7 @@ async function imagesFrom(files) {
 }
 
 exports.listProducts = async (req, res) => {
+  await ensureDB();
   const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
   const page = Math.max(1, parseInt(req.query.page, 10) || 1);
   const filter = q ? { name: mongoose.trusted({ $regex: escapeRegex(q), $options: "i" }) } : {};
@@ -72,6 +74,7 @@ exports.showNewForm = (req, res) => {
 };
 
 exports.createProduct = async (req, res) => {
+  await ensureDB();
   if (!req.files?.length) {
     req.flash("error", "Add at least one product image");
     return res.redirect("/admin/products/new");
@@ -90,6 +93,7 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.showEditForm = async (req, res) => {
+  await ensureDB();
   const product = await findProduct(req.params.id);
   res.render("admin/product-form", {
     title: `Edit ${product.name}`,
@@ -99,6 +103,7 @@ exports.showEditForm = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
+  await ensureDB();
   const product = await findProduct(req.params.id);
 
   product.set(readProductForm(req.body));
@@ -118,6 +123,7 @@ exports.updateProduct = async (req, res) => {
 };
 
 exports.deleteProduct = async (req, res) => {
+  await ensureDB();
   const product = await findProduct(req.params.id);
   await product.deleteOne();
 

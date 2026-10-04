@@ -1,5 +1,6 @@
 const productModel = require("../models/productModel");
 const { APP_URL } = require("../config/site");
+const { ensureDB } = require("../config/db");
 
 const PRIVATE_PATHS = ["/admin", "/account", "/cart", "/checkout", "/orders", "/wishlist"];
 
@@ -17,6 +18,7 @@ const escapeXml = (text) => String(text).replace(/[<>&'"]/g, (char) => `&#${char
 
 // Built from the live catalog so new products are discoverable straight away
 exports.sitemap = async (req, res) => {
+  await ensureDB();
   const products = await productModel.find().select("slug updatedAt").lean();
 
   const pages = [

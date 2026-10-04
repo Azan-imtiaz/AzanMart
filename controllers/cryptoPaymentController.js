@@ -3,6 +3,7 @@ const cryptoConfig = require("../config/crypto");
 const httpError = require("../utils/httpError");
 const { verifyPayment, formatUsdc, isTxHash } = require("../services/crypto");
 const { markOrderPaid } = require("../services/orders");
+const { ensureDB } = require("../config/db");
 
 async function findOwnOrder(req) {
   const order = await orderModel.findOne({ orderNumber: req.params.orderNumber });
@@ -48,6 +49,7 @@ async function confirmPayment(order, txHash) {
 }
 
 exports.showPaymentPage = async (req, res) => {
+  await ensureDB();
   const order = await findOwnOrder(req);
   if (order.status !== "pending") return res.redirect(`/orders/${order.orderNumber}`);
 
@@ -70,6 +72,7 @@ exports.showPaymentPage = async (req, res) => {
 // Called by the payment page while it waits for the blockchain (JSON), or by
 // the "paste your transaction hash" form (regular POST)
 exports.confirm = async (req, res) => {
+  await ensureDB();
   const order = await findOwnOrder(req);
   const txHash = String(req.body.txHash || "").trim();
   const result = isTxHash(txHash)
