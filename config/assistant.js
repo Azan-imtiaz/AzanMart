@@ -5,7 +5,7 @@ module.exports = {
     /\/$/,
     "",
   ),
-  model: process.env.NVIDIA_MODEL || "nvidia/nemotron-3-super-120b-a12b",
+  model: process.env.NVIDIA_MODEL || "nvidia/nemotron-3.5-lightning-30b-a3b",
   // Low temperature keeps answers close to the catalog data
   temperature: 0.2,
   maxTokens: 2048,
